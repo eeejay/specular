@@ -5,6 +5,7 @@ from twisted.web import xmlrpc, server
 from subtree import XmlStringTree, XmlAccessibleTree
 from events import events_map
 import pyatspi
+import gobject
 
 class SpecServe(xmlrpc.XMLRPC):
     AGENTS = ['Mozilla', 'Internet Explorer', 'Webkit', 'Unknown']
@@ -16,12 +17,15 @@ class SpecServe(xmlrpc.XMLRPC):
     def __init__(self):
         xmlrpc.XMLRPC.__init__(self)
         self._event_list = []
+        self._registered_global_listener = False
 
     def xmlrpc_start(self):
+        print 'start!'
         self._top_frame = None
         pyatspi.Registry.registerEventListener(
             self._get_win, 'window:activate')
-        
+        return True
+
     def _get_win(self, event):
         if not len(event.host_application) == 2:
             return
@@ -44,6 +48,48 @@ class SpecServe(xmlrpc.XMLRPC):
         print elist
         return elist
 
+    def xmlrpc_flush_event_cache(self):
+        self._event_list = []
+        return True
+
+    def xmlrpc_start_event_cache(self):
+        if not self._registered_global_listener:
+            for key in pyatspi.EVENT_TREE.keys():
+                pyatspi.Registry.registerEventListener(self._event_cache_cb, key)
+        self._registered_global_listener = True
+        return True
+
+    def xmlrpc_stop_event_cache(self):
+        if self._registered_global_listener:
+            for key in pyatspi.EVENT_TREE.keys():
+                pyatspi.Registry.deregisterEventListener(self._event_cache_cb, key)
+        self._registered_global_listener = False
+        return True
+
+    def _event_cache_cb(self, event):
+        try:
+            source = XmlAccessibleTree(event.source).toxml()
+        except:
+            source = ''
+        self._event_list.append((str(event.type), source))
+        
+    def xmlrpc_check_for_event(self, etype, esource, start_at=0):
+        print 'check', etype, esource
+        esource_tree = XmlStringTree(esource)
+        i = start_at
+        if start_at != 0:
+            event_list = self._event_list[start_at:]
+        else:
+            event_list = self._event_list
+        for et, source in event_list:
+            print events_map[etype], et
+            if et.startswith(events_map[etype]):
+#                print source
+                if XmlStringTree(source).compareNode(esource_tree):
+                    return i
+            i += 1
+        return -1
+                                
     def xmlrpc_get_doc_tree(self):
         try:
             tree = self._find_root_doc(self._top_frame)
@@ -57,6 +103,7 @@ class SpecServe(xmlrpc.XMLRPC):
         gobject.timeout_add(timeout, self._wait_timeout, etype)
         pyatspi.Registry.registerEventListener(
             self._wait_event_cb, events_map[etype])
+        return True
 
     def _wait_timeout(self, etype):
         pyatspi.Registry.deregisterEventListener(
@@ -73,9 +120,6 @@ class SpecServe(xmlrpc.XMLRPC):
         if self._last_waited is not None:
             return 1
         return 0
-
-    def xmlrpc_get_last_event_source(self):
-        return self._last_waited_source or ''
 
     def _find_root_doc(self, window_acc):
         agent_id = self._get_agent()

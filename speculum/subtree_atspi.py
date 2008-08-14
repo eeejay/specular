@@ -4,9 +4,7 @@ class XmlAccessibleTree(XmlSubTree):
     def __init__(self, accessible_tree):
         XmlSubTree.__init__(self)
         self.accessibleSubtree = accessible_tree
-        self.appendChild(
-            self.createElementNS('http://monotonous.org/ariatest', 'ariatest'))
-        self._appendNode(accessible_tree, self.documentElement)
+        self._appendNode(accessible_tree, self)
         
     def _appendNode(self, acc, node):
         n = self.createElement('accessible')

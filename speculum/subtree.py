@@ -37,6 +37,11 @@ class XmlSubTree(Document):
                 return False
         return True
 
+    def compareNode(self, other):
+        if isinstance(other, Document):
+            other = other.documentElement
+        return self._compareNode(self.documentElement, other)
+
     def _compareNode(self, node1, node2):
         if node1.nodeName != node2.nodeName:
             debug_print('node name mismatch')
