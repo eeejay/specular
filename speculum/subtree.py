@@ -40,6 +40,11 @@ class XmlSubTree(Document):
     def compareNode(self, other):
         if isinstance(other, Document):
             other = other.documentElement
+        print '='*80
+        print other.toxml()
+        print '-'*80
+        print self.documentElement.toxml()
+        print '='*80
         return self._compareNode(self.documentElement, other)
 
     def _compareNode(self, node1, node2):

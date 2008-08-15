@@ -74,7 +74,6 @@ class SpecServe(xmlrpc.XMLRPC):
         self._event_list.append((str(event.type), source))
         
     def xmlrpc_check_for_event(self, etype, esource, start_at=0):
-        print 'check', etype, esource
         esource_tree = XmlStringTree(esource)
         i = start_at
         if start_at != 0:
@@ -82,7 +81,6 @@ class SpecServe(xmlrpc.XMLRPC):
         else:
             event_list = self._event_list
         for et, source in event_list:
-            print events_map[etype], et
             if et.startswith(events_map[etype]):
 #                print source
                 if XmlStringTree(source).compareNode(esource_tree):
