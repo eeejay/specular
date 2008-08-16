@@ -17,11 +17,12 @@ class XmlSubTree(Document):
 
     def _find_subtree(self, node, other_subtree):
         if self._compare(node, other_subtree):
-            return True
+            return node
         for child in node.childNodes:
-            if self._find_subtree(child, other_subtree):
-                return True
-        return False
+            n = self._find_subtree(child, other_subtree)
+            if n:
+                return n
+        return None
         
     def compare(self, other):
         if isinstance(other, Document):

@@ -20,8 +20,8 @@ class SpecServe(SpecServeBase):
         self._event_list = []
         self._registered_global_listener = False
 
-    def xmlrpc_start(self):
-        print 'start!'
+    def xmlrpc_start(self, browser_start_cmd):
+        SpecServeBase.xmlrpc_start(self, browser_start_cmd)
         self._top_frame = None
         pyatspi.Registry.registerEventListener(
             self._get_win, 'window:activate')
@@ -36,6 +36,7 @@ class SpecServe(SpecServeBase):
         for frame in frames:
             if 'Selenium Remote Control' not in frame.name:
                 self._top_frame = frame
+                print 'TOP FRAME:', frame
                 pyatspi.Registry.deregisterEventListener(
                     self._get_win, 'window:activate')
 
@@ -59,13 +60,6 @@ class SpecServe(SpecServeBase):
         except:
             source = ''
         self._event_list.append((str(event.type), source))
-                                        
-    def xmlrpc_get_doc_tree(self):
-        try:
-            tree = self._find_root_doc(self._top_frame)
-        except LookupError:
-            return ''
-        return XmlAccessibleTree(tree).toxml()
 
     def _find_root_doc(self, window_acc):
         agent_id = self._get_agent()

@@ -12,7 +12,8 @@ class SpecServe(SpecServeBase):
     def __init__(self):
         SpecServeBase.__init__(self)
 
-    def xmlrpc_start(self):
+    def xmlrpc_start(self, browser_start_cmd):
+        SpecServeBase.xmlrpc_start(self, browser_start_cmd)
         self._top_frame = None
         self._target_pid = -1
         self._window_id = -1

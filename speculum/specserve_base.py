@@ -14,9 +14,10 @@ class SpecServeBase(xmlrpc.XMLRPC):
         self._event_list = []
         self._registered_global_listener = False
 
-    def xmlrpc_start(self):
+    def xmlrpc_start(self, browser_start_cmd):
         # Capture target frame here.
-        raise NotImplementedError
+        print browser_start_cmd
+        pass
 
     def xmlrpc_flush_event_cache(self):
         self._event_list = []
@@ -39,7 +40,7 @@ class SpecServeBase(xmlrpc.XMLRPC):
             et = str(event.type)
         self._event_list.append((et, source))
         
-    def xmlrpc_check_for_event(self, etype, esource, start_at=0):
+    def xmlrpc_check_for_accessible_event(self, etype, esource, start_at=0):
         esource_tree = XmlStringTree(esource)
         i = start_at
         if start_at != 0:
@@ -56,15 +57,30 @@ class SpecServeBase(xmlrpc.XMLRPC):
                 if XmlStringTree(source).compareNode(esource_tree):
                     return i
             i += 1
-        return -1
+        return (len(self._event_list) + 1) * -1
+
+    def xmlrpc_doc_accessible_diff(self, other_doc):
+        return "Not implemented yet"
                                 
-    def xmlrpc_get_doc_tree(self):
-        if self._top_frame is None: return ''
+    def xmlrpc_get_accessible_doc(self):
         try:
             tree = self._find_root_doc(self._top_frame)
-        except LookupError:
+        except:
             return ''
         return XmlAccessibleTree(tree).toxml()
+    
+    def xmlrpc_get_accessible_match(self, acc_node):
+        try:
+            tree = self._find_root_doc(self._top_frame)
+        except:
+            return ''
+        doc_tree = XmlAccessibleTree(tree)
+
+        found = doc_tree.find_subtree(XmlStringTree(acc_node))
+        if found:
+            return found.toxml()
+        else:
+            return ''
 
     def _find_root_doc(self, window_acc):
         raise NotImplementedError
