@@ -9,21 +9,11 @@ def debug_print(s):
     if debug:
         print s
 
-class XmlSubTree(Document):
-    def find_subtree(self, other_subtree):
-        if isinstance(other_subtree, Document):
-            other_subtree = other_subtree.documentElement
-        return self._find_subtree(self.documentElement, other_subtree)
+class SpecularSerial(Document):
+    def __init__(self, root_element):
+        Document.__init__(self)
+        self.appendChild(root_element)
 
-    def _find_subtree(self, node, other_subtree):
-        if self._compare(node, other_subtree):
-            return node
-        for child in node.childNodes:
-            n = self._find_subtree(child, other_subtree)
-            if n:
-                return n
-        return None
-        
     def compare(self, other):
         if isinstance(other, Document):
             other = other.documentElement
@@ -68,34 +58,14 @@ class XmlSubTree(Document):
         else:
             return attr1 == attr2
 
-class XmlFileTree(XmlSubTree):
-    def __init__(self, file):
-        XmlSubTree.__init__(self)        
-        if file:
-            dom = parse(file)
-            self.appendChild(dom.documentElement)
-            self._stripWhiteSpace(self.documentElement)
-        
-    def _stripWhiteSpace(self, element):
-        if element is None: 
-            return
-        sibling = element.firstChild
-        while sibling:
-            nextSibling = sibling.nextSibling
-            if sibling.nodeType == Node.TEXT_NODE:
-                element.removeChild(sibling)
-            else:
-                self._stripWhiteSpace(sibling)
-            sibling = nextSibling
-
-class XmlStringTree(XmlFileTree):
-    def __init__(self, strn):
-        XmlFileTree.__init__(self, None)
-        dom = parseString(strn)
-        self.appendChild(dom.documentElement)
-        self._stripWhiteSpace(self.documentElement)
-
-if platform == 'win32':
-    from subtree_win32 import XmlAccessibleTree
-else:
-    from subtree_atspi import XmlAccessibleTree
+#def strip_whitespace(doc):
+#    if element is None: 
+#        return
+#    sibling = element.firstChild
+#    while sibling:
+#        nextSibling = sibling.nextSibling
+#        if sibling.nodeType == Node.TEXT_NODE:
+#            element.removeChild(sibling)
+#        else:
+#            self._stripWhiteSpace(sibling)
+#        sibling = nextSibling

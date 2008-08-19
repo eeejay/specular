@@ -2,7 +2,6 @@ from twisted.internet import gtk2reactor
 gtk2reactor.install()
 from twisted.internet import reactor
 from twisted.web import xmlrpc, server
-from subtree import XmlStringTree, XmlAccessibleTree
 from events import events_map
 import pyatspi
 import gobject
@@ -53,13 +52,6 @@ class SpecServe(SpecServeBase):
                 pyatspi.Registry.deregisterEventListener(self._event_cache_cb, value)
         self._registered_global_listener = False
         return True
-
-    def _event_cache_cb(self, event):
-        try:
-            source = XmlAccessibleTree(event.source).toxml()
-        except:
-            source = ''
-        self._event_list.append((str(event.type), source))
 
     def _find_root_doc(self, window_acc):
         agent_id = self._get_agent()
