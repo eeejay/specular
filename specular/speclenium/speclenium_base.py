@@ -1,12 +1,11 @@
 from twisted.web import xmlrpc, server
-from events import events_map
 from xml.dom.minidom import parseString
-from specular_accessible import \
+from specular.specular_accessible import \
     specular_accessible_from_accessible, specular_accessible_from_string
-from specular_event import \
+from specular.specular_event import \
     specular_event_from_event, specular_event_from_string
 
-class SpecServeBase(xmlrpc.XMLRPC):
+class SpecleniumBase(xmlrpc.XMLRPC):
     AGENTS = ['Mozilla', 'Internet Explorer', 'Webkit', 'Unknown']
     AGENT_MOZILLA = 0
     AGENT_IE = 1

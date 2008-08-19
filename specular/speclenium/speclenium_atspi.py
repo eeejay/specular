@@ -2,12 +2,12 @@ from twisted.internet import gtk2reactor
 gtk2reactor.install()
 from twisted.internet import reactor
 from twisted.web import xmlrpc, server
-from events import events_map
 import pyatspi
 import gobject
-from specserve_base import SpecServeBase
+from speclenium_base import SpecleniumBase
+from specular.specular_event import events_map
 
-class SpecServe(SpecServeBase):
+class Speclenium(SpecleniumBase):
     AGENTS = ['Mozilla', 'Internet Explorer', 'Webkit', 'Unknown']
     AGENT_MOZILLA = 0
     AGENT_IE = 1
@@ -20,7 +20,7 @@ class SpecServe(SpecServeBase):
         self._registered_global_listener = False
 
     def xmlrpc_start(self, browser_start_cmd):
-        SpecServeBase.xmlrpc_start(self, browser_start_cmd)
+        SpecleniumBase.xmlrpc_start(self, browser_start_cmd)
         self._top_frame = None
         pyatspi.Registry.registerEventListener(
             self._get_win, 'window:activate')

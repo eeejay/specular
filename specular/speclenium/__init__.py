@@ -1,13 +1,13 @@
 from sys import platform
 
 if platform == 'win32':
-    from specserve_win32 import SpecServe
+    from speclenium_win32 import Speclenium
 else:
-    from specserve_atspi import SpecServe
-    
-if __name__ == '__main__':
+    from speclenium_atspi import Speclenium
+
+def main(port=4117):
     from twisted.internet import reactor
     from twisted.web import server
-    r = SpecServe()
-    reactor.listenTCP(4117, server.Site(r))
+    r = Speclenium()
+    reactor.listenTCP(port, server.Site(r))
     reactor.run()

@@ -2,18 +2,18 @@ from twisted.internet import win32eventreactor
 win32eventreactor.install()
 from twisted.internet import reactor
 from twisted.web import xmlrpc, server
-from subtree import XmlStringTree, XmlAccessibleTree
-from events import events_map
+from specular.specular_event import events_map
 import pyia
-from specserve_base import SpecServeBase
+from speclenium_base import SpecleniumBase
 
-class SpecServe(SpecServeBase):
+class Speclenium(SpecleniumBase):
     """An example object to be published."""
     def __init__(self):
-        SpecServeBase.__init__(self)
+        SpecleniumBase.__init__(self)
 
     def xmlrpc_start(self, browser_start_cmd):
-        SpecServeBase.xmlrpc_start(self, browser_start_cmd)
+        SpecleniumBase.xmlrpc_start(self, browser_start_cmd)
+        print 'starty, yo!'
         self._top_frame = None
         self._target_pid = -1
         self._window_id = -1
