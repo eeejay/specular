@@ -1,4 +1,4 @@
-from specular_serial import SpecularSerial
+from specular_serial import SpecularSerial, strip_whitespace
 from sys import platform
 from xml.dom.minidom import \
     Document, Node, parse, parseString, getDOMImplementation
@@ -20,10 +20,12 @@ class SpecularAccessible(SpecularSerial):
 
 def specular_accessible_from_string(acc_str):
     dom = parseString(acc_str)
+    strip_whitespace(dom.documentElement)
     return specular_accessible_from_dom(dom.documentElement)
 
 def specular_accessible_from_file(file):
     dom = parse(file)
+    strip_whitespace(dom.documentElement)
     return specular_accessible_from_dom(dom.documentElement)
 
 def specular_accessible_from_dom(dom):
@@ -66,8 +68,12 @@ else:
         for child in acc:
             if child:
                 e = doc.createElement('accessible')
-                element.appendChild(e)
-                _populate_accessible_node(doc, e, child)
+                try:
+                    _populate_accessible_node(doc, e, child)
+                except LookupError:
+                    pass
+                else:
+                    element.appendChild(e)
 
 def specular_accessible_from_accessible(acc):    
     doc = getDOMImplementation().createDocument(None, "accessible", None)

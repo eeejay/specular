@@ -20,8 +20,8 @@ class SpecServeBase(xmlrpc.XMLRPC):
 
     def xmlrpc_start(self, browser_start_cmd):
         # Capture target frame here.
+        self.xmlrpc_start_event_cache()
         print browser_start_cmd
-        pass
 
     def xmlrpc_flush_event_cache(self):
         self._event_list = []
@@ -34,9 +34,10 @@ class SpecServeBase(xmlrpc.XMLRPC):
         raise NotImplementedError
 
     def _event_cache_cb(self, event):
-        self._event_list.append(specular_event_from_event(event))
+        e = specular_event_from_event(event)
+        self._event_list.append(e)
         
-    def xmlrpc_check_for_accessible_event(self, event, start_at=0):
+    def xmlrpc_get_accessible_event_match(self, event, start_at):
         spec_event = specular_event_from_string(event)
 
         i = start_at
@@ -46,10 +47,11 @@ class SpecServeBase(xmlrpc.XMLRPC):
             event_list = self._event_list
 
         for e in event_list:
-            if spec_event.match(e):
-                return i
+            if e.match(spec_event):
+                e.documentElement.setAttribute('index', str(i))
+                return e.toxml()
             i += 1
-        return (len(self._event_list) + 1) * -1
+        return '<notfound index="%s"/>' % i
 
     def xmlrpc_doc_accessible_diff(self, other_doc):
         return "Not implemented yet"
@@ -57,7 +59,6 @@ class SpecServeBase(xmlrpc.XMLRPC):
     def xmlrpc_get_accessible_doc(self):
         try:
             tree = self._find_root_doc(self._top_frame)
-            print tree
         except:
             return ''
         return specular_accessible_from_accessible(tree).toxml()
@@ -72,11 +73,6 @@ class SpecServeBase(xmlrpc.XMLRPC):
         found = doc_tree.find_subtree(
             specular_accessible_from_string(acc_node))
         if found:
-            print '='*80
-            print found.toxml()
-            print '-'*80
-            print acc_node
-            print '='*80
             return found.toxml()
         else:
             return ''

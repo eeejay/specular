@@ -58,14 +58,14 @@ class SpecularSerial(Document):
         else:
             return attr1 == attr2
 
-#def strip_whitespace(doc):
-#    if element is None: 
-#        return
-#    sibling = element.firstChild
-#    while sibling:
-#        nextSibling = sibling.nextSibling
-#        if sibling.nodeType == Node.TEXT_NODE:
-#            element.removeChild(sibling)
-#        else:
-#            self._stripWhiteSpace(sibling)
-#        sibling = nextSibling
+def strip_whitespace(element):
+    if element is None: 
+        return
+    sibling = element.firstChild
+    while sibling:
+        nextSibling = sibling.nextSibling
+        if sibling.nodeType == Node.TEXT_NODE:
+            element.removeChild(sibling)
+        else:
+            strip_whitespace(sibling)
+        sibling = nextSibling
