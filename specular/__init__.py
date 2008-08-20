@@ -10,7 +10,6 @@
 # for the specific language governing rights and limitations under the
 # License.
 #
-# The Original Code is mozilla.org code.
 #
 # The Initial Developer of the Original Code is Eitan Isaacson.
 # Portions created by the Initial Developer are Copyright (C) 2008
@@ -34,3 +33,4 @@
 __version__   = "0.0.1"
 __copyright__ = "Copyright (c) 2008 Eitan Isaacson"
 __license__   = "MPL 1.1/GPL 2.0/LGPL 2.1"
+
