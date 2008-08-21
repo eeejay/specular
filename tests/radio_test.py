@@ -6,11 +6,6 @@ from sys import platform
 WINDOWS_HOST = "11.0.0.2"
 LINUX_HOST = "localhost"
 
-if True:
-    cmd = "*safari C:\Documents and Settings\Eitan\Desktop\webkit-nightly\Safari.exe"
-else:
-    cmd = "*chrome /usr/lib/firefox-3.0.1/firefox"
-
 class RadioTest(object):
     def setUp(self):
         self.verificationErrors = []
