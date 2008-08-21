@@ -83,23 +83,23 @@ class Speclenium(SpecleniumBase):
     def _find_root_doc(self, window_acc):
         print '_find_root_doc'
         agent_id = self._get_agent()
-        pred = lambda x: False
+        print 'agent', self.AGENTS[agent_id]
+        rv = None
         if agent_id == self.AGENT_MOZILLA:
             # Firefox
             pred = lambda x: x.accRole(0) == pyia.ROLE_SYSTEM_DOCUMENT and \
                 not x.accState(0) & pyia.STATE_SYSTEM_INVISIBLE
+            rv = pyia.findDescendant(window_acc, pred)
         elif agent_id == self.AGENT_IE:
             # IE
-         pred = lambda x: x.accRole(0) == pyia.ROLE_SYSTEM_PANE and \
-             x.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT and \
-             x.accParent.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT
+            pred = lambda x: x.accRole(0) == pyia.ROLE_SYSTEM_PANE and \
+                x.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT and \
+                x.accParent.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT
+            rv = pyia.findDescendant(window_acc, pred)
         elif agent_id == self.AGENT_WEBKIT:
             # Webkit
-            pred = lambda x: False
-        rv = pyia.findDescendant(window_acc, pred)
-        print rv
+            print 'Webkit!'
+            rv = window_acc[3][0][3][0][3]
+        print 'Root doc:', rv
         return rv
-
-    def _get_agent(self):
-        return self.AGENT_MOZILLA
 

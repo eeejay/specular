@@ -38,10 +38,11 @@ from specular.specular_event import \
     specular_event_from_event, specular_event_from_string
 
 class SpecleniumBase(xmlrpc.XMLRPC):
-    AGENTS = ['Mozilla', 'Internet Explorer', 'Webkit', 'Unknown']
+    AGENTS = ['Mozilla', 'Internet Explorer', 'Webkit', 'Opera', 'Unknown']
     AGENT_MOZILLA = 0
     AGENT_IE = 1
     AGENT_WEBKIT = 2
+    AGENT_OPERA = 3
     AGENT_UNKNOWN = -1
     """An example object to be published."""
     def __init__(self):
@@ -52,7 +53,7 @@ class SpecleniumBase(xmlrpc.XMLRPC):
     def xmlrpc_start(self, browser_start_cmd):
         # Capture target frame here.
         self.xmlrpc_start_event_cache()
-        print browser_start_cmd
+        self._browser_start_cmd = browser_start_cmd
 
     def xmlrpc_flush_event_cache(self):
         self._event_list = []
@@ -88,18 +89,24 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         return "Not implemented yet"
                                 
     def xmlrpc_get_accessible_doc(self):
-        try:
-            tree = self._find_root_doc(self._top_frame)
-        except:
+        if not self._top_frame:
+            print 'no _top_frame'
             return ''
-        return specular_accessible_from_accessible(tree).toxml()
-    
+        
+        tree = self._find_root_doc(self._top_frame)
+        if tree:
+            xml_tree = specular_accessible_from_accessible(tree).toxml()
+        else:
+            print 'no xml_tree'
+            xml_tree = ''
+        return xml_tree
+
     def xmlrpc_get_accessible_match(self, acc_node):
         try:
             tree = self._find_root_doc(self._top_frame)
+            doc_tree = specular_accessible_from_accessible(tree)
         except:
             return ''
-        doc_tree = specular_accessible_from_accessible(tree)
 
         found = doc_tree.find_subtree(
             specular_accessible_from_string(acc_node))
@@ -112,5 +119,12 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         raise NotImplementedError
 
     def _get_agent(self):
-        raise NotImplementedError
-
+        if 'chrome' in self._browser_start_cmd:
+            return self.AGENT_MOZILLA
+        if 'firefox' in self._browser_start_cmd:
+            return self.AGENT_MOZILLA
+        if 'explore' in self._browser_start_cmd:
+            return self.AGENT_IE
+        if 'safari' in self._browser_start_cmd:
+            return self.AGENT_WEBKIT
+        return self.AGENT_UNKNOWN
