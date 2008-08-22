@@ -30,8 +30,8 @@
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
 '''WAI-ARIA Tooltip Test
-Tests to see if the correct state change events are emited when checkboxes
-are toggled.'''
+Tests to see if an accessible with a 'tooltip' role is in the document at the
+proper moment.'''
 
 from selenium import selenium
 import unittest, time, re
