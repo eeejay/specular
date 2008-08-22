@@ -74,13 +74,6 @@ class TooltipTest(unittest.TestCase):
             tooltip_present != '', 
             'Tooltip should be present after click')
 
-#        sel.click("xpath=//*[@id=\"last\"]")
-#        try: self.failUnless(sel.is_text_present("Your last name"))
-#        except AssertionError, e: self.verificationErrors.append(str(e))
-#        sel.click("xpath=//*[@id=\"email\"]")
-#        try: self.failUnless(sel.is_text_present("Your e-mail"))
-#        except AssertionError, e: self.verificationErrors.append(str(e))
-
     def tearDown(self):
         self.selenium.stop()
         self.assertEqual([], self.verificationErrors)

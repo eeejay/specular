@@ -45,18 +45,8 @@ def main(tests=[], browsers=None, platforms=None):
             if browsers is not None and browser not in browsers.split(','):
                 continue
             settings.current_command = command
-            print 'Running tests for', name, browser
-            #unittest.TextTestRunner().run(suite)
-
-#    settings.current_host = settings.configs['linux']['host']
-#    settings.current_command = settings.configs['linux']['browsers']['firefox3']
-#
-#    unittest.TextTestRunner().run(suite)
-#
-#    settings.current_host = settings.configs['windows']['host']
-#    settings.current_command = settings.configs['windows']['browsers']['firefox3']
-
-#    unittest.TextTestRunner().run(suite)
+#            print 'Running tests for', name, browser
+            unittest.TextTestRunner().run(suite)
 
 
 if __name__ == '__main__':
