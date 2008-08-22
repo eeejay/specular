@@ -1,4 +1,4 @@
-# Speclenium Radio Button Test
+# Speclenium Checkbox Test
 #
 # The contents of this file are subject to the Mozilla Public License Version
 # 1.1 (the "License"); you may not use this file except in compliance with
@@ -29,8 +29,8 @@
 # and other provisions required by the GPL or the LGPL. If you do not delete
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
-'''WAI-ARIA Radio Button Test
-Tests to see if the correct state change events are emited when radio buttons
+'''WAI-ARIA Checkbox Test
+Tests to see if the correct state change events are emited when checkboxes
 are toggled.'''
 
 from selenium import selenium
@@ -41,25 +41,25 @@ from sys import platform
 WINDOWS_HOST = "11.0.0.2"
 LINUX_HOST = "localhost"
 
-class RadioTest(object):
+class CheckboxTest(object):
     def setUp(self):
         self.verificationErrors = []
         self.selenium = \
             selenium(self.host, 4444, self.command, 
-                     "http://test.cita.uiuc.edu/")
+                     "http://www.mozilla.org/")
         #self.selenium.set_speed(1000)
         self.selenium.start()
         self.selenium.set_timeout(30000)
 
-    def test_radio_button(self):
+    def test_checkbox_button(self):
         sel = self.selenium
-        sel.open("/aria/radio/view_inline.php?title=Radio%20Example%201&ginc=includes/radio1_inline.inc&gcss=css/radio1_inline.css&gjs=../js/globals.js,../js/widgets_inline.js,js/radio1_inline.js")
-        sel.click("r3")
+        sel.open("/access/dhtml/checkbox")
+        sel.click("//div[2]/span/img")
         success = False
         for i in xrange(10):
             e = sel.get_accessible_event_match(
                 '<event type="object-state-changed-checked">'
-                '<source><accessible role="radio button"/>'
+                '<source><accessible role="check box"/>'
                 '</source></event>', 0)
             if 'notfound' not in e:
                 success = True
@@ -67,22 +67,22 @@ class RadioTest(object):
             print 'retrying', i
         self.failUnless(
             success, 
-            'Did not recieve a state-changed event after radio button toggle')
+            'Did not recieve a state-changed event after check button toggle')
     def tearDown(self):
         self.selenium.stop()
         self.assertEqual([], self.verificationErrors)
 
-class LinuxFirefox3RadioTest(RadioTest, unittest.TestCase):
+class LinuxFirefox3CheckboxTest(CheckboxTest, unittest.TestCase):
     host = LINUX_HOST
     command = "*chrome /usr/lib/firefox-3.0.1/firefox"
 
-class WindowsFirefox3RadioTest(RadioTest, unittest.TestCase):
+class WindowsFirefox3CheckboxTest(CheckboxTest, unittest.TestCase):
     host = WINDOWS_HOST
     command = "*chrome"
 
-class WindowsSafariRadioTest(RadioTest, unittest.TestCase):
-    host = WINDOWS_HOST
-    command = "*safari C:\Documents and Settings\Eitan\Desktop\webkit-nightly\Safari.exe"
+#class WindowsSafariCheckboxTest(CheckboxTest, unittest.TestCase):
+#    host = WINDOWS_HOST
+#    command = "*safari C:\Documents and Settings\Eitan\Desktop\webkit-nightly\Safari.exe"
 
 if __name__ == "__main__":
     unittest.main()

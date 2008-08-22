@@ -1,4 +1,4 @@
-# Speclenium Radio Button Test
+# Speclenium Tooltip Test
 #
 # The contents of this file are subject to the Mozilla Public License Version
 # 1.1 (the "License"); you may not use this file except in compliance with
@@ -29,8 +29,8 @@
 # and other provisions required by the GPL or the LGPL. If you do not delete
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
-'''WAI-ARIA Radio Button Test
-Tests to see if the correct state change events are emited when radio buttons
+'''WAI-ARIA Tooltip Test
+Tests to see if the correct state change events are emited when checkboxes
 are toggled.'''
 
 from selenium import selenium
@@ -41,7 +41,7 @@ from sys import platform
 WINDOWS_HOST = "11.0.0.2"
 LINUX_HOST = "localhost"
 
-class RadioTest(object):
+class TooltipTest(object):
     def setUp(self):
         self.verificationErrors = []
         self.selenium = \
@@ -51,38 +51,53 @@ class RadioTest(object):
         self.selenium.start()
         self.selenium.set_timeout(30000)
 
-    def test_radio_button(self):
+    def test_tooltip(self):
         sel = self.selenium
-        sel.open("/aria/radio/view_inline.php?title=Radio%20Example%201&ginc=includes/radio1_inline.inc&gcss=css/radio1_inline.css&gjs=../js/globals.js,../js/widgets_inline.js,js/radio1_inline.js")
-        sel.click("r3")
-        success = False
-        for i in xrange(10):
-            e = sel.get_accessible_event_match(
-                '<event type="object-state-changed-checked">'
-                '<source><accessible role="radio button"/>'
-                '</source></event>', 0)
-            if 'notfound' not in e:
-                success = True
-                break
-            print 'retrying', i
+        sel.open("/aria/tooltip/view_inline.php?title=Tooltip%20Example%201&ginc=includes/tooltip1_inline.inc&gcss=css/tooltip1_inline.css&gjs=js/tooltip1_inline.js,../js/widgets_inline.js,../js/globals.js")
+
+        tooltip_present = \
+            sel.get_accessible_match('<accessible '
+                                     'name="Your first name is a optional" '
+                                     'role="tool tip"/>')
+        try:
+            self.failUnless(
+                tooltip_present == '', 
+                'No tooltip should be present before click')
+        except AssertionError, e: 
+            self.verificationErrors.append(str(e))
+
+        sel.click("xpath=//*[@id=\"first\"]")
+
+        tooltip_present = \
+            sel.get_accessible_match('<accessible '
+                                     'name="Your first name is a optional" '
+                                     'role="tool tip"/>')
         self.failUnless(
-            success, 
-            'Did not recieve a state-changed event after radio button toggle')
+            tooltip_present != '', 
+            'Tooltip should be present after click')
+
+#        sel.click("xpath=//*[@id=\"last\"]")
+#        try: self.failUnless(sel.is_text_present("Your last name"))
+#        except AssertionError, e: self.verificationErrors.append(str(e))
+#        sel.click("xpath=//*[@id=\"email\"]")
+#        try: self.failUnless(sel.is_text_present("Your e-mail"))
+#        except AssertionError, e: self.verificationErrors.append(str(e))
+
     def tearDown(self):
         self.selenium.stop()
         self.assertEqual([], self.verificationErrors)
 
-class LinuxFirefox3RadioTest(RadioTest, unittest.TestCase):
+class LinuxFirefox3TooltipTest(TooltipTest, unittest.TestCase):
     host = LINUX_HOST
     command = "*chrome /usr/lib/firefox-3.0.1/firefox"
 
-class WindowsFirefox3RadioTest(RadioTest, unittest.TestCase):
+class WindowsFirefox3TooltipTest(TooltipTest, unittest.TestCase):
     host = WINDOWS_HOST
     command = "*chrome"
 
-class WindowsSafariRadioTest(RadioTest, unittest.TestCase):
-    host = WINDOWS_HOST
-    command = "*safari C:\Documents and Settings\Eitan\Desktop\webkit-nightly\Safari.exe"
+#class WindowsSafariTooltipTest(TooltipTest, unittest.TestCase):
+#    host = WINDOWS_HOST
+#    command = "*safari C:\Documents and Settings\Eitan\Desktop\webkit-nightly\Safari.exe"
 
 if __name__ == "__main__":
     unittest.main()

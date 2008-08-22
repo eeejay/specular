@@ -41,13 +41,14 @@ from specular_accessible import \
 
 if platform == 'win32':
     import pyia
-    events_map = {'object-state-changed':pyia.EVENT_OBJECT_STATECHANGE}
+    events_map = {'object-state-changed-checked':pyia.EVENT_OBJECT_STATECHANGE}
     def get_specular_type(native_type):
         for key, value in events_map.iteritems():
             if value == native_type:
                 return key
 else:
-    events_map = {'object-state-changed':'object:state-changed'}
+    events_map = \
+        {'object-state-changed-checked':'object:state-changed:checked'}
     def get_specular_type(native_type):
         for key, value in events_map.iteritems():
             if native_type.startswith(value):
