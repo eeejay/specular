@@ -36,22 +36,20 @@ proper moment.'''
 from selenium import selenium
 import unittest, time, re
 from sys import platform
+import settings
 
-
-WINDOWS_HOST = "11.0.0.2"
-LINUX_HOST = "localhost"
-
-class TooltipTest(object):
+class TooltipTest(unittest.TestCase):
     def setUp(self):
         self.verificationErrors = []
         self.selenium = \
-            selenium(self.host, 4444, self.command, 
+            selenium(settings.current_host, 4444, 
+                     settings.current_command,
                      "http://test.cita.uiuc.edu/")
         #self.selenium.set_speed(1000)
         self.selenium.start()
         self.selenium.set_timeout(30000)
 
-    def test_tooltip(self):
+    def runTest(self):
         sel = self.selenium
         sel.open("/aria/tooltip/view_inline.php?title=Tooltip%20Example%201&ginc=includes/tooltip1_inline.inc&gcss=css/tooltip1_inline.css&gjs=js/tooltip1_inline.js,../js/widgets_inline.js,../js/globals.js")
 
@@ -87,17 +85,5 @@ class TooltipTest(object):
         self.selenium.stop()
         self.assertEqual([], self.verificationErrors)
 
-class LinuxFirefox3TooltipTest(TooltipTest, unittest.TestCase):
-    host = LINUX_HOST
-    command = "*chrome /usr/lib/firefox-3.0.1/firefox"
-
-class WindowsFirefox3TooltipTest(TooltipTest, unittest.TestCase):
-    host = WINDOWS_HOST
-    command = "*chrome"
-
-#class WindowsSafariTooltipTest(TooltipTest, unittest.TestCase):
-#    host = WINDOWS_HOST
-#    command = "*safari C:\Documents and Settings\Eitan\Desktop\webkit-nightly\Safari.exe"
-
-if __name__ == "__main__":
-    unittest.main()
+#if __name__ == "__main__":
+#    unittest.main()

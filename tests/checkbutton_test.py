@@ -36,22 +36,20 @@ are toggled.'''
 from selenium import selenium
 import unittest, time, re
 from sys import platform
+import settings
 
-
-WINDOWS_HOST = "11.0.0.2"
-LINUX_HOST = "localhost"
-
-class CheckboxTest(object):
+class CheckboxTest(unittest.TestCase):
     def setUp(self):
         self.verificationErrors = []
         self.selenium = \
-            selenium(self.host, 4444, self.command, 
+            selenium(settings.current_host, 4444, 
+                     settings.current_command, 
                      "http://www.mozilla.org/")
         #self.selenium.set_speed(1000)
         self.selenium.start()
         self.selenium.set_timeout(30000)
 
-    def test_checkbox_button(self):
+    def runTest(self):
         sel = self.selenium
         sel.open("/access/dhtml/checkbox")
         sel.click("//div[2]/span/img")
@@ -72,17 +70,5 @@ class CheckboxTest(object):
         self.selenium.stop()
         self.assertEqual([], self.verificationErrors)
 
-class LinuxFirefox3CheckboxTest(CheckboxTest, unittest.TestCase):
-    host = LINUX_HOST
-    command = "*chrome /usr/lib/firefox-3.0.1/firefox"
-
-class WindowsFirefox3CheckboxTest(CheckboxTest, unittest.TestCase):
-    host = WINDOWS_HOST
-    command = "*chrome"
-
-#class WindowsSafariCheckboxTest(CheckboxTest, unittest.TestCase):
-#    host = WINDOWS_HOST
-#    command = "*safari C:\Documents and Settings\Eitan\Desktop\webkit-nightly\Safari.exe"
-
-if __name__ == "__main__":
-    unittest.main()
+#if __name__ == "__main__":
+#    unittest.main()
