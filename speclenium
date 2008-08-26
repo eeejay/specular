@@ -34,6 +34,38 @@
 
 
 import specular.speclenium
+import os, os.path
+import sys
+import subprocess
+from time import sleep
+from optparse import OptionParser
 
-specular.speclenium.main()
+def run_selenium(jar_file):
+    if not jar_file:
+        try:
+            fname = __file__
+        except NameError:
+            # This could be one of those py2exe entry-points.
+            fname = sys.executable
+        jar_file = os.path.join(os.path.dirname(fname),'selenium-server.jar')
+
+    s = subprocess.Popen(['java', '-jar', jar_file])
+    sleep(1)
+    return s.poll() != 1
+    
+
+if __name__ == '__main__':
+    usage = "Usage: %prog [options]"
+    parser = OptionParser(usage)
+    parser.add_option("--no-selenium", dest="no_selenium", default=False,
+                      action="store_true", help="don't launch selenium-rc")
+    parser.add_option("--selenium-jar", dest="selenium_jar",
+                      help="selenium-rc jar file to launch")
+
+    options, args = parser.parse_args()
+
+    if not options.no_selenium:
+        if not run_selenium(options.selenium_jar):
+            print 'Could not launch Selenium-RC. Start Selenium-RC seperately'
+    specular.speclenium.main()
 
