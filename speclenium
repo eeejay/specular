@@ -48,7 +48,8 @@ def run_selenium(jar_file):
             # This could be one of those py2exe entry-points.
             fname = sys.executable
         jar_file = os.path.join(os.path.dirname(fname),'selenium-server.jar')
-
+        if not os.patch.exists(jar_file):
+            jar_file = os.path.join(os.path.curdir, 'selenium-server.jar')
     s = subprocess.Popen(['java', '-jar', jar_file])
     sleep(1)
     return s.poll() != 1
