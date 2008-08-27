@@ -60,7 +60,9 @@ else:
 
     extras = {'options' : {'bdist_win32_standalone' : 
                            {'includes' : 'twisted.web.resource'}},
-              'console' : ['speclenium'],
+              'console' : [{'script' : 'speclenium',
+                            "icon_resources" : 
+                            [(1, "pixmaps/speclenium-logo.ico")]}],
               'cmdclass' : {'bdist_win32_standalone' : bdist_win32_standalone}}
 
 
