@@ -10,28 +10,35 @@ import specular
 
 options = {}
 
+
+class _include_selenium:
+    user_options = [('selenium=', 'S', 'Selenium JAR file to include')]
+    def initialize_options(self):
+        self.selenium = 'selenium-server.jar'
+    def finalize_options(self):
+        if self.distribution.data_files is None:
+            self.distribution.data_files = []
+        self.distribution.data_files.append(('', [self.selenium]))
+        
+
 try:
     import py2exe
 except ImportError:
     # Not on windows or no py2exe, no biggie.
     extras = {}
 else:
-    class bdist_win32_standalone(py2exe.build_exe.py2exe):
+    class standalone_win32(py2exe.build_exe.py2exe, _include_selenium):
         user_options = py2exe.build_exe.py2exe.user_options + \
-            [('selenium=', 'S', 'Selenium JAR file to include'),
-             ('zip', 'Z', 'zip distribution')]
+            _include_selenium.user_options + \
+            [('zip', 'Z', 'zip distribution')]
 
         def initialize_options(self):
-            self.selenium = 'selenium-server.jar'
             self.zip = False
+            _include_selenium.initialize_options(self)
             py2exe.build_exe.py2exe.initialize_options(self)
 
         def finalize_options(self):
-            if not os.path.exists(self.selenium):
-                raise DistutilsOptionError, \
-                    'Cannot find "%s". ' \
-                    'Use -S to point to a selenium server JAR file.' \
-                        % self.selenium
+            _include_selenium.finalize_options(self)
             py2exe.build_exe.py2exe.finalize_options(self)
             if self.zip:
                 self.base_name = \
@@ -43,14 +50,7 @@ else:
 
         def run(self):
             py2exe.build_exe.py2exe.run(self)
-            print
-            print self.distribution.get_fullname().lower()
-            print 
-            print 'Copying', self.selenium, 'to', self.dist_dir
-            shutil.copy(self.selenium, 
-                        os.path.join(self.dist_dir, 'selenium-server.jar'))
             if self.zip:
-#                print 'root_dir', os.path.dirname(self.dist_dir.rstrip(os.path.sep))
                 archive_name = make_archive(self.base_name + '.win32', 'zip', 
                                              self.base_dir, self.base_name)
                 print
@@ -63,7 +63,7 @@ else:
               'console' : [{'script' : 'speclenium',
                             "icon_resources" : 
                             [(1, "pixmaps/speclenium-logo.ico")]}],
-              'cmdclass' : {'bdist_win32_standalone' : bdist_win32_standalone}}
+              'cmdclass' : {'standalone_win32' : standalone_win32}}
 
 
 classifiers = [
