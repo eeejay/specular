@@ -4,12 +4,11 @@ A cross-platform accessibility API inspection library and service.
 import sys, os
 from distutils.core import setup, Command, DistutilsOptionError
 from distutils.archive_util import make_archive
-import distutils.command
+import distutils.command, distutils.command.sdist
 import shutil
-import specular
+import specular, specular.speclenium
 
 options = {}
-
 
 class _include_selenium:
     user_options = [('selenium=', 'S', 'Selenium JAR file to include')]
@@ -18,14 +17,28 @@ class _include_selenium:
     def finalize_options(self):
         if self.distribution.data_files is None:
             self.distribution.data_files = []
-        self.distribution.data_files.append(('', [self.selenium]))
+        print 'appending', self.selenium
+        self.distribution.dist_files.append(('', [self.selenium]))
         
+
+class standalone(distutils.command.sdist.sdist, _include_selenium):
+    user_options = distutils.command.sdist.sdist.user_options + \
+        _include_selenium.user_options
+    def initialize_options(self):
+        _include_selenium.initialize_options(self)
+        distutils.command.sdist.sdist.initialize_options(self)
+        print self.distribution.dist_files
+    def finalize_options(self):
+        distutils.command.sdist.sdist.finalize_options(self)
+    def read_manifest(self):
+        distutils.command.sdist.sdist.read_manifest(self)
+        self.filelist.append(self.selenium)
 
 try:
     import py2exe
 except ImportError:
     # Not on windows or no py2exe, no biggie.
-    extras = {}
+    extras = {'cmdclass' : {'standalone' : standalone}}
 else:
     class standalone_win32(py2exe.build_exe.py2exe, _include_selenium):
         user_options = py2exe.build_exe.py2exe.user_options + \
@@ -42,7 +55,7 @@ else:
             py2exe.build_exe.py2exe.finalize_options(self)
             if self.zip:
                 self.base_name = \
-                    self.distribution.get_fullname().lower()
+                    self.distribution.get_fullname()
                 self.archive_dir = os.path.join(self.dist_dir, self.base_name)
                 self.base_dir = self.dist_dir
                 self.dist_dir = self.archive_dir
@@ -58,12 +71,13 @@ else:
                 shutil.rmtree(self.archive_dir)
                 print 'Deleted', self.archive_dir
 
-    extras = {'options' : {'bdist_win32_standalone' : 
+    extras = {'options' : {'standalone_win32' : 
                            {'includes' : 'twisted.web.resource'}},
               'console' : [{'script' : 'speclenium',
                             "icon_resources" : 
                             [(1, "pixmaps/speclenium-logo.ico")]}],
-              'cmdclass' : {'standalone_win32' : standalone_win32}}
+              'cmdclass' : {'standalone_win32' : standalone_win32,
+                            'standalone' : standalone}}
 
 
 classifiers = [
@@ -91,4 +105,5 @@ setup(name=__doc__.split('\n')[0],
       classifiers=classifiers,
       version=specular.__version__,
       packages=["specular", "specular.speclenium"],
-      scripts=["speclenium"], **extras)
+      scripts=["speclenium"], 
+      data_files=[('', ['LICENSE'])], **extras)

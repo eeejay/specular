@@ -2,8 +2,8 @@ configs = {
     'windows' : {
             'host' : '11.0.0.2',
             'browsers' : {
-                        'firefox3' : '*chrome',
-                        'safari' : '*safari C:\Documents and Settings\Eitan\Desktop\webkit-nightly\Safari.exe'
+                        'firefox3' : '*chrome'
+#                        'safari' : '*safari C:\Documents and Settings\Eitan\Desktop\webkit-nightly\Safari.exe'
                         }
             },
     'linux' : {

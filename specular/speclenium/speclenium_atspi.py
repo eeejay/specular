@@ -30,8 +30,8 @@
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
 
-from twisted.internet import gtk2reactor
-gtk2reactor.install()
+from twisted.internet import glib2reactor
+glib2reactor.install()
 from twisted.internet import reactor
 from twisted.web import xmlrpc, server
 import pyatspi

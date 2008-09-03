@@ -62,7 +62,6 @@ class RadioTest(unittest.TestCase):
             if 'notfound' not in e:
                 success = True
                 break
-            print 'retrying', i
         self.failUnless(
             success, 
             'Did not recieve a state-changed event after radio button toggle')
