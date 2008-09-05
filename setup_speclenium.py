@@ -1,5 +1,5 @@
-r"""Specular
-A cross-platform accessibility API inspection library and service.
+r"""Speclenium
+A cross-platform accessibility API inspection service.
 """
 import sys, os
 from distutils.core import setup, Command, DistutilsOptionError
@@ -7,21 +7,9 @@ from distutils.archive_util import make_archive
 import distutils.command, distutils.command.build_py
 import shutil
 import specular, specular.speclenium
-from distutils.core import Command
-
-options = {}
-
-class _include_selenium:
-    user_options = [('selenium=', 'S', 'Selenium JAR file to include')]
-    def initialize_options(self):
-        self.selenium = 'selenium-server.jar'
-    def finalize_options(self):
-        if self.distribution.data_files is None:
-            self.distribution.data_files = []
-        self.distribution.data_files.append(('', [self.selenium]))
-        
 
 class standalone(distutils.command.build_py.build_py):
+    description = "Create a standalone speclenium distribution."
     user_options = [('selenium=', 'S', 'Selenium JAR file to include')] + \
         distutils.command.build_py.build_py.user_options
     
@@ -62,6 +50,10 @@ class standalone(distutils.command.build_py.build_py):
                 'gztar', self.dist_dir, self.distribution.get_fullname())
         shutil.rmtree(dest_root)
 
+
+distutils.command.__all__ = []
+distutils.command.__all__.append('standalone')
+
 try:
     import py2exe
 except ImportError:
@@ -69,6 +61,8 @@ except ImportError:
     extras = {'cmdclass' : {'standalone' : standalone}}
 else:
     class standalone_win32(py2exe.build_exe.py2exe, _include_selenium):
+        description = \
+            "Create a standalone speclenium distribution for Windows."
         user_options = py2exe.build_exe.py2exe.user_options + \
             _include_selenium.user_options + \
             [('zip', 'Z', 'zip distribution'),
@@ -99,6 +93,8 @@ else:
                     os.path.join(self.dist_dir, self.base_name + '.win32'),
                     'zip', self.base_dir, self.base_name)
                 shutil.rmtree(self.archive_dir)
+
+    distutils.command.__all__.append('standalone_win32')
 
     extras = {'options' : {'standalone_win32' : 
                            {'includes' : 'twisted.web.resource'}},
