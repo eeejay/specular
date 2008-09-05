@@ -48,7 +48,7 @@ class standalone(distutils.command.build_py.build_py):
         self.mkpath(dest_root)
         for f, dest_dir in self.filelist:
             dest_dir = os.path.join(dest_root, dest_dir)
-            dest_file = os.path.join(dest_root, f)
+            dest_file = os.path.join(dest_dir, os.path.basename(f))
             if not os.path.exists(dest_dir):
                 self.mkpath(dest_dir)
             self.copy_file(f, dest_file)
