@@ -60,11 +60,10 @@ except ImportError:
     # Not on windows or no py2exe, no biggie.
     extras = {'cmdclass' : {'standalone' : standalone}}
 else:
-    class standalone_win32(py2exe.build_exe.py2exe, _include_selenium):
+    class standalone_win32(py2exe.build_exe.py2exe):
         description = \
             "Create a standalone speclenium distribution for Windows."
         user_options = py2exe.build_exe.py2exe.user_options + \
-            _include_selenium.user_options + \
             [('zip', 'Z', 'zip distribution'),
              ('selenium=', 'S', 'Selenium JAR file to include')]
 
