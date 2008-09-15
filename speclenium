@@ -43,7 +43,7 @@ from optparse import OptionParser
 def run_selenium(jar_file):
     if not jar_file:
         try:
-            script_dir = os.path.dirname(__file__)
+            script_dir = os.path.dirname(__file__) or '.'
         except NameError:
             # This could be one of those py2exe entry-points.
             script_dir = os.path.dirname(sys.executable)
@@ -52,8 +52,9 @@ def run_selenium(jar_file):
                 lambda x: x.startswith('selenium-server') and \
                     x.endswith('.jar'), os.listdir(script_dir))[0]
         except IndexError:
-            jar_file = ''
-    s = subprocess.Popen(['java', '-jar', os.path.join(script_dir, jar_file)])
+            return False
+        jar_file = os.path.join(script_dir, jar_file)
+    s = subprocess.Popen(['java', '-jar', jar_file])
     sleep(1)
     return s.poll() != 1
     
@@ -63,7 +64,7 @@ if __name__ == '__main__':
     parser = OptionParser(usage)
     parser.add_option("--no-selenium", dest="no_selenium", default=False,
                       action="store_true", help="don't launch selenium-rc")
-    parser.add_option("--selenium-jar", dest="selenium_jar",
+    parser.add_option("-S", "--selenium-jar", dest="selenium_jar",
                       help="selenium-rc jar file to launch")
 
     options, args = parser.parse_args()
