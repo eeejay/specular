@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-#
-# Speclenium
+# Speclenium Test harness
 #
 # The contents of this file are subject to the Mozilla Public License Version
 # 1.1 (the "License"); you may not use this file except in compliance with
@@ -32,46 +30,47 @@
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
 
+import os, os.path, sys
+import unittest, new
+from settings import configs
 
-import specular.speclenium
-import os, os.path
-import sys
-import subprocess
-from time import sleep
-from optparse import OptionParser
+_testsdir = os.path.dirname(__file__)
+sys.path.insert(0, _testsdir)
 
-def run_selenium(jar_file):
-    if not jar_file:
-        try:
-            script_dir = os.path.dirname(__file__) or '.'
-        except NameError:
-            # This could be one of those py2exe entry-points.
-            script_dir = os.path.dirname(sys.executable)
-        try:
-            jar_file = filter(
-                lambda x: x.startswith('selenium-server') and \
-                    x.endswith('.jar'), os.listdir(script_dir))[0]
-        except IndexError:
-            return False
-        jar_file = os.path.join(script_dir, jar_file)
-    extra_args = os.environ.get('SELENIUM_ARGS', '').split(' ')
-    s = subprocess.Popen(['java', '-jar', jar_file] + extra_args)
-    sleep(1)
-    return s.poll() != 1
-    
+_test_modules = \
+    map(lambda x: x[:-3],
+        filter(lambda x: x.endswith('_test.py'), os.listdir(_testsdir)))
 
-if __name__ == '__main__':
-    usage = "Usage: %prog [options]"
-    parser = OptionParser(usage)
-    parser.add_option("--no-selenium", dest="no_selenium", default=False,
-                      action="store_true", help="don't launch selenium-rc")
-    parser.add_option("-S", "--selenium-jar", dest="selenium_jar",
-                      help="selenium-rc jar file to launch")
+base_tests = {}
+for mod in _test_modules:
+    m = __import__(mod)
+    for key, value in m.__dict__.items():
+        if key.endswith('Test') and \
+                issubclass(value, unittest.TestCase):
+            base_tests[key] = value
 
-    options, args = parser.parse_args()
+browsers = set()
+for platform_config in configs.values():
+    map(browsers.add, platform_config['browsers'].keys())
 
-    if not options.no_selenium:
-        if not run_selenium(options.selenium_jar):
-            print 'Could not launch Selenium-RC. Start Selenium-RC seperately'
-    specular.speclenium.main()
 
+def build_test_suite(platforms=configs.keys(), 
+                     browsers=browsers, 
+                     tests=base_tests.keys()):
+    full_suite = unittest.TestSuite()
+    for platform in platforms:
+        for browser in browsers:
+            try:
+                host = configs[platform]['host']
+                command = configs[platform]['browsers'][browser]
+            except KeyError:
+                continue
+            suite = unittest.TestSuite()
+            for test_name in tests:
+                c = new.classobj(
+                    platform.capitalize()+browser.capitalize()+test_name,
+                    (base_tests[test_name],), 
+                    {'host': host, 'command' : command})
+                suite.addTest(c())
+            full_suite.addTest(suite)
+    return full_suite

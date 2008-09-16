@@ -29,26 +29,18 @@
 # and other provisions required by the GPL or the LGPL. If you do not delete
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
-'''WAI-ARIA Radio Button Test
-Tests to see if the correct state change events are emited when radio buttons
-are toggled.'''
 
 from selenium import selenium
 import unittest, time, re
 from sys import platform
 import settings
+from common import TestCommon
 
-class RadioTest(unittest.TestCase):
-    def setUp(self):
-        self.verificationErrors = []
-        self.selenium = \
-            selenium(settings.current_host, 4444, 
-                     settings.current_command, 
-                     "http://test.cita.uiuc.edu/")
-        #self.selenium.set_speed(1000)
-        self.selenium.start()
-        self.selenium.set_timeout(30000)
-
+class RadioTest(TestCommon, unittest.TestCase):
+    '''WAI-ARIA Radio Button Test
+    Tests to see if the correct state change events are emited when radio 
+    buttons are toggled.'''
+    base_url = "http://test.cita.uiuc.edu/"
     def runTest(self):
         sel = self.selenium
         sel.open("/aria/radio/view_inline.php?title=Radio%20Example%201&ginc=includes/radio1_inline.inc&gcss=css/radio1_inline.css&gjs=../js/globals.js,../js/widgets_inline.js,js/radio1_inline.js")
@@ -65,9 +57,6 @@ class RadioTest(unittest.TestCase):
         self.failUnless(
             success, 
             'Did not recieve a state-changed event after radio button toggle')
-    def tearDown(self):
-        self.selenium.stop()
-        self.assertEqual([], self.verificationErrors)
 
 #if __name__ == "__main__":
 #    unittest.main()

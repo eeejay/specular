@@ -29,24 +29,19 @@
 # and other provisions required by the GPL or the LGPL. If you do not delete
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
-'''WAI-ARIA Alert Test
-Tests to see if an accessible with an 'alert' role is in the document'''
 
 from selenium import selenium
 import unittest, time, re
 from specular.specular_event import events_map
 import settings
 from sys import platform
+from common import TestCommon
+from time import sleep
 
-class AlertTest(unittest.TestCase):
-    def setUp(self):
-        self.verificationErrors = []
-        self.selenium = selenium(
-            settings.current_host, 4444, 
-            settings.current_command, 
-            "http://test.cita.uiuc.edu/")
-        self.selenium.start()
-    
+class AlertTest(TestCommon, unittest.TestCase):
+    '''WAI-ARIA Alert Test
+    Tests to see if an accessible with an 'alert' role is in the document'''
+    base_url = "http://test.cita.uiuc.edu/"
     def runTest(self):
         sel = self.selenium
         sel.open("/aria/alert/view_inline.php?title=Alert%20Example%201:%20Number%20Guessing%20Game&ginc=includes/alert1_inline.inc&gcss=css/alert1_class.css&gjs=../js/globals.js,../js/widgets_inline.js,js/alert1_class.js")
@@ -57,13 +52,9 @@ class AlertTest(unittest.TestCase):
             self.failUnless(result)
         except AssertionError, e:
             self.verificationErrors.append(str(e))
-#        print sel.get_accessible_doc()
+        #print sel.get_accessible_doc()
         try: self.failUnless(sel.is_text_present("Make a guess"))
         except AssertionError, e: self.verificationErrors.append(str(e))
     
-    def tearDown(self):
-        self.selenium.stop()
-        self.assertEqual([], self.verificationErrors)
-
 #if __name__ == "__main__":
 #    unittest.main()

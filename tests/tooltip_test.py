@@ -29,26 +29,18 @@
 # and other provisions required by the GPL or the LGPL. If you do not delete
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
-'''WAI-ARIA Tooltip Test
-Tests to see if an accessible with a 'tooltip' role is in the document at the
-proper moment.'''
 
 from selenium import selenium
 import unittest, time, re
 from sys import platform
 import settings
+from common import TestCommon
 
-class TooltipTest(unittest.TestCase):
-    def setUp(self):
-        self.verificationErrors = []
-        self.selenium = \
-            selenium(settings.current_host, 4444, 
-                     settings.current_command,
-                     "http://test.cita.uiuc.edu/")
-        #self.selenium.set_speed(1000)
-        self.selenium.start()
-        self.selenium.set_timeout(30000)
-
+class TooltipTest(TestCommon, unittest.TestCase):
+    '''WAI-ARIA Tooltip Test
+    Tests to see if an accessible with a 'tooltip' role is in the document 
+    at the proper moment.'''
+    base_url = "http://test.cita.uiuc.edu/"
     def runTest(self):
         sel = self.selenium
         sel.open("/aria/tooltip/view_inline.php?title=Tooltip%20Example%201&ginc=includes/tooltip1_inline.inc&gcss=css/tooltip1_inline.css&gjs=js/tooltip1_inline.js,../js/widgets_inline.js,../js/globals.js")
@@ -73,10 +65,6 @@ class TooltipTest(unittest.TestCase):
         self.failUnless(
             tooltip_present != '', 
             'Tooltip should be present after click')
-
-    def tearDown(self):
-        self.selenium.stop()
-        self.assertEqual([], self.verificationErrors)
 
 #if __name__ == "__main__":
 #    unittest.main()

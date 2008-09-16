@@ -33,7 +33,8 @@
 # the terms of any one of the MPL, the GPL or the LGPL.
 
 import os, os.path, sys
-import unittest
+import unittest, new
+import tests
 
 test_dir = os.path.join(os.path.dirname(__file__), 'tests')
 
@@ -41,45 +42,26 @@ sys.path.insert(0, test_dir)
 
 import settings
 
-def _get_available_tests():
-    test_files = os.listdir(test_dir)
-    test_files = \
-        filter(lambda x: x.endswith('_test.py'), test_files)
-    return [t[:-8] for t in test_files]
-    
-
 def list_tests():
-    print 'Available tests:'
-    tests = _get_available_tests()
-    for t in tests:
-        m = __import__(t+'_test')
+    print 'Available tests:\n\t'
+    for tname, tclass in tests.base_tests.iteritems():
         try:
-            short_desc = m.__doc__.split('\n')[0]
+            short_desc = tclass.__doc__.split('\n')[0]
         except:
             short_desc = ''
-        print ' %s%s%s' % (t, ' '*(25-len(t)), short_desc)
+        print ' %s%s%s' % (tname, ' '*(25-len(tname)), short_desc)
 
-def main(tests=[], browsers=None, platforms=None):
-    if not tests:
-        tests = _get_available_tests()
-    suite = unittest.TestSuite()
-    for test_module in tests:
-        m = __import__(test_module+'_test')
-        for cls_name in filter(lambda x: x.endswith('Test'), dir(m)):
-            print 'Adding %s to suite', cls_name
-            suite.addTest(getattr(m, cls_name)())
+def main(matrix_args, gui):
+    global test_suite
+    test_suite = tests.build_test_suite(**matrix_args)
+    if gui:
+        import unittestgui
+        unittestgui.main('__main__.test_suite')
+    else:
+        unittest.TextTestRunner().run(test_suite)
 
-    for name, platform in settings.configs.items():
-        if platforms is not None and name not in platforms.split(','):
-            continue
-        settings.current_host = platform['host']
-        for browser, command in platform['browsers'].items():
-            if browsers is not None and browser not in browsers.split(','):
-                continue
-            settings.current_command = command
-#            print 'Running tests for', name, browser
-            unittest.TextTestRunner().run(suite)
-
+def _get_suite():
+    return test_suite
 
 if __name__ == '__main__':
     from optparse import OptionParser
@@ -96,19 +78,28 @@ if __name__ == '__main__':
                       help="comma seperated list of browsers")
     parser.add_option("-p", "--platforms", dest="platforms",
                       help="comma seperated list of platforms")
+    parser.add_option("-g", "--gui", dest="gui",
+                      action="store_true", help="run tests in gui")
 
     (options, args) = parser.parse_args()
     if options.list_tests:
         list_tests()
     elif options.list_browsers:
         print 'Available browsers:'
-        for name, platform in settings.configs.items():
+        for name, platform in tests.configs.items():
             print ' %s:' % name.capitalize()
             for browser in platform['browsers'].keys():
                 print '  %s' % browser
     elif options.list_platforms:
         print 'Available platforms:'
-        for name in settings.configs.keys():
+        for name in tests.configs.keys():
             print ' %s' % name
     else:
-        main(args, options.browsers, options.platforms)
+        matrix_args = {}
+        if args != []:
+            matrix_args['tests'] = args
+        if options.browsers:
+            matrix_args['browsers'] = options.browsers.split(',')
+        if options.platforms:
+            matrix_args['platforms'] = options.platforms.split(',')
+        main(matrix_args, options.gui)
