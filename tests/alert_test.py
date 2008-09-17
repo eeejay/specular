@@ -42,9 +42,9 @@ class AlertTest(TestCommon, unittest.TestCase):
     '''WAI-ARIA Alert Test
     Tests to see if an accessible with an 'alert' role is in the document'''
     base_url = "http://test.cita.uiuc.edu/"
+    path = "/aria/alert/view_inline.php?title=Alert%20Example%201:%20Number%20Guessing%20Game&ginc=includes/alert1_inline.inc&gcss=css/alert1_class.css&gjs=../js/globals.js,../js/widgets_inline.js,js/alert1_class.js"
     def runTest(self):
         sel = self.selenium
-        sel.open("/aria/alert/view_inline.php?title=Alert%20Example%201:%20Number%20Guessing%20Game&ginc=includes/alert1_inline.inc&gcss=css/alert1_class.css&gjs=../js/globals.js,../js/widgets_inline.js,js/alert1_class.js")
         result = sel.get_accessible_match('<accessible role="alert">'
                                           '  <accessible name="Make a guess"/>'
                                           '</accessible>')

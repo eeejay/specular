@@ -41,10 +41,10 @@ class TooltipTest(TestCommon, unittest.TestCase):
     Tests to see if an accessible with a 'tooltip' role is in the document 
     at the proper moment.'''
     base_url = "http://test.cita.uiuc.edu/"
+    path = "/aria/tooltip/view_inline.php?title=Tooltip%20Example%201&ginc=includes/tooltip1_inline.inc&gcss=css/tooltip1_inline.css&gjs=js/tooltip1_inline.js,../js/widgets_inline.js,../js/globals.js"
+
     def runTest(self):
         sel = self.selenium
-        sel.open("/aria/tooltip/view_inline.php?title=Tooltip%20Example%201&ginc=includes/tooltip1_inline.inc&gcss=css/tooltip1_inline.css&gjs=js/tooltip1_inline.js,../js/widgets_inline.js,../js/globals.js")
-
         tooltip_present = \
             sel.get_accessible_match('<accessible '
                                      'name="Your first name is a optional" '

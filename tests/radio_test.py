@@ -41,9 +41,9 @@ class RadioTest(TestCommon, unittest.TestCase):
     Tests to see if the correct state change events are emited when radio 
     buttons are toggled.'''
     base_url = "http://test.cita.uiuc.edu/"
+    path = "/aria/radio/view_inline.php?title=Radio%20Example%201&ginc=includes/radio1_inline.inc&gcss=css/radio1_inline.css&gjs=../js/globals.js,../js/widgets_inline.js,js/radio1_inline.js"
     def runTest(self):
         sel = self.selenium
-        sel.open("/aria/radio/view_inline.php?title=Radio%20Example%201&ginc=includes/radio1_inline.inc&gcss=css/radio1_inline.css&gjs=../js/globals.js,../js/widgets_inline.js,js/radio1_inline.js")
         sel.click("r3")
         success = False
         for i in xrange(10):

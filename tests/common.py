@@ -5,9 +5,9 @@ class TestCommon:
     def setUp(self):
         self.verificationErrors = []
         self.selenium = selenium(self.host, 4444, self.command, self.base_url)
-        #self.selenium.set_speed(1000)
         self.selenium.start()
         self.selenium.set_timeout(30000)
+        self.selenium.open(self.path)
 
     def tearDown(self):
         self.selenium.stop()

@@ -41,9 +41,9 @@ class CheckboxTest(TestCommon, unittest.TestCase):
     Tests to see if the correct state change events are emited when checkboxes
     are toggled.'''
     base_url = "http://www.mozilla.org/"
+    path = "/access/dhtml/checkbox"
     def runTest(self):
         sel = self.selenium
-        sel.open("/access/dhtml/checkbox")
         sel.click("//div[2]/span/img")
         success = False
         for i in xrange(10):
