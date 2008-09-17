@@ -12,3 +12,4 @@ class TestCommon:
     def tearDown(self):
         self.selenium.stop()
         self.assertEqual([], self.verificationErrors)
+        #self.failUnless([] == self.verificationErrors)

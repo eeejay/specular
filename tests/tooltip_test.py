@@ -49,12 +49,10 @@ class TooltipTest(TestCommon, unittest.TestCase):
             sel.get_accessible_match('<accessible '
                                      'name="Your first name is a optional" '
                                      'role="tool tip"/>')
-        try:
-            self.failUnless(
+        self.failUnless(
                 tooltip_present == '', 
                 'No tooltip should be present before click')
-        except AssertionError, e: 
-            self.verificationErrors.append(str(e))
+
 
         sel.click("xpath=//*[@id=\"first\"]")
 

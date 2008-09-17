@@ -54,7 +54,10 @@ def run_selenium(jar_file):
         except IndexError:
             return False
         jar_file = os.path.join(script_dir, jar_file)
-    extra_args = os.environ.get('SELENIUM_ARGS', '').split(' ')
+    try:
+        extra_args = os.environ['SELENIUM_ARGS'].split(' ')
+    except KeyError:
+        extra_args = []
     s = subprocess.Popen(['java', '-jar', jar_file] + extra_args)
     sleep(1)
     return s.poll() != 1

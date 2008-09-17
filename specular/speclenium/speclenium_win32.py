@@ -45,7 +45,6 @@ class Speclenium(SpecleniumBase):
 
     def xmlrpc_start(self, browser_start_cmd):
         SpecleniumBase.xmlrpc_start(self, browser_start_cmd)
-        print 'starty, yo!'
         self._top_frame = None
         self._target_pid = -1
         self._window_id = -1
@@ -54,11 +53,33 @@ class Speclenium(SpecleniumBase):
         return True
 
     def _get_win(self, event):
+        agent_id = self._get_agent()
+        if agent_id == self.AGENT_MOZILLA:
+            return self._get_win_ff3(event)
+        elif agent_id == self.AGENT_IE:
+#            return
+            return self._get_win_ie8(event)
+            
+    def _get_win_ie8(self, event):
+        if not event.source: return
+        acc_name = event.source.accName(0) or ''
+        ie_title = 'Windows Internet Explorer'
+        if ie_title in acc_name and ie_title != acc_name and \
+                event.source.accState(0) & pyia.STATE_SYSTEM_SIZEABLE:
+            pyia.Registry.deregisterEventListener(
+                self._get_win, pyia.EVENT_OBJECT_NAMECHANGE)
+            self._top_frame = event.source
+            print 'TOP FRAME', event.source
+        return
+
+    def _get_win_ff3(self, event):
+        print (self._target_pid, self._window_id), (pyia.getAccessibleThreadProcessID(event.source)[0], event.hwnd)
         if event.source != None:
             if self._target_pid == -1 and \
                     'Selenium Remote Control' in (event.source.accName(0) or ''):
                 self._target_pid = pyia.getAccessibleThreadProcessID(event.source)[0]
                 self._window_id = event.hwnd
+                print self._target_pid, self._window_id
             elif pyia.getAccessibleThreadProcessID(event.source)[0] == self._target_pid and \
                     self._window_id != event.hwnd:
                 pyia.Registry.deregisterEventListener(
@@ -81,7 +102,7 @@ class Speclenium(SpecleniumBase):
         return True
 
     def _find_root_doc(self, window_acc):
-        print '_find_root_doc'
+        a = pyia.accessibleObjectFromWindow(self._window_id)
         agent_id = self._get_agent()
         print 'agent', self.AGENTS[agent_id]
         rv = None
@@ -92,10 +113,12 @@ class Speclenium(SpecleniumBase):
             rv = pyia.findDescendant(window_acc, pred)
         elif agent_id == self.AGENT_IE:
             # IE
+            print 'IE!'
             pred = lambda x: x.accRole(0) == pyia.ROLE_SYSTEM_PANE and \
                 x.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT and \
                 x.accParent.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT
             rv = pyia.findDescendant(window_acc, pred)
+            print rv
         elif agent_id == self.AGENT_WEBKIT:
             # Webkit
             print 'Webkit!'

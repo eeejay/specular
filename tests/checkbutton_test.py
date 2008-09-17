@@ -54,7 +54,6 @@ class CheckboxTest(TestCommon, unittest.TestCase):
             if 'notfound' not in e:
                 success = True
                 break
-            print 'retrying', i
         self.failUnless(
             success, 
             'Did not recieve a state-changed event after check button toggle')
