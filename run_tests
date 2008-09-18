@@ -75,7 +75,7 @@ if __name__ == '__main__':
     parser.add_option("-g", "--gui", dest="gui",
                       action="store_true", help="run tests in gui")
     parser.add_option("-c", "--config", dest="cfg_file",
-                      action="store", help="list available browsers", 
+                      action="store", help="config file", 
                       default="settings.ini")
 
     (options, args) = parser.parse_args()
