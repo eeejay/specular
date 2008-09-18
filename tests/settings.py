@@ -10,12 +10,7 @@ configs = {
     'linux' : {
             'host' : 'localhost',
             'browsers' : {
-                        'firefox3' : '*chrome /usr/lib/firefox-3.0.2/firefox',
-                        'midori' : '*custom /usr/bin/midori',
-                        'epiphany' : '*custom /usr/bin/epiphany'
+                        'firefox3' : '*chrome /usr/lib/firefox-3.0.2/firefox'
                         }
             }
     }
-
-current_host = None
-current_command = None

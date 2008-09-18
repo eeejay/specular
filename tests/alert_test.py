@@ -48,13 +48,7 @@ class AlertTest(TestCommon, unittest.TestCase):
         result = sel.get_accessible_match('<accessible role="alert">'
                                           '  <accessible name="Make a guess"/>'
                                           '</accessible>')
-        try: 
-            self.failUnless(result)
-        except AssertionError, e:
-            self.verificationErrors.append(str(e))
-        #print sel.get_accessible_doc()
-        try: self.failUnless(sel.is_text_present("Make a guess"))
-        except AssertionError, e: self.verificationErrors.append(str(e))
+        self.failUnless(result)
     
 #if __name__ == "__main__":
 #    unittest.main()
