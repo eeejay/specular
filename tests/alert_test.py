@@ -33,7 +33,6 @@
 from selenium import selenium
 import unittest, time, re
 from specular.specular_event import events_map
-import settings
 from sys import platform
 from common import TestCommon
 from time import sleep

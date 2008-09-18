@@ -35,15 +35,14 @@
 import os, os.path, sys
 import unittest, new
 import tests
+from ConfigParser import ConfigParser
 
 test_dir = os.path.join(os.path.dirname(__file__), 'tests')
 
 sys.path.insert(0, test_dir)
 
-import settings
-
 def list_tests():
-    print 'Available tests:\n\t'
+    print 'Available tests:'
     for tname, tclass in tests.base_tests.iteritems():
         try:
             short_desc = tclass.__doc__.split('\n')[0]
@@ -51,17 +50,14 @@ def list_tests():
             short_desc = ''
         print ' %s%s%s' % (tname, ' '*(25-len(tname)), short_desc)
 
-def main(matrix_args, gui):
+def main(cfg_file, matrix_args, gui):
     global test_suite
-    test_suite = tests.build_test_suite(**matrix_args)
+    test_suite = tests.build_test_suite(cfg_file, **matrix_args)
     if gui:
         import unittestgui
         unittestgui.main('__main__.test_suite')
     else:
         unittest.TextTestRunner().run(test_suite)
-
-def _get_suite():
-    return test_suite
 
 if __name__ == '__main__':
     from optparse import OptionParser
@@ -70,30 +66,29 @@ if __name__ == '__main__':
     parser = OptionParser(usage)
     parser.add_option("--list-tests", dest="list_tests",
                       action="store_true", help="list available tests")
-    parser.add_option("--list-browsers", dest="list_browsers",
-                      action="store_true", help="list available browsers")
-    parser.add_option("--list-platforms", dest="list_platforms",
-                      action="store_true", help="list available browsers")
+    parser.add_option("--list-agents", dest="list_agents",
+                      action="store_true", help="list available user agents")
     parser.add_option("-b", "--browsers", dest="browsers",
                       help="comma seperated list of browsers")
     parser.add_option("-p", "--platforms", dest="platforms",
                       help="comma seperated list of platforms")
     parser.add_option("-g", "--gui", dest="gui",
                       action="store_true", help="run tests in gui")
+    parser.add_option("-c", "--config", dest="cfg_file",
+                      action="store", help="list available browsers", 
+                      default="settings.ini")
 
     (options, args) = parser.parse_args()
     if options.list_tests:
         list_tests()
-    elif options.list_browsers:
-        print 'Available browsers:'
-        for name, platform in tests.configs.items():
-            print ' %s:' % name.capitalize()
-            for browser in platform['browsers'].keys():
-                print '  %s' % browser
-    elif options.list_platforms:
-        print 'Available platforms:'
-        for name in tests.configs.keys():
-            print ' %s' % name
+    elif options.list_agents:
+        cfg = ConfigParser()
+        cfg.read(options.cfg_file)
+        print 'Available user agents:'
+        for section in cfg.sections():
+            print ' %s:' % ' '.join(section.split(' ')[:-1])
+            for browser_name in cfg.options(section):
+                print '  %s' % browser_name
     else:
         matrix_args = {}
         if args != []:
@@ -102,4 +97,4 @@ if __name__ == '__main__':
             matrix_args['browsers'] = options.browsers.split(',')
         if options.platforms:
             matrix_args['platforms'] = options.platforms.split(',')
-        main(matrix_args, options.gui)
+        main(options.cfg_file, matrix_args, options.gui)

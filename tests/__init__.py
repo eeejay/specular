@@ -32,7 +32,7 @@
 
 import os, os.path, sys
 import unittest, new
-from settings import configs
+from ConfigParser import ConfigParser
 
 _testsdir = os.path.dirname(__file__)
 sys.path.insert(0, _testsdir)
@@ -49,14 +49,31 @@ for mod in _test_modules:
                 issubclass(value, unittest.TestCase):
             base_tests[key] = value
 
-browsers = set()
-for platform_config in configs.values():
-    map(browsers.add, platform_config['browsers'].keys())
+def _parse_config(config_file):
+    cfg_parser = ConfigParser()
+    cfg_parser.read(config_file)
+    configs = {}
+    for section in cfg_parser.sections():
+        section_list = section.split(' ')
+        host_dict = {}
+        configs[' '.join(section_list[:-1])] = host_dict
+        host_dict['host'] = section_list[-1]
+        host_dict['browsers'] = {}
+        for option in cfg_parser.options(section):
+            host_dict['browsers'][option] = cfg_parser.get(section, option)
 
+    return configs
 
-def build_test_suite(platforms=configs.keys(), 
-                     browsers=browsers, 
+def build_test_suite(config_file,
+                     platforms=None, 
+                     browsers=None, 
                      tests=base_tests.keys()):
+    configs = _parse_config(config_file)
+    platforms = platforms or configs.keys()
+    if not browsers:
+        browsers = set()
+        for platform_config in configs.values():
+            map(browsers.add, platform_config['browsers'].keys())
     full_suite = unittest.TestSuite()
     for platform in platforms:
         for browser in browsers:

@@ -33,7 +33,6 @@
 from selenium import selenium
 import unittest, time, re
 from sys import platform
-import settings
 from common import TestCommon
 
 class RadioTest(TestCommon, unittest.TestCase):
