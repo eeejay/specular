@@ -54,22 +54,36 @@ class Speclenium(SpecleniumBase):
 
     def _get_win(self, event):
         agent_id = self._get_agent()
+        success = False
         if agent_id == self.AGENT_MOZILLA:
-            return self._get_win_ff3(event)
+            success = self._get_win_ff3(event)
         elif agent_id == self.AGENT_IE:
-#            return
-            return self._get_win_ie8(event)
+            success = self._get_win_ie8(event)
+        elif agent_id == self.AGENT_OPERA:
+            success = self._get_win_opera(event)
+
+        if success:
+            pyia.Registry.deregisterEventListener(
+                self._get_win, pyia.EVENT_OBJECT_NAMECHANGE)
             
+    def _get_win_opera(self, event):
+        if not event.source: return False
+        acc_name = event.source.accName(0) or ''
+        if 'Opera' in acc_name and 'Blank.html' in acc_name:
+            self._top_frame = event.source
+            print 'TOP FRAME', event.source
+            return True
+        return False
+
     def _get_win_ie8(self, event):
-        if not event.source: return
+        if not event.source: return False
         acc_name = event.source.accName(0) or ''
         ie_title = 'Windows Internet Explorer'
         if ie_title in acc_name and ie_title != acc_name and \
                 event.source.accState(0) & pyia.STATE_SYSTEM_SIZEABLE:
-            pyia.Registry.deregisterEventListener(
-                self._get_win, pyia.EVENT_OBJECT_NAMECHANGE)
             self._top_frame = event.source
-        return
+            return True
+        return False
 
     def _get_win_ff3(self, event):
         if event.source != None:
@@ -79,9 +93,9 @@ class Speclenium(SpecleniumBase):
                 self._window_id = event.hwnd
             elif pyia.getAccessibleThreadProcessID(event.source)[0] == self._target_pid and \
                     self._window_id != event.hwnd:
-                pyia.Registry.deregisterEventListener(
-                    self._get_win, pyia.EVENT_OBJECT_NAMECHANGE)
                 self._top_frame = event.source
+                return True
+        return False
 
     def xmlrpc_start_event_cache(self):
         if not self._registered_global_listener:
@@ -98,7 +112,6 @@ class Speclenium(SpecleniumBase):
         return True
 
     def _find_root_doc(self, window_acc):
-        a = pyia.accessibleObjectFromWindow(self._window_id)
         agent_id = self._get_agent()
         rv = None
         if agent_id == self.AGENT_MOZILLA:
@@ -116,5 +129,11 @@ class Speclenium(SpecleniumBase):
         elif agent_id == self.AGENT_WEBKIT:
             # Webkit
             rv = window_acc[3][0][3][0][3]
+        elif agent_id == self.AGENT_OPERA:
+            # Opera
+            # TODO: I don't think Opera has anything exposed in the document.
+            pred = lambda x: x.accRole(0) == pyia.ROLE_SYSTEM_DOCUMENT and \
+                not x.accState(0) & pyia.STATE_SYSTEM_INVISIBLE
+            rv = pyia.findDescendant(window_acc, pred)
         return rv
 

@@ -127,4 +127,6 @@ class SpecleniumBase(xmlrpc.XMLRPC):
             return self.AGENT_IE
         if 'safari' in self._browser_start_cmd:
             return self.AGENT_WEBKIT
+        if 'opera' in self._browser_start_cmd:
+            return self.AGENT_OPERA
         return self.AGENT_UNKNOWN
