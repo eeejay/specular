@@ -1,0 +1,46 @@
+Specular
+
+Description
+===========
+
+Specular is a suite of tools and libraries used for
+cross-(browser|platform) testing of ARIA implementations in user
+agents. Specular currently consists of the following components that
+may be ditributed seperately for ease of use:
+
+1. Speclenium
+Speclenium is a server that runs along-side Selenium-RC to provide
+accessibility API assertions during a Selenium automated
+tests. Typically when speclenium is launched, it will start an
+instance of Selenium-RC. All test target machines need to have
+Speclenium running on them.
+
+2. PyUnit Test Suite
+Selenium-RC allows tests to be driven accross machine boundaries by
+almost any standard unit testing framework, in any language. The test
+suite bundled with Specular is written in Python, and tests for ARIA
+conformance across browsers. The test suite too could be distributed 
+seperateley.
+
+Building Distribution Packages
+==============================
+
+The whole of Specular is developed in one repository and it's source
+is distributed as one monolithic collection of the components
+above. Nonetheless, the individual components could be packaged
+seperately, and include some basic dependancies to ease
+installation. The following setup.py commands should work:
+
+1. speclenium_dist
+This prepares an archive with the library and script needed to start a
+Speclenium server. A Selenium-RC JAR file will be bundled with this
+package, and Speclenium will launch Selenium-RC at startup.
+
+2. speclenium_dist_win32
+This prepares an executable of Speclenium for Windows. All
+dependancies are included in this package, even Python.
+
+3. tests_dist
+This prepares an archive of PyUnit tests and a harness called
+'run_tests'. This distribution will bundle selenium.py, which is an
+external module from the Selenium project.

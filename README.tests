@@ -1,0 +1,13 @@
+Speclenium Test Suite
+
+Prerequisites
+=============
+Besides the selenium module, which should be bundled with the suite,
+there are no other dependancies besides Python 2.5.
+
+The test suite consists of simple ARIA conformance PyUnit tests. The
+harness is "run_tests", just run it with "--help" to see the possible
+arguments.
+
+Edit settings.ini to match your browser setup and network topography.
+

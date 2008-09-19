@@ -1,4 +1,4 @@
-r"""Speclenium
+r"""Specular
 A cross-platform accessibility API inspection service.
 """
 import sys, os
@@ -64,7 +64,8 @@ class speclenium_dist(partial_dist):
     user_options = [('selenium=', 'S', 'Selenium JAR file to include')] + \
         partial_dist.user_options
     dist_overlay = dict(
-        name=__doc__.split('\n')[0]+'-standalone',
+        name='Speclenium-standalone',
+        data_files=[('', ['LICENSE', 'README', 'README.speclenium', ])],
         packages=['specular', 'specular.speclenium'],
         scripts=['speclenium'])
 
@@ -81,7 +82,8 @@ class testsuite_dist(partial_dist):
     description = "Create a standalone speclenium test suite and harness."
     dist_overlay = dict(
         name=__doc__.split('\n')[0]+'-testsuite',
-        data_files=[('', ['LICENSE', selenium.__file__.rstrip('c')])],
+        data_files=[('', ['LICENSE', 'README', 'README.tests', 
+                          selenium.__file__.rstrip('c')])],
         packages=['tests'],
         scripts=['run_tests'])
 
@@ -99,6 +101,13 @@ else:
             [('zip', 'Z', 'zip distribution'),
              ('selenium=', 'S', 'Selenium JAR file to include')]
 
+        def __init__(self, dist):
+            dist.metadata.name = dist.name = 'Speclenium-standalone-win32'
+            dist.data_files=[('', ['LICENSE', 
+                                   'README', 
+                                   'README.speclenium'])]
+            py2exe.build_exe.py2exe.__init__(self, dist)
+
         def initialize_options(self):
             self.zip = False
             self.selenium = 'selenium-server.jar'
@@ -114,17 +123,13 @@ else:
             self.archive_dir = os.path.join(self.dist_dir, self.base_name)
             self.base_dir = self.dist_dir
             self.dist_dir = self.archive_dir
-            print 'base_name', self.base_name
-            print 'archive_dir', self.archive_dir
-            print 'base_dir', self.base_dir
-            print 'dist_dir', self.dist_dir
             os.makedirs(self.dist_dir)
 
         def run(self):
             py2exe.build_exe.py2exe.run(self)
             if self.zip:
                 archive_name = make_archive(
-                    os.path.join(self.dist_dir, self.base_name + '.win32'),
+                    os.path.join(self.dist_dir, self.base_name),
                     'zip', self.base_dir, self.base_name)
                 shutil.rmtree(self.archive_dir)
 
@@ -163,6 +168,9 @@ setup(name=__doc__.split('\n')[0],
       classifiers=classifiers,
       version=specular.__version__,
       packages=["specular", "specular.speclenium", "tests"],
-      scripts=["speclenium"], 
-      data_files=[('', ['LICENSE'])],
+      scripts=["speclenium", "run_tests"], 
+      data_files=[('', ['LICENSE', 
+                        'README', 
+                        'README.speclenium', 
+                        'README.tests'])],
       **extras)

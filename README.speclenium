@@ -1,0 +1,21 @@
+Speclenium
+
+Description
+===========
+
+Speclenium is a service that provides an XML-RPC interface for common
+a11y testing tasks. By default Speclenium will launch a modified
+Selenium-RC, and thus provide a standalone solution.
+
+Prerequisites
+=============
+When specular is distributed as an EXE, there are no additional
+dependancies. Otherwise, these are the things that are needed:
+- A modified Selenium-RC, this is often bundled, look for a jar file.
+(http://github.com/eeejay/selenium-remote-control/tree/master)
+- Python 2.5
+- Twisted (http://twistedmatrix.com)
+- pyia, for Windows (http://github.com/eeejay/pyia/tree)
+- comtypes, for Windows (http://www.comtypes.sf.net)
+- pywin32, for Windows (http://sourceforge.net/projects/pywin32)
+
