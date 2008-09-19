@@ -69,23 +69,19 @@ class Speclenium(SpecleniumBase):
             pyia.Registry.deregisterEventListener(
                 self._get_win, pyia.EVENT_OBJECT_NAMECHANGE)
             self._top_frame = event.source
-            print 'TOP FRAME', event.source
         return
 
     def _get_win_ff3(self, event):
-        print (self._target_pid, self._window_id), (pyia.getAccessibleThreadProcessID(event.source)[0], event.hwnd)
         if event.source != None:
             if self._target_pid == -1 and \
                     'Selenium Remote Control' in (event.source.accName(0) or ''):
                 self._target_pid = pyia.getAccessibleThreadProcessID(event.source)[0]
                 self._window_id = event.hwnd
-                print self._target_pid, self._window_id
             elif pyia.getAccessibleThreadProcessID(event.source)[0] == self._target_pid and \
                     self._window_id != event.hwnd:
                 pyia.Registry.deregisterEventListener(
                     self._get_win, pyia.EVENT_OBJECT_NAMECHANGE)
                 self._top_frame = event.source
-                print 'TOP FRAME', event.source
 
     def xmlrpc_start_event_cache(self):
         if not self._registered_global_listener:
@@ -104,7 +100,6 @@ class Speclenium(SpecleniumBase):
     def _find_root_doc(self, window_acc):
         a = pyia.accessibleObjectFromWindow(self._window_id)
         agent_id = self._get_agent()
-        print 'agent', self.AGENTS[agent_id]
         rv = None
         if agent_id == self.AGENT_MOZILLA:
             # Firefox
@@ -113,7 +108,6 @@ class Speclenium(SpecleniumBase):
             rv = pyia.findDescendant(window_acc, pred)
         elif agent_id == self.AGENT_IE:
             # IE
-            print 'IE!'
             pred = lambda x: x.accRole(0) == pyia.ROLE_SYSTEM_PANE and \
                 x.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT and \
                 x.accParent.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT
@@ -121,8 +115,6 @@ class Speclenium(SpecleniumBase):
             print rv
         elif agent_id == self.AGENT_WEBKIT:
             # Webkit
-            print 'Webkit!'
             rv = window_acc[3][0][3][0][3]
-        print 'Root doc:', rv
         return rv
 
