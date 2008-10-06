@@ -77,7 +77,7 @@ class SpecularEvent(SpecularSerial):
     
 
 def specular_event_from_string(event_str):
-    dom = parseString(event_str)
+    dom = parseString(event_str.encode('utf-8'))
     strip_whitespace(dom.documentElement)
     return specular_event_from_dom(dom.documentElement)
 

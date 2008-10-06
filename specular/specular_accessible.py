@@ -51,7 +51,7 @@ class SpecularAccessible(SpecularSerial):
         return None
 
 def specular_accessible_from_string(acc_str):
-    dom = parseString(acc_str)
+    dom = parseString(acc_str.encode('utf-8'))
     strip_whitespace(dom.documentElement)
     return specular_accessible_from_dom(dom.documentElement)
 
