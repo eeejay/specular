@@ -193,16 +193,16 @@ if __name__ == '__main__':
     from optparse import OptionParser
     from sys import stderr, stdout
 
-    usage = "Usage: %prog [options] tests"
+    usage = "Usage: %prog [options] url"
     parser = OptionParser(usage)
     parser.add_option("--list-agents", dest="list_agents",
                       action="store_true", help="list available user agents")
-    parser.add_option("-b", "--browser", action="callback", type="string", 
+    parser.add_option("-B", "--browser", action="callback", type="string", 
                       callback=browser_cb,
-                      help="comma seperated list of browsers")
-    parser.add_option("-f", "--file", action="callback", type="string", 
+                      help="browser to run")
+    parser.add_option("-F", "--file", action="callback", type="string", 
                       callback=file_cb, 
-                      help="comma seperatedXML accessible tree files")
+                      help="XML accessible tree file")
     parser.add_option("-c", "--config", dest="cfg_file",
                       action="store", help="config file", 
                       default="settings.ini")

@@ -84,8 +84,8 @@ class testsuite_dist(partial_dist):
         name=__doc__.split('\n')[0]+'-testsuite',
         data_files=[('', ['LICENSE', 'README', 'README.tests', 'settings.ini',
                           selenium.__file__.rstrip('c')])],
-        packages=['tests'],
-        scripts=['run_tests'])
+        packages=['tests', 'treediff'],
+        scripts=['run_tests', 'quick_diff'])
 
 try:
     import py2exe
