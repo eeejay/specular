@@ -6,7 +6,7 @@ from distutils.core import setup, Command, DistutilsOptionError
 from distutils.archive_util import make_archive
 import distutils.command, distutils.command.build_py
 import shutil
-import specular, specular.speclenium, selenium
+import specular, speclenium, selenium
 
 class partial_dist(distutils.command.build_py.build_py):
     description = "Create a standalone speclenium test suite and harness."
@@ -66,8 +66,8 @@ class speclenium_dist(partial_dist):
     dist_overlay = dict(
         name='Speclenium-standalone',
         data_files=[('', ['LICENSE', 'README', 'README.speclenium', ])],
-        packages=['specular', 'specular.speclenium'],
-        scripts=['speclenium'])
+        packages=['specular', 'speclenium'],
+        scripts=['speclenium.py'])
 
     def initialize_options(self):
         self.selenium = "selenium-server.jar"
@@ -83,7 +83,10 @@ class testsuite_dist(partial_dist):
     dist_overlay = dict(
         name=__doc__.split('\n')[0]+'-testsuite',
         data_files=[('', ['LICENSE', 'README', 'README.tests', 'settings.ini',
-                          selenium.__file__.rstrip('c')])],
+                          selenium.__file__.rstrip('c')]),
+                    ('viewdiff', ['html/api-compare.css', 
+                              'viewdiff/api-compare.js', 
+                              'viewdiff/api-compare.xsl'])],
         packages=['tests', 'treediff'],
         scripts=['run_tests', 'quick_diff'])
 
@@ -135,7 +138,7 @@ else:
 
     extras = {'options' : {'speclenium_dist_win32' : 
                            {'includes' : 'twisted.web.resource'}},
-              'console' : [{'script' : 'speclenium',
+              'console' : [{'script' : 'speclenium.py',
                             "icon_resources" : 
                             [(1, "pixmaps/speclenium-logo.ico")]}],
               'cmdclass' : {'testsuite_dist' : testsuite_dist,
@@ -167,8 +170,8 @@ setup(name=__doc__.split('\n')[0],
       license=specular.__license__,
       classifiers=classifiers,
       version=specular.__version__,
-      packages=["specular", "specular.speclenium", "tests"],
-      scripts=["speclenium", "run_tests"], 
+      packages=["specular", "speclenium", "tests"],
+      scripts=["speclenium.py", "run_tests"], 
       data_files=[('', ['LICENSE', 
                         'README', 
                         'README.speclenium', 

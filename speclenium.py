@@ -33,7 +33,7 @@
 # the terms of any one of the MPL, the GPL or the LGPL.
 
 
-import specular.speclenium
+import speclenium
 import os, os.path
 import sys
 import subprocess
@@ -76,5 +76,5 @@ if __name__ == '__main__':
     if not options.no_selenium:
         if not run_selenium(options.selenium_jar):
             print 'Could not launch Selenium-RC. Start Selenium-RC seperately'
-    specular.speclenium.main()
+    speclenium.main()
 
