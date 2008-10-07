@@ -7,8 +7,8 @@
 <xsl:template match="/sidebyside">
   <html>
     <head>
-      <link rel="stylesheet" type="text/css" href="treediff.css" />
-      <script type="text/javascript" src="treediff.js" />
+      <link rel="stylesheet" type="text/css" href="api-compare.css" />
+      <script type="text/javascript" src="api-compare.js" />
       <title>An Experiment</title>
     </head>
     <body>
