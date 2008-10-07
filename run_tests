@@ -70,8 +70,6 @@ if __name__ == '__main__':
                       action="store_true", help="list available user agents")
     parser.add_option("-b", "--browsers", dest="browsers",
                       help="comma seperated list of browsers")
-    parser.add_option("-p", "--platforms", dest="platforms",
-                      help="comma seperated list of platforms")
     parser.add_option("-g", "--gui", dest="gui",
                       action="store_true", help="run tests in gui")
     parser.add_option("-c", "--config", dest="cfg_file",
@@ -86,15 +84,11 @@ if __name__ == '__main__':
         cfg.read(options.cfg_file)
         print 'Available user agents:'
         for section in cfg.sections():
-            print ' %s:' % ' '.join(section.split(' ')[:-1])
-            for browser_name in cfg.options(section):
-                print '  %s' % browser_name
+            print ' %s' % section
     else:
         matrix_args = {}
         if args != []:
             matrix_args['tests'] = args
         if options.browsers:
             matrix_args['browsers'] = options.browsers.split(',')
-        if options.platforms:
-            matrix_args['platforms'] = options.platforms.split(',')
         main(options.cfg_file, matrix_args, options.gui)

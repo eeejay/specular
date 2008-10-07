@@ -49,45 +49,22 @@ for mod in _test_modules:
                 issubclass(value, unittest.TestCase):
             base_tests[key] = value
 
-def _parse_config(config_file):
-    cfg_parser = ConfigParser()
-    cfg_parser.read(config_file)
-    configs = {}
-    for section in cfg_parser.sections():
-        section_list = section.split(' ')
-        host_dict = {}
-        configs[' '.join(section_list[:-1])] = host_dict
-        host_dict['host'] = section_list[-1]
-        host_dict['browsers'] = {}
-        for option in cfg_parser.options(section):
-            host_dict['browsers'][option] = cfg_parser.get(section, option)
-
-    return configs
-
 def build_test_suite(config_file,
-                     platforms=None, 
                      browsers=None, 
                      tests=base_tests.keys()):
-    configs = _parse_config(config_file)
-    platforms = platforms or configs.keys()
+    cfg_parser = ConfigParser()
+    cfg_parser.read(config_file)
     if not browsers:
-        browsers = set()
-        for platform_config in configs.values():
-            map(browsers.add, platform_config['browsers'].keys())
+        browsers = cfg_parser.sections()
     full_suite = unittest.TestSuite()
-    for platform in platforms:
-        for browser in browsers:
-            try:
-                host = configs[platform]['host']
-                command = configs[platform]['browsers'][browser]
-            except KeyError:
-                continue
-            suite = unittest.TestSuite()
-            for test_name in tests:
-                c = new.classobj(
-                    platform.capitalize()+browser.capitalize()+test_name,
-                    (base_tests[test_name],), 
-                    {'host': host, 'command' : command})
-                suite.addTest(c())
-            full_suite.addTest(suite)
+    for browser in browsers:
+        suite = unittest.TestSuite()
+        for test_name in tests:
+            c = new.classobj(
+                browser+test_name,
+                (base_tests[test_name],), 
+                {'host': cfg_parser.get(browser, 'host'), 
+                 'command' : cfg_parser.get(browser, 'command')})
+            suite.addTest(c())
+        full_suite.addTest(suite)
     return full_suite
