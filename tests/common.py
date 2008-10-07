@@ -8,7 +8,7 @@ class TestCommon:
         self.selenium.start()
         self.selenium.set_timeout(30000)
         self.selenium.open(self.path)
-
+        self.selenium.window_maximize()
     def tearDown(self):
         self.selenium.stop()
         self.assertEqual([], self.verificationErrors)
