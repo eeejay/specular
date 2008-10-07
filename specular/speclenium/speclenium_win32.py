@@ -87,8 +87,12 @@ class Speclenium(SpecleniumBase):
 
     def _get_win_ff3(self, event):
         if event.source != None:
+            try:
+                acc_name = event.source.accName(0) or ''
+            except:
+                acc_name = ''
             if self._target_pid == -1 and \
-                    'Selenium Remote Control' in (event.source.accName(0) or ''):
+                    'Selenium Remote Control' in acc_name:
                 self._target_pid = pyia.getAccessibleThreadProcessID(event.source)[0]
                 self._window_id = event.hwnd
             elif pyia.getAccessibleThreadProcessID(event.source)[0] == self._target_pid and \
