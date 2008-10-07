@@ -1,0 +1,61 @@
+table.moreinfo { 
+  display: none;
+  background-color: #CACAFF;
+}
+.fieldname { 
+  font-weight: bold;
+}
+a.accessible:link { 
+  color: black;
+  text-decoration: none;
+}
+
+.revUpdated { 
+  background-color: #B5B5FF;
+}
+
+.revDeleted { 
+  background-color: #FF8380;
+}
+
+.revInserted { 
+  background-color: #80FF8D;
+}
+
+.revMoved { 
+  background-color: #FFF791;
+}
+/*
+span.revUpdated { 
+  color: #000085;
+}
+
+span.revDeleted { 
+  color: #AE0000;
+}
+
+span.revInserted { 
+  color: #009305;
+}
+
+span.revMoved { 
+  color: #FF8200;
+}
+*/
+ul { 
+  padding-left: 1em;
+  list-style: none;
+}
+
+.accessiblerole{ 
+  font-style: italic;
+}
+
+a.accessible:visited { 
+  color: black;
+  text-decoration: none;
+}
+a.accessible:hover { 
+  color: #6D6D6D;
+  text-decoration: underline;
+}
