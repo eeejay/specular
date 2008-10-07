@@ -1,0 +1,196 @@
+#!/usr/bin/env python
+#
+# Speclenium Test harness
+#
+# The contents of this file are subject to the Mozilla Public License Version
+# 1.1 (the "License"); you may not use this file except in compliance with
+# the License. You may obtain a copy of the License at
+# http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+#
+# The Initial Developer of the Original Code is Eitan Isaacson.
+# Portions created by the Initial Developer are Copyright (C) 2008
+# the Initial Developer. All Rights Reserved.
+#
+# Contributor(s):
+#   Original Author: Eitan Isaacson (eitan@ascender.com)
+#
+# Alternatively, the contents of this file may be used under the terms of
+# either of the GNU General Public License Version 2 or later (the "GPL"),
+# or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+# in which case the provisions of the GPL or the LGPL are applicable instead
+# of those above. If you wish to allow use of your version of this file only
+# under the terms of either the GPL or the LGPL, and not to allow others to
+# use your version of this file under the terms of the MPL, indicate your
+# decision by deleting the provisions above and replace them with the notice
+# and other provisions required by the GPL or the LGPL. If you do not delete
+# the provisions above, a recipient may use your version of this file under
+# the terms of any one of the MPL, the GPL or the LGPL.
+
+from selenium import selenium
+import sys, codecs
+from xml.dom.minidom import parse, parseString
+from ConfigParser import ConfigParser
+import treediff
+from treediff.dom_tree_iface import DomTreeIface
+from difflib import SequenceMatcher
+from treediff.dom_tree_iface import strip_whitespace
+from urlparse import urlparse
+
+class AccessibleTreeIface(DomTreeIface):
+    def get_labels(self):
+        def _get_labels(node, middle_labels, leaf_labels):
+            if node and node.childNodes:
+                for n in node.childNodes:
+                    _get_labels(n, middle_labels, leaf_labels)
+                if node != self.get_root():
+                    middle_labels.setdefault(
+                        self.get_label(node), []).append(node)
+            elif node:
+                leaf_labels.setdefault(
+                    self.get_label(node), []).append(node)
+        leaf_labels = {}
+        middle_labels = {}
+        _get_labels(self.get_root(), middle_labels, leaf_labels)
+        return leaf_labels, middle_labels
+
+class AccessibleTreeMatcher(treediff.DomTreeMatcher):
+    def __init__(self, tree1, tree2, f=0.75, t=0.5, 
+                 tree_parser=AccessibleTreeIface, 
+                 script_store=treediff.MarkChangesScriptStore):
+        treediff.DomTreeMatcher.__init__(
+            self, tree1, tree2, f, t, tree_parser, script_store)
+
+    def _get_joint_value(self, node):
+        keys = node.attributes.keys()
+        keys.sort()
+        return ','.join(node.attributes[k].value for k in keys)
+
+    def _leaf_equal(self, node1, node2):
+        val1 = self._get_joint_value(node1)
+        val2 = self._get_joint_value(node2)
+        sm = SequenceMatcher(None, val1, val2)
+#        ratio = sm.ratio()
+#        if ratio > self._f:
+#            print '*'*80
+#            print val1.encode('utf-8')
+#            print val2.encode('utf-8')
+#            print ratio
+        return sm.ratio() > self._f
+
+    def _map(self, n1, n2):
+        self._mapping.append((n1, n2))
+        self._tree1.mark_mapped(n1)
+        self._tree1.cache_pedigree(n1)
+        self._tree2.cache_pedigree(n2)
+        if getattr(n1, 'attributes', None) and getattr(n2, 'attributes', None):
+            for attrib in set(n1.attributes.keys() + n2.attributes.keys()):
+                a1 = n1.attributes.get(attrib)
+                a2 = n2.attributes.get(attrib)
+                if None not in (a1, a2):
+                    self._map(a1, a2)
+                
+
+def get_acc_tree(host, command, url):
+    parsed = urlparse(url)
+    try:
+        first_half = url.split(parsed[2])[0]
+        second_half = url.split(parsed[1])[-1]
+    except:
+        first_half = url
+        second_half = '/'
+    s = selenium(host, 4444, command, first_half)
+    s.start()
+    s.set_timeout(30000)
+    s.open(second_half)
+    x = s.get_accessible_doc()
+    s.stop()
+    return parseString(x.encode('utf-8'))
+
+def browser_cb(option, opt_str, value, parser):
+    browsers = value.split(',')
+    acc_trees = getattr(parser.values, 'acc_trees', [])
+    if len(acc_trees) + len(browsers) > 2:
+        raise OptionValueError("Cannot compare more than two browsers/files")
+    for b in browsers:
+        acc_trees.append(b)
+    parser.values.acc_trees = acc_trees
+        
+
+def file_cb(option, opt_str, value, parser):
+    files = value.split(',')
+    acc_trees = getattr(parser.values, 'acc_trees', [])
+    if len(acc_trees) + len(files) > 2:
+        raise OptionValueError("Cannot compare more than two browsers/files")
+    for f in files:
+        d = parse(f)
+        strip_whitespace(d)
+        acc_trees.append(d)
+    parser.values.acc_trees = acc_trees
+
+if __name__ == '__main__':
+    from optparse import OptionParser
+    from sys import stderr, stdout
+
+    usage = "Usage: %prog [options] tests"
+    parser = OptionParser(usage)
+    parser.add_option("--list-agents", dest="list_agents",
+                      action="store_true", help="list available user agents")
+    parser.add_option("-b", "--browser", action="callback", type="string", 
+                      callback=browser_cb,
+                      help="comma seperated list of browsers")
+    parser.add_option("-f", "--file", action="callback", type="string", 
+                      callback=file_cb, 
+                      help="comma seperatedXML accessible tree files")
+    parser.add_option("-c", "--config", dest="cfg_file",
+                      action="store", help="config file", 
+                      default="settings.ini")
+    parser.add_option("-o", "--output", dest="output",
+                      action="store", 
+                      help="output XML. Single tree or side-by-side.")
+    parser.add_option("--print-changes", dest="print_changes",
+                      action="store_true", help="print tree changes")
+
+    (options, args) = parser.parse_args()
+    cfg = ConfigParser()
+    cfg.read(options.cfg_file)
+    if options.list_agents:
+        print 'Available user agents:'
+        for section in cfg.sections():
+            print ' %s' % section
+    else:
+        acc_trees = getattr(options, "acc_trees", [])
+        if len(acc_trees) > 2:
+            raise OptionValueError(
+                "Need exactly two browsers/files for comparison")
+        for i in xrange(len(acc_trees)):
+            if type(acc_trees[i]) == str:
+                acc_trees[i] = get_acc_tree(
+                    cfg.get(acc_trees[i], 'host'), 
+                    cfg.get(acc_trees[i], 'command'),
+                    args[0])
+
+        if len(acc_trees) == 2:
+            tm = AccessibleTreeMatcher(*options.acc_trees)
+            print >>stderr, "Got trees. Retrieving delta..."
+            s = tm.get_opcodes()
+            if options.print_changes:
+                for i in s:
+                    print i
+            if options.output:
+                f = open(options.output, 'w')
+                f.write(s.get_sidebyside().toprettyxml('  ').encode('utf-8'))
+                f.close()
+        elif len(acc_trees) == 1:
+            # Just output accessible tree
+            if options.output:
+                out = open(options.output, 'w')
+            else:
+                out = stdout
+            out.write(acc_trees[0].toprettyxml('  ').encode('utf-8'))
+            out.close()
