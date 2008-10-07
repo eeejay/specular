@@ -42,6 +42,43 @@ from difflib import SequenceMatcher
 from treediff.dom_tree_iface import strip_whitespace
 from urlparse import urlparse
 
+class AccessibleChangesScriptStore(treediff.MarkChangesScriptStore):
+    def __init__(self, tree):
+        self.simple_ops = []
+        self._simple_inserted = []
+        treediff.MarkChangesScriptStore.__init__(self, tree)
+
+
+    def move(self, node, parent, index):
+        self.simple_ops.append('Move %s to %s (%s)' % \
+                                   (self._tree.node_repr(node),
+                                    self._tree.node_repr(parent), index))
+        treediff.MarkChangesScriptStore.move(self, node, parent, index)
+    
+    def update(self, node, value):
+        self.simple_ops.append('Update %s to %s' % \
+                                   (self._tree.node_repr(node), value))
+        treediff.MarkChangesScriptStore.update(self, node, value)
+
+    def insert(self, node, label, value, parent, index):
+        if node.nodeType == node.ATTRIBUTE_NODE:
+            element = node.ownerElement
+            if element.hasAttribute('role') and \
+                    element.hasAttribute('name') and \
+                    element not in self._simple_inserted:
+                self.simple_ops.append('Inserted %s' % \
+                                           self._tree.node_repr(element))
+                self._simple_inserted.append(element)
+        treediff.MarkChangesScriptStore.insert(
+            self, node, label, value, parent, index)
+
+    def delete(self, node):
+        if node.nodeType != node.ATTRIBUTE_NODE:
+            self.simple_ops.append('Delete %s' % \
+                                       self._orig_tree.node_repr(self._pairs[node]))
+        treediff.MarkChangesScriptStore.delete(self, node)
+
+
 class AccessibleTreeIface(DomTreeIface):
     def get_labels(self):
         def _get_labels(node, middle_labels, leaf_labels):
@@ -59,10 +96,28 @@ class AccessibleTreeIface(DomTreeIface):
         _get_labels(self.get_root(), middle_labels, leaf_labels)
         return leaf_labels, middle_labels
 
+    def node_repr(self, node):
+        p = node
+        path = []
+        while p:
+            if p.nodeType == p.ATTRIBUTE_NODE:
+                lname = '@' + self.get_label(p).split('~',1)[-1]
+            elif p.nodeType == p.TEXT_NODE:
+                lname = 'text()'
+            else:
+                lname = '[%s|%s](%d)' % (p.getAttribute('name'),
+                                         p.getAttribute('role'),
+                                         self.get_index_in_parent(p, True) + 1)
+            path.insert(0, lname)
+            p = self.get_parent(p)
+        return '/'+'/'.join(path)
+    def deep_copy(self):
+        return AccessibleTreeIface(self._dom.cloneNode(True))
+
 class AccessibleTreeMatcher(treediff.DomTreeMatcher):
     def __init__(self, tree1, tree2, f=0.75, t=0.5, 
                  tree_parser=AccessibleTreeIface, 
-                 script_store=treediff.MarkChangesScriptStore):
+                 script_store=AccessibleChangesScriptStore):
         treediff.DomTreeMatcher.__init__(
             self, tree1, tree2, f, t, tree_parser, script_store)
 
@@ -108,6 +163,7 @@ def get_acc_tree(host, command, url):
     s.start()
     s.set_timeout(30000)
     s.open(second_half)
+    s.window_maximize()
     x = s.get_accessible_doc()
     s.stop()
     return parseString(x.encode('utf-8'))
@@ -180,11 +236,16 @@ if __name__ == '__main__':
             print >>stderr, "Got trees. Retrieving delta..."
             s = tm.get_opcodes()
             if options.print_changes:
-                for i in s:
-                    print i
+                print '\n'.join(s.simple_ops)
             if options.output:
                 f = open(options.output, 'w')
-                f.write(s.get_sidebyside().toprettyxml('  ').encode('utf-8'))
+                doc = s.get_sidebyside()
+                doc.insertBefore(
+                    doc.createProcessingInstruction(
+                        'xml-stylesheet', 
+                        'type="text/xsl" href="api-compare.xsl"'),
+                    doc.documentElement)
+                f.write(doc.toprettyxml('  ').encode('utf-8'))
                 f.close()
         elif len(acc_trees) == 1:
             # Just output accessible tree
