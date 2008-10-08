@@ -68,7 +68,7 @@ if __name__ == '__main__':
                       action="store_true", help="list available tests")
     parser.add_option("--list-agents", dest="list_agents",
                       action="store_true", help="list available user agents")
-    parser.add_option("-b", "--browsers", dest="browsers",
+    parser.add_option("-B", "--browsers", dest="browsers",
                       help="comma seperated list of browsers")
     parser.add_option("-g", "--gui", dest="gui",
                       action="store_true", help="run tests in gui")

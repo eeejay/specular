@@ -32,7 +32,7 @@
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
 
-from selenium import selenium
+from speclenium_client import SpecleniumClient as selenium
 import sys, codecs
 from xml.dom.minidom import parse, parseString
 from ConfigParser import ConfigParser

@@ -30,7 +30,6 @@
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
 
-from selenium import selenium
 import unittest, time, re
 from sys import platform
 from common import TestCommon

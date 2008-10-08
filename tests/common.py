@@ -1,4 +1,4 @@
-from selenium import selenium
+from speclenium_client import SpecleniumClient as selenium
 
 class TestCommon:
     '''Do common setup and teardown tasks.'''
