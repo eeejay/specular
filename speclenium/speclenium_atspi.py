@@ -40,11 +40,6 @@ from speclenium_base import SpecleniumBase
 from specular.specular_event import events_map
 
 class Speclenium(SpecleniumBase):
-    AGENTS = ['Mozilla', 'Internet Explorer', 'Webkit', 'Unknown']
-    AGENT_MOZILLA = 0
-    AGENT_IE = 1
-    AGENT_WEBKIT = 2
-    AGENT_UNKNOWN = -1
     """An example object to be published."""
     def __init__(self):
         xmlrpc.XMLRPC.__init__(self)

@@ -61,11 +61,24 @@ class Speclenium(SpecleniumBase):
             success = self._get_win_ie8(event)
         elif agent_id == self.AGENT_OPERA:
             success = self._get_win_opera(event)
+        elif agent_id == self.AGENT_SAFARI:
+            success = self._get_win_safari(event)
 
         if success:
             pyia.Registry.deregisterEventListener(
                 self._get_win, pyia.EVENT_OBJECT_NAMECHANGE)
             
+    def _get_win_safari(self, event):
+        try:
+            acc_name = event.source.accName(0) or ''
+        except:
+            acc_name = ''
+        if 'Blank.html' in acc_name:
+            self._top_frame = event.source
+            print 'TOP FRAME', event.source
+            return True
+        return False
+
     def _get_win_opera(self, event):
         if not event.source: return False
         acc_name = event.source.accName(0) or ''
@@ -130,8 +143,8 @@ class Speclenium(SpecleniumBase):
                 x.accParent.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT
             rv = pyia.findDescendant(window_acc, pred)
             print rv
-        elif agent_id == self.AGENT_WEBKIT:
-            # Webkit
+        elif agent_id == self.AGENT_SAFARI:
+            # Safari
             rv = window_acc[3][0][3][0][3]
         elif agent_id == self.AGENT_OPERA:
             # Opera

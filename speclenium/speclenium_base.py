@@ -41,7 +41,7 @@ class SpecleniumBase(xmlrpc.XMLRPC):
     AGENTS = ['Mozilla', 'Internet Explorer', 'Webkit', 'Opera', 'Unknown']
     AGENT_MOZILLA = 0
     AGENT_IE = 1
-    AGENT_WEBKIT = 2
+    AGENT_SAFARI = 2
     AGENT_OPERA = 3
     AGENT_UNKNOWN = -1
     """An example object to be published."""
@@ -126,7 +126,7 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         if 'explore' in self._browser_start_cmd:
             return self.AGENT_IE
         if 'safari' in self._browser_start_cmd:
-            return self.AGENT_WEBKIT
+            return self.AGENT_SAFARI
         if 'opera' in self._browser_start_cmd:
             return self.AGENT_OPERA
         return self.AGENT_UNKNOWN
