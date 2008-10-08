@@ -84,11 +84,11 @@ class testsuite_dist(partial_dist):
         name=__doc__.split('\n')[0]+'-testsuite',
         data_files=[('', ['LICENSE', 'README', 'README.tests', 'settings.ini',
                           selenium.__file__.rstrip('c')]),
-                    ('viewdiff', ['html/api-compare.css', 
-                              'viewdiff/api-compare.js', 
-                              'viewdiff/api-compare.xsl'])],
+                    ('viewdiff', ['viewdiff/api-compare.css', 
+                                  'viewdiff/api-compare.js', 
+                                  'viewdiff/api-compare.xsl'])],
         packages=['tests', 'treediff'],
-        scripts=['run_tests', 'quick_diff'])
+        scripts=['run_tests.py', 'quick_diff.py'])
 
 try:
     import py2exe
@@ -140,7 +140,7 @@ else:
                            {'includes' : 'twisted.web.resource'}},
               'console' : [{'script' : 'speclenium.py',
                             "icon_resources" : 
-                            [(1, "pixmaps/speclenium-logo.ico")]}],
+                            [(1, "speclenium-logo.ico")]}],
               'cmdclass' : {'testsuite_dist' : testsuite_dist,
                             'speclenium_dist_win32' : speclenium_dist_win32,
                             'speclenium_dist' : speclenium_dist}}
@@ -171,7 +171,7 @@ setup(name=__doc__.split('\n')[0],
       classifiers=classifiers,
       version=specular.__version__,
       packages=["specular", "speclenium", "tests"],
-      scripts=["speclenium.py", "run_tests"], 
+      scripts=["speclenium.py", "run_tests.py"], 
       data_files=[('', ['LICENSE', 
                         'README', 
                         'README.speclenium', 
