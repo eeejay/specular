@@ -41,24 +41,6 @@ class AlertTest(TestCommon, unittest.TestCase):
     base_url = "http://codetalks.org/"
     path = "/source/widgets/alert/alert.html"
 
-    _alert_show = ['<event type="object-add">'
-                   '<source><accessible role="alert"/>'
-                   '</source></event>', 
-                   '<event type="system-alert">'
-                   '<source><accessible role="alert"/>'
-                   '</source></event>']
-
-    _alert_show_and_focus = _alert_show + ['<event type="object-focus">'
-                                            '<source>'
-                                            '<accessible role="alert"/>'
-                                            '</source>'
-                                            '</event>']
-
-    _alert_hide = ['<event type="object-destroy">'
-                   '<source><accessible role="alert"/>'
-                   '</source></event>'] 
-
-
     def _wait_for_alert_show(self, focus):
         events = [
             '<event type="object-add">'
