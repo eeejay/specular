@@ -41,7 +41,12 @@ from specular_accessible import \
 
 if platform == 'win32':
     import pyia
-    events_map = {'object-state-changed-checked':pyia.EVENT_OBJECT_STATECHANGE}
+    events_map = \
+        {'object-state-changed-checked' : pyia.EVENT_OBJECT_STATECHANGE,
+         'object-destroy' : pyia.EVENT_OBJECT_HIDE,
+         'object-add' : pyia.EVENT_OBJECT_SHOW,
+         'object-focus' : pyia.EVENT_OBJECT_FOCUS,
+         'system-alert' : pyia.EVENT_SYSTEM_ALERT}
     def get_specular_type(native_type):
         for key, value in events_map.iteritems():
             if value == native_type:
@@ -94,7 +99,7 @@ def specular_event_from_event(event):
     doc.appendChild(doc.createElement('event'))
     doc.documentElement.setAttribute('type', get_specular_type(event.type))
     if event.source:
-        acc_dom = specular_accessible_from_accessible(event.source)
+        acc_dom = specular_accessible_from_accessible(event.source, False)
         source = doc.createElement('source')
         doc.documentElement.appendChild(source)
         source.appendChild(acc_dom.documentElement)

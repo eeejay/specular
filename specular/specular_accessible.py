@@ -65,7 +65,7 @@ def specular_accessible_from_dom(dom):
 
 
 if platform == 'win32':
-    def _populate_accessible_node(doc, element, acc):
+    def _populate_accessible_node(doc, element, acc, descendants=True):
         element.setAttribute('role', acc.accRoleName() or '')
         element.setAttribute('name', acc.accName(0) or '')
 
@@ -82,13 +82,14 @@ if platform == 'win32':
 
         element.setAttribute('state', '|'.join(acc.accStateSet()))
         
-        for child in acc:
-            if child:
-                e = doc.createElement('accessible')
-                element.appendChild(e)
-                _populate_accessible_node(doc, e, child)
+        if descendants:
+            for child in acc:
+                if child:
+                    e = doc.createElement('accessible')
+                    element.appendChild(e)
+                    _populate_accessible_node(doc, e, child)
 else:
-    def _populate_accessible_node(doc, element, acc):
+    def _populate_accessible_node(doc, element, acc, descendants=True):
         element.setAttribute('role', acc.getRoleName())
         element.setAttribute('name', acc.name)
 
@@ -97,17 +98,18 @@ else:
         sset = [repr(a)[6:].lower() for a in acc.getState().getStates()]
         
         element.setAttribute('state', '|'.join(sset))
-        for child in acc:
-            if child:
-                e = doc.createElement('accessible')
-                try:
-                    _populate_accessible_node(doc, e, child)
-                except LookupError:
-                    pass
-                else:
-                    element.appendChild(e)
+        if descendants:
+            for child in acc:
+                if child:
+                    e = doc.createElement('accessible')
+                    try:
+                        _populate_accessible_node(doc, e, child)
+                    except LookupError:
+                        pass
+                    else:
+                        element.appendChild(e)
 
-def specular_accessible_from_accessible(acc):    
+def specular_accessible_from_accessible(acc, descendants=True):    
     doc = getDOMImplementation().createDocument(None, "accessible", None)
-    _populate_accessible_node(doc, doc.documentElement, acc)
+    _populate_accessible_node(doc, doc.documentElement, acc, descendants)
     return specular_accessible_from_dom(doc.documentElement)
