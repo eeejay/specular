@@ -1,5 +1,8 @@
 from selenium import selenium
 from xmlrpclib import ServerProxy
+import time
+from xml.dom.minidom import parseString
+
 class SpecleniumClient(selenium):
     SPECLENIUM_PORT = 4117
     def start(self):
@@ -22,3 +25,19 @@ class SpecleniumClient(selenium):
         return self._speclenium_server.get_accessible_event_match(
             match_criteria, index)
 
+    def wait_accessible_events(self, events, timeout=3000):
+        returned_events = []
+        index = 0
+        cumulative_time = 0
+        for event in events:
+            while cumulative_time < timeout:
+                e = parseString(self.get_accessible_event_match(event, index))
+                if e.documentElement.tagName == 'event':
+                    index = \
+                        int(e.documentElement.getAttribute('index') or 0) + 1
+                    returned_events.append(e.toxml())
+                    break
+                cumulative_time += 500
+                time.sleep(0.5)
+
+        return returned_events
