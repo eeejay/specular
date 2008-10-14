@@ -38,14 +38,93 @@ from time import sleep
 class AlertTest(TestCommon, unittest.TestCase):
     '''WAI-ARIA Alert Test
     Tests to see if an accessible with an 'alert' role is in the document'''
-    base_url = "http://test.cita.uiuc.edu/"
-    path = "/aria/alert/view_inline.php?title=Alert%20Example%201:%20Number%20Guessing%20Game&ginc=includes/alert1_inline.inc&gcss=css/alert1_class.css&gjs=../js/globals.js,../js/widgets_inline.js,js/alert1_class.js"
+    base_url = "http://codetalks.org/"
+    path = "/source/widgets/alert/alert.html"
+
+    _alert_show = ['<event type="object-add">'
+                   '<source><accessible role="alert"/>'
+                   '</source></event>', 
+                   '<event type="system-alert">'
+                   '<source><accessible role="alert"/>'
+                   '</source></event>']
+
+    _alert_show_and_focus = _alert_show + ['<event type="object-focus">'
+                                            '<source>'
+                                            '<accessible role="alert"/>'
+                                            '</source>'
+                                            '</event>']
+
+    _alert_hide = ['<event type="object-destroy">'
+                   '<source><accessible role="alert"/>'
+                   '</source></event>'] 
+
+
+    def _wait_for_alert_show(self, focus):
+        events = [
+            '<event type="object-add">'
+            '<source><accessible role="alert"/>'
+            '</source></event>', 
+            '<event type="system-alert">'
+            '<source><accessible role="alert"/>'
+            '</source></event>']
+
+        if focus:
+            events.append('<event type="object-focus">'
+                          '<source><accessible role="alert"/>'
+                          '</source></event>')
+        
+        got_events = self.selenium.wait_accessible_events(events)
+        self.failUnless(len(got_events) == len(events), 
+                        'Expected:\n%s\nGot:\n%s\n' % ('\n'.join(events),
+                                                       '\n'.join(got_events)))
+
+    def _assert_no_alert_showing(self):
+        self.assertEqual(
+            self.selenium.get_accessible_match(
+                '<accessible role="alert" state="regexp:^((?!invisible).)*$" />'), '')
+        
+        
+    def _assert_alert_showing(self):
+        self.assertNotEqual(
+            self.selenium.get_accessible_match(
+                '<accessible role="alert" state="regexp:^((?!invisible).)*$" />'), '')
+        
+
     def runTest(self):
         sel = self.selenium
-        result = sel.get_accessible_match('<accessible role="alert">'
-                                          '  <accessible name="Make a guess"/>'
-                                          '</accessible>')
-        self.failUnless(result)
+        self._assert_no_alert_showing()
+        sel.click("//button[@onclick='createRemoveAlert(FOCUS_TEXT, true);']")
+        self._wait_for_alert_show(True)
+        self._assert_alert_showing()
+        sel.click("//a[@onclick='createRemoveAlert();']")
+        self._assert_no_alert_showing()
+        sel.click("//button[@onclick='createRemoveAlert(NOFOCUS_TEXT, false);']")
+        self._wait_for_alert_show(False)
+        self._assert_alert_showing()
+        sel.click("//a[@onclick='createRemoveAlert();']")
+        self._assert_no_alert_showing()
+        sel.click("//button[@onclick=\"toggleAlert('alertVis', true);\"]")
+#        self._wait_for_alert_show(True)
+        self._assert_alert_showing()
+        a = sel.get_accessible_doc()
+        sel.click("link=close")
+        self._assert_no_alert_showing()
+        sel.click("//button[@onclick=\"toggleAlert('alertVis');\"]")
+        self._wait_for_alert_show(False)
+        self._assert_alert_showing()
+        sel.click("link=close")
+        self._assert_no_alert_showing()
+        sel.click("//button[@onclick=\"toggleAlert('alertDisp', true);\"]")
+#        self._wait_for_alert_show(True)
+        self._assert_alert_showing()
+        sel.click("//div[@id='alertDisp']/div/a")
+        self._assert_no_alert_showing()
+        sel.click("//button[@onclick=\"toggleAlert('alertDisp');\"]")
+        self._wait_for_alert_show(False)
+        self._assert_alert_showing()
+        sel.click("//div[@id='alertDisp']/div/a")
+        self._assert_no_alert_showing()
+        #self.failUnless(result)
     
 #if __name__ == "__main__":
 #    unittest.main()
