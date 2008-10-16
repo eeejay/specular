@@ -53,7 +53,11 @@ if platform == 'win32':
                 return key
 else:
     events_map = \
-        {'object-state-changed-checked':'object:state-changed:checked'}
+        {'object-state-changed-checked':'object:state-changed:checked',
+         'object-destroy' : 'object:children-changed:remove',
+         'object-add' : 'object:children-changed:add',
+         'object-focus' : 'focus',
+         'system-alert' : 'not supported on platform'}
     def get_specular_type(native_type):
         for key, value in events_map.iteritems():
             if native_type.startswith(value):
@@ -98,7 +102,14 @@ def specular_event_from_event(event):
     doc = Document()
     doc.appendChild(doc.createElement('event'))
     doc.documentElement.setAttribute('type', get_specular_type(event.type))
-    if event.source:
+    if type(event.type) != int and \
+            event.type.startswith('object:children-changed') and \
+            getattr(event, 'any_data', None):
+        acc_dom = specular_accessible_from_accessible(event.any_data, False)
+        source = doc.createElement('source')
+        doc.documentElement.appendChild(source)
+        source.appendChild(acc_dom.documentElement)
+    elif event.source:
         acc_dom = specular_accessible_from_accessible(event.source, False)
         source = doc.createElement('source')
         doc.documentElement.appendChild(source)

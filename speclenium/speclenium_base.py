@@ -35,7 +35,7 @@ from xml.dom.minidom import parseString
 from specular.specular_accessible import \
     specular_accessible_from_accessible, specular_accessible_from_string
 from specular.specular_event import \
-    specular_event_from_event, specular_event_from_string
+    specular_event_from_event, specular_event_from_string, events_map
 
 class SpecleniumBase(xmlrpc.XMLRPC):
     AGENTS = ['Mozilla', 'Internet Explorer', 'Webkit', 'Opera', 'Unknown']
@@ -71,6 +71,10 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         
     def xmlrpc_get_accessible_event_match(self, event, start_at):
         spec_event = specular_event_from_string(event)
+        if events_map[spec_event.type] == 'not supported on platform':
+            spec_event.documentElement.setAttribute(
+                'supportedOnPlatform', 'false')
+            return spec_event.toxml()
 
         i = start_at
         if start_at != 0:
