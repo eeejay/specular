@@ -88,6 +88,7 @@ class testsuite_dist(partial_dist):
                                   'viewdiff/api-compare.js', 
                                   'viewdiff/api-compare.xsl'])],
         packages=['tests', 'treediff'],
+        py_modules=['speclenium_client'],
         scripts=['run_tests.py', 'quick_diff.py'])
 
 try:
@@ -171,6 +172,7 @@ setup(name=__doc__.split('\n')[0],
       classifiers=classifiers,
       version=specular.__version__,
       packages=["specular", "speclenium", "tests"],
+      py_modules=["speclenium_client"],
       scripts=["speclenium.py", "run_tests.py"], 
       data_files=[('', ['LICENSE', 
                         'README', 
