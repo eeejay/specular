@@ -109,9 +109,13 @@ def specular_event_from_event(event):
         source = doc.createElement('source')
         doc.documentElement.appendChild(source)
         source.appendChild(acc_dom.documentElement)
-    elif event.source:
-        acc_dom = specular_accessible_from_accessible(event.source, False)
-        source = doc.createElement('source')
-        doc.documentElement.appendChild(source)
-        source.appendChild(acc_dom.documentElement)
+    else:
+        try:
+            acc_dom = specular_accessible_from_accessible(event.source, False)
+        except:
+            pass
+        else:
+            source = doc.createElement('source')
+            doc.documentElement.appendChild(source)
+            source.appendChild(acc_dom.documentElement)
     return specular_event_from_dom(doc.documentElement)
