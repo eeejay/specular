@@ -133,9 +133,13 @@ class Speclenium(SpecleniumBase):
         rv = None
         if agent_id == self.AGENT_MOZILLA:
             # Firefox
-            pred = lambda x: x.accRole(0) == pyia.ROLE_SYSTEM_DOCUMENT and \
+            pred = lambda x: 'browser' in x.accRoleName() and \
                 not x.accState(0) & pyia.STATE_SYSTEM_INVISIBLE
             rv = pyia.findDescendant(window_acc, pred)
+            try:
+                rv = rv[0]
+            except:
+                pass
         elif agent_id == self.AGENT_IE:
             # IE
             pred = lambda x: x.accRole(0) == pyia.ROLE_SYSTEM_PANE and \

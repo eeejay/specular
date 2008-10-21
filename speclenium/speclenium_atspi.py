@@ -85,8 +85,15 @@ class Speclenium(SpecleniumBase):
         pred = lambda x: False
         if agent_id == self.AGENT_MOZILLA:
             # Firefox
-            pred = lambda x: x.getRole() == pyatspi.ROLE_DOCUMENT_FRAME and \
-                x.getState().contains(pyatspi.STATE_SHOWING)
+            def pred(x):
+                p = x.parent
+                if p.getRole() == pyatspi.ROLE_INTERNAL_FRAME:
+                    attribs = \
+                        dict([a.split(':',1) for a in p.getAttributes()])
+                    if 'browser' in attribs.get('tag', '') and \
+                            p.getState().contains(pyatspi.STATE_SHOWING):
+                        return True
+                return False
         return pyatspi.findDescendant(window_acc, pred)
 
     def _get_agent(self):
