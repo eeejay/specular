@@ -38,14 +38,114 @@ from time import sleep
 class AlertTest(TestCommon, unittest.TestCase):
     '''WAI-ARIA Alert Test
     Tests to see if an accessible with an 'alert' role is in the document'''
-    base_url = "http://test.cita.uiuc.edu/"
-    path = "/aria/alert/view_inline.php?title=Alert%20Example%201:%20Number%20Guessing%20Game&ginc=includes/alert1_inline.inc&gcss=css/alert1_class.css&gjs=../js/globals.js,../js/widgets_inline.js,js/alert1_class.js"
+    base_url = "http://codetalks.org/"
+    path = "/source/widgets/alert/alert.html"
+    _failed_asserts = []
+
+
+    def _wait_for_alert_show(self, subtest ,focus):
+        events = [
+            '<event type="object-add">'
+            '<source><accessible role="alert"/>'
+            '</source></event>',
+            '<event type="system-alert">'
+            '<source><accessible role="alert"/>'
+            '</source></event>']
+
+        if focus:
+            events.append('<event type="object-focus">'
+                          '<source><accessible role="alert"/>'
+                          '</source></event>')
+        
+        got_events = self.selenium.wait_accessible_events(events)
+        try:
+            self.failUnless(len(got_events) == len(events), 
+                            'Did not get the right events for "%s"\n'
+                            'Expected:\n%s\nGot:\n%s\n' % (subtest,
+                                                           '\n'.join(events),
+                                                           '\n'.join(got_events)))
+        except AssertionError, e:
+            self._failed_asserts.append(e)
+
+    def _assert_no_alert_showing(self, subtest):
+        try:
+            self.assertEqual(
+                self.selenium.get_accessible_match(
+                    '<accessible role="alert" state="regexp:.*focusable.*" />'), 
+                '', 'Found unexpected focusable "alert" accessible in "%s" test' % subtest)
+        except AssertionError, e:
+            self._failed_asserts.append(e)
+        
+        
+    def _assert_alert_showing(self, subtest):
+        try:
+            self.assertNotEqual(
+                self.selenium.get_accessible_match(
+                    '<accessible role="alert" state="regexp:.*focusable.*" />'), 
+                '', 
+                'Failed to find focusable "alert" accessible in "%s" test' % subtest)
+        except AssertionError, e:
+            self._failed_asserts.append(e)
+        
+
     def runTest(self):
         sel = self.selenium
-        result = sel.get_accessible_match('<accessible role="alert">'
-                                          '  <accessible name="Make a guess"/>'
-                                          '</accessible>')
-        self.failUnless(result)
+        self._assert_no_alert_showing('')
+
+        # Create and Focus
+        subtest = 'Create and Focus'
+        sel.click("//button[@onclick='createRemoveAlert(FOCUS_TEXT, true);']")
+        self._wait_for_alert_show(subtest, True)
+        self._assert_alert_showing(subtest)
+        sel.click("//a[@onclick='createRemoveAlert();']")
+        self._assert_no_alert_showing(subtest)
+
+        # Create - no Focus
+        subtest = 'Create - no Focus'
+        sel.click("//button[@onclick='createRemoveAlert(NOFOCUS_TEXT, false);']")
+        self._wait_for_alert_show(subtest, False)
+        self._assert_alert_showing(subtest)
+        sel.click("//a[@onclick='createRemoveAlert();']")
+        self._assert_no_alert_showing(subtest)
+
+        # Show (via visibility style) and Focus
+        subtest = 'Show (via visibility style) and Focus'
+        sel.click("//button[@onclick=\"toggleAlert('alertVis', true);\"]")
+        self._wait_for_alert_show(subtest, True)
+        self._assert_alert_showing(subtest)
+        sel.click("link=close")
+        self._assert_no_alert_showing(subtest)
+
+
+        # Show (via visibility style) - no Focus
+        subtest = 'Show (via visibility style) - no Focus'
+        sel.click("//button[@onclick=\"toggleAlert('alertVis');\"]")
+        self._wait_for_alert_show(subtest, False)
+        self._assert_alert_showing(subtest)
+        sel.click("link=close")
+        self._assert_no_alert_showing(subtest)
+
+        # Show (via display style) and Focus
+        subtest = 'Show (via display style) and Focus'
+        sel.click("//button[@onclick=\"toggleAlert('alertDisp', true);\"]")
+        self._wait_for_alert_show(subtest, True)
+        self._assert_alert_showing(subtest)
+        sel.click("//div[@id='alertDisp']/div/a")
+        self._assert_no_alert_showing(subtest)
+
+        # Show (via display style) - no Focus
+        subtest = 'Show (via display style) - no Focus'
+        sel.click("//button[@onclick=\"toggleAlert('alertDisp');\"]")
+        self._wait_for_alert_show(subtest, False)
+        self._assert_alert_showing(subtest)
+        sel.click("//div[@id='alertDisp']/div/a")
+        self._assert_no_alert_showing(subtest)
+
+        # Fail if we had any assertion failures.
+        self.failUnless(
+            self._failed_asserts == [],
+            'Failed assertions:\n%s' \
+                % '\n'.join(map(str, self._failed_asserts)))
     
 #if __name__ == "__main__":
 #    unittest.main()

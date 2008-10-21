@@ -38,23 +38,41 @@ class CheckboxTest(TestCommon, unittest.TestCase):
     '''WAI-ARIA Checkbox Test
     Tests to see if the correct state change events are emited when checkboxes
     are toggled.'''
-    base_url = "http://www.mozilla.org/"
-    path = "/access/dhtml/checkbox"
+    base_url = "http://codetalks.org/"
+    path = "/source/widgets/checkbox/checkbox.html"
+
+    def _wait_for_checked(self, checked):
+        if checked:
+            state_regex = 'regexp:.*checked.*'
+        else:
+            state_regex = 'regexp:^((?!checked).)*$'
+
+        got_events = self.selenium.wait_accessible_events(
+            ['<event type="object-state-changed-checked">'
+             '<source><accessible role="check box" state="%s"/>'
+             '</source></event>' % state_regex])
+
+        self.failUnless(got_events != [])
+
     def runTest(self):
         sel = self.selenium
-        sel.click("//div[2]/span/img")
-        success = False
-        for i in xrange(10):
-            e = sel.get_accessible_event_match(
-                '<event type="object-state-changed-checked">'
-                '<source><accessible role="check box"/>'
-                '</source></event>', 0)
-            if 'notfound' not in e:
-                success = True
-                break
-        self.failUnless(
-            success, 
-            'Did not recieve a state-changed event after check button toggle')
+        sel.click("//span[@id='remove-to-clear']/img")
+        self._wait_for_checked(False)
+        sel.click("//span[@id='remove-to-clear']/img")
+        self._wait_for_checked(True)
+        sel.click("//span[@id='check-to-clear']/img")
+        self._wait_for_checked(False)
+        sel.click("//span[@id='check-to-clear']/img")
+        self._wait_for_checked(True)
+        sel.click("//div[3]/span/img")
+        self._wait_for_checked(False)
+        sel.click("//div[3]/span/img")
+        self._wait_for_checked(True)
+        sel.click("//div[4]/span/img")
+        self._wait_for_checked(False)
+        sel.click("//div[4]/span/img")
+        self._wait_for_checked(True)
+        return
 
 #if __name__ == "__main__":
 #    unittest.main()
