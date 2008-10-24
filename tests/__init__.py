@@ -39,7 +39,8 @@ sys.path.insert(0, _testsdir)
 
 _test_modules = \
     map(lambda x: x[:-3],
-        filter(lambda x: x.endswith('_test.py'), os.listdir(_testsdir)))
+        filter(lambda x: x.endswith('_test.py') and not x.startswith("."), 
+               os.listdir(_testsdir)))
 
 base_tests = {}
 for mod in _test_modules:
