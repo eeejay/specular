@@ -1,4 +1,4 @@
-# Speclenium Checkbox Test
+# Speclenium Checkbox Tristate Test
 #
 # The contents of this file are subject to the Mozilla Public License Version
 # 1.1 (the "License"); you may not use this file except in compliance with
@@ -34,18 +34,21 @@ import unittest, time, re
 from sys import platform
 from common import TestCommon
 
-class CheckboxTest(TestCommon, unittest.TestCase):
-    '''WAI-ARIA Checkbox Test
+class ComboboxEditTest(TestCommon, unittest.TestCase):
+    '''WAI-ARIA Checkbox Tristate Test
     Tests to see if the correct state change events are emited when checkboxes
-    are toggled.'''
+    are toggled. And that the there is partial state.'''
     base_url = "http://codetalks.org/"
-    path = "/source/widgets/checkbox/checkbox.html"
+    path = "/source/widgets/combobox/combo-editable.html"
+    _failed_asserts = []
 
     def _wait_for_checked(self, checked, name="regexp:.*"):
         if checked:
             state_regex = 'regexp:.*checked.*'
+        elif checked is None:
+            state_regex = 'regexp:.*(indeterminate|mixed).*'
         else:
-            state_regex = 'regexp:^((?!checked).)*$'
+            state_regex = 'regexp:^((?!checked|indeterminate|mixed).)*$'
 
         event_query = '<event type="object-state-changed-checked"><source><accessible role="check box" name="%s" state="%s"/></source></event>' % (name, state_regex)
         got_events = self.selenium.wait_accessible_events([event_query])
@@ -53,27 +56,41 @@ class CheckboxTest(TestCommon, unittest.TestCase):
         self.failUnless(got_events != [])
         return got_events[0]
 
+    def _wait_for_combobox_show(self):
+        events = [
+            '<event type="object-add">'
+            '<source><accessible role="list"/>'
+            '</source></event>',
+            '<event type="object-focus">'
+            '<source><accessible name="cool" role="list item"/>'
+            '</source></event>']
+
+        
+        got_events = self.selenium.wait_accessible_events(events)
+        print '\n--------------'.join(got_events)
+
+        try:
+            self.failUnless(len(got_events) == len(events), 
+                            'Did not get the right events for combo box show\n'
+                            'Expected:\n%s\nGot:\n%s\n' % (
+                    '\n'.join(events),
+                    '\n'.join(got_events)))
+        except AssertionError, e:
+            print '\n\n'.join(self.selenium.dump_accessible_event_cache())
+            self._failed_asserts.append(e)
+
+
     def runTest(self):
         sel = self.selenium
-        sel.click("//span[@id='remove-to-clear']/img")
-        self._wait_for_checked(False,'regexp:.*removeAttribute.*')
-        sel.click("//span[@id='remove-to-clear']/img")
-        self._wait_for_checked(True, 'regexp:.*removeAttribute.*')
-        sel.click("//span[@id='check-to-clear']/img")
-        self._wait_for_checked(False, 'regexp:.*setAttribute.*')
-        sel.click("//span[@id='check-to-clear']/img")
-        self._wait_for_checked(True, 'regexp:.*setAttribute.*')
-        # TODO: Validate the "invalid" state.
-        sel.click("//div[3]/span/img") 
-        self._wait_for_checked(False, ' Invalid checkbox')
-        sel.click("//div[3]/span/img")
-        self._wait_for_checked(True, ' Invalid checkbox')
-        # TODO: Validate the "required" state.
-        sel.click("//div[4]/span/img")
-        self._wait_for_checked(False, ' Required checkbox')
-        sel.click("//div[4]/span/img")
-        self._wait_for_checked(True, ' Required checkbox')
-        return
+        sel.type("cat", "cool\n")
+        sel.key_press("cat", "\\13")
+        self._wait_for_combobox_show()
+        sel.click("dropButton")
 
+        self.failUnless(
+            self._failed_asserts == [],
+            'Failed assertions:\n%s' \
+                % '\n'.join(map(str, self._failed_asserts)))
+    
 #if __name__ == "__main__":
 #    unittest.main()

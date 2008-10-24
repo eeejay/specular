@@ -1,4 +1,4 @@
-# Speclenium Checkbox Test
+# Speclenium Checkbox Tristate Test
 #
 # The contents of this file are subject to the Mozilla Public License Version
 # 1.1 (the "License"); you may not use this file except in compliance with
@@ -34,18 +34,20 @@ import unittest, time, re
 from sys import platform
 from common import TestCommon
 
-class CheckboxTest(TestCommon, unittest.TestCase):
-    '''WAI-ARIA Checkbox Test
+class CheckboxTristateTest(TestCommon, unittest.TestCase):
+    '''WAI-ARIA Checkbox Tristate Test
     Tests to see if the correct state change events are emited when checkboxes
-    are toggled.'''
+    are toggled. And that the there is partial state.'''
     base_url = "http://codetalks.org/"
-    path = "/source/widgets/checkbox/checkbox.html"
+    path = "/source/widgets/checkbox/checkbox-tristate.html"
 
     def _wait_for_checked(self, checked, name="regexp:.*"):
         if checked:
             state_regex = 'regexp:.*checked.*'
+        elif checked is None:
+            state_regex = 'regexp:.*(indeterminate|mixed).*'
         else:
-            state_regex = 'regexp:^((?!checked).)*$'
+            state_regex = 'regexp:^((?!checked|indeterminate|mixed).)*$'
 
         event_query = '<event type="object-state-changed-checked"><source><accessible role="check box" name="%s" state="%s"/></source></event>' % (name, state_regex)
         got_events = self.selenium.wait_accessible_events([event_query])
@@ -58,22 +60,15 @@ class CheckboxTest(TestCommon, unittest.TestCase):
         sel.click("//span[@id='remove-to-clear']/img")
         self._wait_for_checked(False,'regexp:.*removeAttribute.*')
         sel.click("//span[@id='remove-to-clear']/img")
-        self._wait_for_checked(True, 'regexp:.*removeAttribute.*')
-        sel.click("//span[@id='check-to-clear']/img")
+        self._wait_for_checked(None,'regexp:.*removeAttribute.*')
+        sel.click("//span[@id='remove-to-clear']/img")
+        self._wait_for_checked(True,'regexp:.*removeAttribute.*')
+        sel.click("//span[@id='set-false-to-clear']/img")
         self._wait_for_checked(False, 'regexp:.*setAttribute.*')
-        sel.click("//span[@id='check-to-clear']/img")
-        self._wait_for_checked(True, 'regexp:.*setAttribute.*')
-        # TODO: Validate the "invalid" state.
-        sel.click("//div[3]/span/img") 
-        self._wait_for_checked(False, ' Invalid checkbox')
-        sel.click("//div[3]/span/img")
-        self._wait_for_checked(True, ' Invalid checkbox')
-        # TODO: Validate the "required" state.
-        sel.click("//div[4]/span/img")
-        self._wait_for_checked(False, ' Required checkbox')
-        sel.click("//div[4]/span/img")
-        self._wait_for_checked(True, ' Required checkbox')
-        return
+        sel.click("//span[@id='set-false-to-clear']/img")
+        self._wait_for_checked(None, 'regexp:.*setAttribute.*')
+        sel.click("//span[@id='set-false-to-clear']/img")
+        self._wait_for_checked(True, 'regexp:.*setAttribute.*')    
 
 #if __name__ == "__main__":
 #    unittest.main()
