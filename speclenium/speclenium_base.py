@@ -89,9 +89,9 @@ class SpecleniumBase(xmlrpc.XMLRPC):
             i += 1
         return '<notfound index="%s"/>' % i
 
-    def xmlrpc_doc_accessible_diff(self, other_doc):
-        return "Not implemented yet"
-                                
+    def xmlrpc_dump_accessible_event_cache(self):
+        return [n.toxml() for n in self._event_list]
+
     def xmlrpc_get_accessible_doc(self):
         if not self._top_frame:
             print 'no _top_frame'
