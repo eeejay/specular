@@ -94,6 +94,21 @@ else:
         element.setAttribute('name', acc.name)
 
         element.setAttribute('description', acc.description)
+
+        val = ''
+        try:
+            ivalue = acc.queryValue()
+        except NotImplementedError:
+            try:
+                itext = acc.queryText()
+            except NotImplementedError:
+                pass
+            else:
+                val = itext.getText(0,-1)
+        else:
+            val = ivalue.currentValue
+
+        element.setAttribute('value', val)
         
         sset = [repr(a)[6:].lower() for a in acc.getState().getStates()]
         
