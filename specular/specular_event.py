@@ -42,22 +42,22 @@ from specular_accessible import \
 if platform == 'win32':
     import pyia
     events_map = \
-        {'object-state-changed-checked' : pyia.EVENT_OBJECT_STATECHANGE,
-         'object-destroy' : pyia.EVENT_OBJECT_HIDE,
-         'object-add' : pyia.EVENT_OBJECT_SHOW,
-         'object-focus' : pyia.EVENT_OBJECT_FOCUS,
-         'system-alert' : pyia.EVENT_SYSTEM_ALERT}
+        {u'object-state-changed-checked' : pyia.EVENT_OBJECT_STATECHANGE,
+         u'object-destroy' : pyia.EVENT_OBJECT_HIDE,
+         u'object-add' : pyia.EVENT_OBJECT_SHOW,
+         u'object-focus' : pyia.EVENT_OBJECT_FOCUS,
+         u'system-alert' : pyia.EVENT_SYSTEM_ALERT}
     def get_specular_type(native_type):
         for key, value in events_map.iteritems():
             if value == native_type:
                 return key
 else:
     events_map = \
-        {'object-state-changed-checked':'object:state-changed:checked',
-         'object-destroy' : 'object:children-changed:remove',
-         'object-add' : 'object:children-changed:add',
-         'object-focus' : 'focus',
-         'system-alert' : 'not supported on platform'}
+        {u'object-state-changed-checked':'object:state-changed:checked',
+         u'object-destroy' : 'object:children-changed:remove',
+         u'object-add' : 'object:children-changed:add',
+         u'object-focus' : 'focus',
+         u'system-alert' : 'not supported on platform'}
     def get_specular_type(native_type):
         for key, value in events_map.iteritems():
             if native_type.startswith(value):
@@ -67,10 +67,11 @@ else:
 class SpecularEvent(SpecularSerial):
     def __init__(self, root_element):
         SpecularSerial.__init__(self, root_element)
-        self.type = self.documentElement.getAttribute('type')
+        self.type = self.documentElement.getAttribute('type').encode('utf-8')
         source = self.getElementsByTagName('accessible')
         if source:
-            self.source = specular_accessible_from_string(source[0].toxml())
+            self.source = specular_accessible_from_dom(
+                source[0].cloneNode(True))
         else:
             self.source = specular_accessible_from_string('<accessible/>')
 
@@ -86,7 +87,8 @@ class SpecularEvent(SpecularSerial):
     
 
 def specular_event_from_string(event_str):
-    dom = parseString(event_str.encode('utf-8'))
+    event_str = event_str.encode('utf-8')
+    dom = parseString(event_str)
     strip_whitespace(dom.documentElement)
     return specular_event_from_dom(dom.documentElement)
 
@@ -106,16 +108,11 @@ def specular_event_from_event(event):
             event.type.startswith('object:children-changed') and \
             getattr(event, 'any_data', None):
         acc_dom = specular_accessible_from_accessible(event.any_data, False)
-        source = doc.createElement('source')
-        doc.documentElement.appendChild(source)
-        source.appendChild(acc_dom.documentElement)
     else:
-        try:
-            acc_dom = specular_accessible_from_accessible(event.source, False)
-        except:
-            pass
-        else:
-            source = doc.createElement('source')
-            doc.documentElement.appendChild(source)
-            source.appendChild(acc_dom.documentElement)
+        acc_dom = specular_accessible_from_accessible(event.source, False)
+
+    source = doc.createElement('source')
+    doc.documentElement.appendChild(source)
+    source.appendChild(acc_dom.documentElement)
+
     return specular_event_from_dom(doc.documentElement)

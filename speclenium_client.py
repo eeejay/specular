@@ -37,7 +37,8 @@ class SpecleniumClient(selenium):
         cumulative_time = 0
         for event in events:
             while cumulative_time < timeout:
-                e = parseString(self.get_accessible_event_match(event, index))
+                m = self.get_accessible_event_match(event, index)
+                e = parseString(m.encode('utf-8'))
                 if e.documentElement.tagName == 'event':
                     index = \
                         int(e.documentElement.getAttribute('index') or 0) + 1

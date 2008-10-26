@@ -66,21 +66,21 @@ def specular_accessible_from_dom(dom):
 
 if platform == 'win32':
     def _populate_accessible_node(doc, element, acc, descendants=True):
-        element.setAttribute('role', acc.accRoleName() or '')
-        element.setAttribute('name', acc.accName(0) or '')
+        element.setAttribute('role', unicode(acc.accRoleName() or '', 'utf-8'))
+        element.setAttribute('name', unicode(acc.accName(0) or '', 'utf-8'))
 
         try:
-            element.setAttribute('value', acc.accValue(0) or '')
+            element.setAttribute('value', unicode(acc.accValue(0) or '', 'utf-8'))
         except:
             pass
 
         try: 
             element.setAttribute('description', 
-                                 (acc.accDescription(0) or '').strip('\x00'))
+                                 unicode((acc.accDescription(0) or '').strip('\x00'), 'utf-8'))
         except:
             pass
 
-        element.setAttribute('state', '|'.join(acc.accStateSet()))
+        element.setAttribute('state', u'|'.join(acc.accStateSet()))
         
         if descendants:
             for child in acc:
@@ -90,10 +90,10 @@ if platform == 'win32':
                     _populate_accessible_node(doc, e, child)
 else:
     def _populate_accessible_node(doc, element, acc, descendants=True):
-        element.setAttribute('role', acc.getRoleName())
-        element.setAttribute('name', acc.name)
+        element.setAttribute('role', unicode(acc.getRoleName(), 'utf-8'))
+        element.setAttribute('name', unicode(acc.name, 'utf-8'))
 
-        element.setAttribute('description', acc.description)
+        element.setAttribute('description', unicode(acc.description, 'utf-8'))
 
         val = ''
         try:
@@ -106,13 +106,13 @@ else:
             else:
                 val = itext.getText(0,-1)
         else:
-            val = ivalue.currentValue
+            val = str(ivalue.currentValue)
 
-        element.setAttribute('value', val)
+        element.setAttribute('value', unicode(val, 'utf-8'))
         
         sset = [repr(a)[6:].lower() for a in acc.getState().getStates()]
         
-        element.setAttribute('state', '|'.join(sset))
+        element.setAttribute('state', u'|'.join(sset))
         if descendants:
             for child in acc:
                 if child:

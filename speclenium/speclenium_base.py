@@ -70,10 +70,10 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         self._event_list.append(e)
         
     def xmlrpc_get_accessible_event_match(self, event, start_at):
-        spec_event = specular_event_from_string(event)
+        spec_event = specular_event_from_string(event.encode('utf-8'))
         if events_map[spec_event.type] == 'not supported on platform':
             spec_event.documentElement.setAttribute(
-                'supportedOnPlatform', 'false')
+                'supportedOnPlatform', u'false')
             return spec_event.toxml()
 
         i = start_at
@@ -84,7 +84,7 @@ class SpecleniumBase(xmlrpc.XMLRPC):
 
         for e in event_list:
             if e.match(spec_event):
-                e.documentElement.setAttribute('index', str(i))
+                e.documentElement.setAttribute('index', unicode(i))
                 return e.toxml()
             i += 1
         return '<notfound index="%s"/>' % i
