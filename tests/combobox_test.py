@@ -42,19 +42,20 @@ class ComboboxEditTest(TestCommon, unittest.TestCase):
     path = "/source/widgets/combobox/combo-editable.html"
     _failed_asserts = []
 
-    def _wait_for_checked(self, checked, name="regexp:.*"):
-        if checked:
-            state_regex = 'regexp:.*checked.*'
-        elif checked is None:
-            state_regex = 'regexp:.*(indeterminate|mixed).*'
-        else:
-            state_regex = 'regexp:^((?!checked|indeterminate|mixed).)*$'
-
-        event_query = '<event type="object-state-changed-checked"><source><accessible role="check box" name="%s" state="%s"/></source></event>' % (name, state_regex)
+    def _wait_for_focus_change(self, 
+                               name, role="list item", value="regexp:.*"):
+        event_query = '<event type="object-focus"><source><accessible role="%s" name="%s" value="%s"/></source></event>' % (role, name, value)
         got_events = self.selenium.wait_accessible_events([event_query])
 
-        self.failUnless(got_events != [])
-        return got_events[0]
+        try:
+            self.failUnless(got_events != [], 
+                            'Did not get a focus event for "%s"' % name)
+        except AssertionError, e:
+            print '\n\n'.join(self.selenium.dump_accessible_event_cache())
+            self._failed_asserts.append(e)
+            return None
+        else:
+            return got_events[0]
 
     def _wait_for_combobox_show(self):
         events = [
@@ -67,8 +68,6 @@ class ComboboxEditTest(TestCommon, unittest.TestCase):
 
         
         got_events = self.selenium.wait_accessible_events(events)
-        print '\n--------------'.join(got_events)
-
         try:
             self.failUnless(len(got_events) == len(events), 
                             'Did not get the right events for combo box show\n'
@@ -83,10 +82,18 @@ class ComboboxEditTest(TestCommon, unittest.TestCase):
     def runTest(self):
         sel = self.selenium
         sel.type("cat", "cool\n")
-        sel.key_press("cat", "\\13")
+        sel.key_down("cat", "\\13")
         self._wait_for_combobox_show()
-        sel.click("dropButton")
-
+        sel.key_down('//*[@id="combo"]', "\\38")
+        self._wait_for_focus_change('catholic')        
+        sel.key_down('//*[@id="combo"]', "\\38")
+        self._wait_for_focus_change('cathedral')        
+        sel.key_down('//*[@id="combo"]', "\\38")
+        self._wait_for_focus_change('caterpillar')        
+        sel.key_down('//*[@id="combo"]', "\\13")
+        self._wait_for_focus_change(
+            'regexp:Editable Combo:.*', 'entry', 'caterpillar')        
+        
         self.failUnless(
             self._failed_asserts == [],
             'Failed assertions:\n%s' \
