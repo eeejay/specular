@@ -41,7 +41,7 @@ class AlertTest(TestCommon, unittest.TestCase):
     base_url = "http://codetalks.org/"
     path = "/source/widgets/alert/alert.html"
     _failed_asserts = []
-
+    expected_revision = 72
 
     def _wait_for_alert_show(self, subtest ,focus):
         events = [

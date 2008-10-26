@@ -40,6 +40,7 @@ class ImageTiledTest(TestCommon, unittest.TestCase):
     image and not 9.'''
     base_url = "http://codetalks.org/"
     path = "/source/widgets/img/tiled.html"
+    expected_revision = 71
 
     def runTest(self):
         sel = self.selenium

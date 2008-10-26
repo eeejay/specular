@@ -40,6 +40,7 @@ class CheckboxTest(TestCommon, unittest.TestCase):
     are toggled.'''
     base_url = "http://codetalks.org/"
     path = "/source/widgets/checkbox/checkbox.html"
+    expected_revision = 71
 
     def _wait_for_checked(self, checked, name="regexp:.*"):
         if checked:

@@ -40,6 +40,7 @@ class CheckboxTristateTest(TestCommon, unittest.TestCase):
     are toggled. And that the there is partial state.'''
     base_url = "http://codetalks.org/"
     path = "/source/widgets/checkbox/checkbox-tristate.html"
+    expected_revision = 71
 
     def _wait_for_checked(self, checked, name="regexp:.*"):
         if checked:

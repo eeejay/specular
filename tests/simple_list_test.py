@@ -40,6 +40,7 @@ class SimpleListTest(TestCommon, unittest.TestCase):
     correctly'''
     base_url = "http://codetalks.org/"
     path = "/source/widgets/list/list.html"
+    expected_revision = 71
 
     def runTest(self):
         sel = self.selenium
