@@ -81,7 +81,9 @@ class ComboboxEditTest(TestCommon, unittest.TestCase):
 
     def runTest(self):
         sel = self.selenium
-        sel.type("cat", "cool\n")
+        sel.type("cat", "cool")
+#        sel.focus("cat")
+#        sel.key_down_native("10")
         sel.key_down("cat", "\\13")
         self._wait_for_combobox_show()
         sel.key_down('//*[@id="combo"]', "\\38")
@@ -92,7 +94,9 @@ class ComboboxEditTest(TestCommon, unittest.TestCase):
         self._wait_for_focus_change('caterpillar')        
         sel.key_down('//*[@id="combo"]', "\\13")
         self._wait_for_focus_change(
-            'regexp:Editable Combo:.*', 'entry', 'caterpillar')        
+            'regexp:Editable Combo:.*', 
+            'regexp:(entry|editable text)', 
+            'caterpillar')        
         
         self.failUnless(
             self._failed_asserts == [],
