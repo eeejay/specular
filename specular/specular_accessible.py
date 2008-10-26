@@ -125,6 +125,7 @@ else:
                         element.appendChild(e)
 
 def specular_accessible_from_accessible(acc, descendants=True):    
+    if not acc: return None
     doc = getDOMImplementation().createDocument(None, "accessible", None)
     _populate_accessible_node(doc, doc.documentElement, acc, descendants)
     return specular_accessible_from_dom(doc.documentElement)

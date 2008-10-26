@@ -64,7 +64,6 @@ class SpecularSerial(Document):
         if isinstance(other, Document):
             other = other.documentElement
         rv = self._compareNode(self.documentElement, other)
-        print rv
         return rv
 
     def _compareNode(self, node1, node2):
