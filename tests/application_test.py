@@ -41,6 +41,7 @@ class ApplicationTest(TestCommon, unittest.TestCase):
     buffer mode in Windows screen readers.'''
     base_url = "http://codetalks.org/"
     path = "/source/widgets/grid/grid.html"
+    expected_revision = 71
 
     def runTest(self):
         sel = self.selenium

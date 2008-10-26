@@ -40,6 +40,7 @@ class ComboboxEditTest(TestCommon, unittest.TestCase):
     are toggled. And that the there is partial state.'''
     base_url = "http://codetalks.org/"
     path = "/source/widgets/combobox/combo-editable.html"
+    expected_revision = 71
     _failed_asserts = []
 
     def _wait_for_focus_change(self, 
