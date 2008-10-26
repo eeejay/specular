@@ -72,6 +72,9 @@ if __name__ == '__main__':
                       help="comma seperated list of browsers")
     parser.add_option("-g", "--gui", dest="gui",
                       action="store_true", help="run tests in gui")
+    parser.add_option("-U", "--base-url", dest="base_url",
+                      default="http://codetalks.org/",
+                      action="store", help="base url for all tests.")
     parser.add_option("-c", "--config", dest="cfg_file",
                       action="store", help="config file", 
                       default="settings.ini")
@@ -86,7 +89,7 @@ if __name__ == '__main__':
         for section in cfg.sections():
             print ' %s' % section
     else:
-        matrix_args = {}
+        matrix_args = {'base_url':options.base_url}
         if args != []:
             matrix_args['tests'] = args
         if options.browsers:

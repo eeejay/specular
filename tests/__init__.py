@@ -52,20 +52,22 @@ for mod in _test_modules:
 
 def build_test_suite(config_file,
                      browsers=None, 
-                     tests=base_tests.keys()):
+                     tests=base_tests.keys(),
+                     base_url=None):
     cfg_parser = ConfigParser()
     cfg_parser.read(config_file)
     if not browsers:
         browsers = cfg_parser.sections()
     full_suite = unittest.TestSuite()
     for browser in browsers:
+        class_dict = {'host': cfg_parser.get(browser, 'host'), 
+                      'command' : cfg_parser.get(browser, 'command')}
+        if base_url:
+            class_dict['base_url'] = base_url
         suite = unittest.TestSuite()
         for test_name in tests:
             c = new.classobj(
-                browser+test_name,
-                (base_tests[test_name],), 
-                {'host': cfg_parser.get(browser, 'host'), 
-                 'command' : cfg_parser.get(browser, 'command')})
+                browser+test_name, (base_tests[test_name],), class_dict)
             suite.addTest(c())
         full_suite.addTest(suite)
     return full_suite
