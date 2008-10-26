@@ -43,7 +43,10 @@ sys.path.insert(0, test_dir)
 
 def list_tests():
     print 'Available tests:'
-    for tname, tclass in tests.base_tests.iteritems():
+    test_names = tests.base_tests.keys()
+    test_names.sort()
+    for tname in test_names:
+        tclass = tests.base_tests[tname]
         try:
             short_desc = tclass.__doc__.split('\n')[0]
         except:
