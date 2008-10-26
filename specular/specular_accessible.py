@@ -66,17 +66,17 @@ def specular_accessible_from_dom(dom):
 
 if platform == 'win32':
     def _populate_accessible_node(doc, element, acc, descendants=True):
-        element.setAttribute('role', unicode(acc.accRoleName() or '', 'utf-8'))
-        element.setAttribute('name', unicode(acc.accName(0) or '', 'utf-8'))
+        element.setAttribute('role', unicode(acc.accRoleName() or ''))
+        element.setAttribute('name', unicode(acc.accName(0) or ''))
 
         try:
-            element.setAttribute('value', unicode(acc.accValue(0) or '', 'utf-8'))
+            element.setAttribute('value', unicode(acc.accValue(0) or ''))
         except:
             pass
 
         try: 
             element.setAttribute('description', 
-                                 unicode((acc.accDescription(0) or '').strip('\x00'), 'utf-8'))
+                                 unicode((acc.accDescription(0) or '').strip('\x00')))
         except:
             pass
 

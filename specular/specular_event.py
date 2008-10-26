@@ -108,11 +108,14 @@ def specular_event_from_event(event):
             event.type.startswith('object:children-changed') and \
             getattr(event, 'any_data', None):
         acc_dom = specular_accessible_from_accessible(event.any_data, False)
-    else:
+    elif event.source is not None:
         acc_dom = specular_accessible_from_accessible(event.source, False)
+    else:
+        acc_dom = None
 
-    source = doc.createElement('source')
-    doc.documentElement.appendChild(source)
-    source.appendChild(acc_dom.documentElement)
+    if acc_dom:
+        source = doc.createElement('source')
+        doc.documentElement.appendChild(source)
+        source.appendChild(acc_dom.documentElement)
 
     return specular_event_from_dom(doc.documentElement)
