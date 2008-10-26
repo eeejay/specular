@@ -146,7 +146,6 @@ class Speclenium(SpecleniumBase):
                 x.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT and \
                 x.accParent.accParent.accRole(0) == pyia.ROLE_SYSTEM_CLIENT
             rv = pyia.findDescendant(window_acc, pred)
-            print rv
         elif agent_id == self.AGENT_SAFARI:
             # Safari
             rv = window_acc[3][0][3][0][3]
