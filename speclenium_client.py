@@ -15,6 +15,9 @@ class SpecleniumClient(selenium):
         self._speclenium_server.flush_event_cache()
         return selenium.do_command(self, verb, args)
 
+    def flush_accessible_event_cache(self):
+        self._speclenium_server.flush_event_cache()
+
     def dump_accessible_event_cache(self):
         return self._speclenium_server.dump_accessible_event_cache()
 
