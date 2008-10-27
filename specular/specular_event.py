@@ -45,6 +45,8 @@ if platform == 'win32':
         {u'object-state-changed-checked' : pyia.EVENT_OBJECT_STATECHANGE,
          u'object-destroy' : pyia.EVENT_OBJECT_HIDE,
          u'object-add' : pyia.EVENT_OBJECT_SHOW,
+         u'object-text-delete' : 'not supported on platform',
+         u'object-text-insert' : 'not supported on platform',
          u'object-focus' : pyia.EVENT_OBJECT_FOCUS,
          u'system-alert' : pyia.EVENT_SYSTEM_ALERT}
     def get_specular_type(native_type):
@@ -56,6 +58,8 @@ else:
         {u'object-state-changed-checked':'object:state-changed:checked',
          u'object-destroy' : 'object:children-changed:remove',
          u'object-add' : 'object:children-changed:add',
+         u'object-text-delete' : 'object:text-changed:delete',
+         u'object-text-insert' : 'object:text-changed:insert',
          u'object-focus' : 'focus',
          u'system-alert' : 'not supported on platform'}
     def get_specular_type(native_type):
