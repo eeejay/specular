@@ -157,3 +157,8 @@ class Speclenium(SpecleniumBase):
             rv = pyia.findDescendant(window_acc, pred)
         return rv
 
+    def _is_in_frame(self, event):
+        def _pred(x):
+            return pyia.windowFromAccessibleObject(x) == \
+                pyia.windowFromAccessibleObject(self._top_frame)
+        return pyia.findAncestor(event.source, _pred)

@@ -66,8 +66,9 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         raise NotImplementedError
 
     def _event_cache_cb(self, event):
-        e = specular_event_from_event(event)
-        self._event_list.append(e)
+        if self._is_in_frame(event):
+            e = specular_event_from_event(event)
+            self._event_list.append(e)
         
     def xmlrpc_get_accessible_event_match(self, event, start_at):
         spec_event = specular_event_from_string(event.encode('utf-8'))
@@ -119,6 +120,9 @@ class SpecleniumBase(xmlrpc.XMLRPC):
             return found.toxml()
         else:
             return ''
+
+    def _is_in_frame(self, event):
+        raise NotImplementedError        
 
     def _find_root_doc(self, window_acc):
         raise NotImplementedError

@@ -64,6 +64,13 @@ class Speclenium(SpecleniumBase):
                     self._get_win, 'document:load-complete')
                 self._top_frame = frame
 
+    def _is_in_frame(self, event):
+        try:
+            return pyatspi.findAncestor(
+                event.source, lambda x: x == self._top_frame)
+        except:
+            return None
+
     def xmlrpc_start_event_cache(self):
         if not self._registered_global_listener:
             for value in events_map.values():
