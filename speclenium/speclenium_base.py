@@ -94,7 +94,7 @@ class SpecleniumBase(xmlrpc.XMLRPC):
 
     def xmlrpc_get_accessible_doc(self):
         if not self._top_frame:
-            print 'no _top_frame'
+            print 'ERROR: Did not get top accessible frame'
             return ''
         
         tree = self._find_root_doc(self._top_frame)
@@ -106,12 +106,13 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         return xml_tree
 
     def xmlrpc_get_accessible_match(self, acc_node):
-        try:
-            tree = self._find_root_doc(self._top_frame)
-            doc_tree = specular_accessible_from_accessible(tree)
-        except:
+        if not self._top_frame:
+            print 'ERROR: Did not get top accessible frame'
             return ''
 
+        tree = self._find_root_doc(self._top_frame)
+        doc_tree = specular_accessible_from_accessible(tree)
+        
         found = doc_tree.find_subtree(
             specular_accessible_from_string(acc_node))
         if found:

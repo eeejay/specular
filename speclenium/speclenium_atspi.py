@@ -50,21 +50,19 @@ class Speclenium(SpecleniumBase):
         SpecleniumBase.xmlrpc_start(self, browser_start_cmd)
         self._top_frame = None
         pyatspi.Registry.registerEventListener(
-            self._get_win, 'window:activate')
+            self._get_win, 'document:load-complete')
         return True
 
     def _get_win(self, event):
-        if not len(event.host_application) == 2:
-            return
-        frames = [f for f in event.host_application]
-        if 'Selenium Remote Control' not in ' '.join([f.name for f in frames]):
-            return
-        for frame in frames:
-            if 'Selenium Remote Control' not in frame.name:
-                self._top_frame = frame
+        if 'selenium-server/core/Blank.html' in event.source.name:
+            frame = pyatspi.findAncestor(
+                event.source,
+                lambda x: x.getRole() == pyatspi.ROLE_FRAME)
+            if frame:
                 print 'TOP FRAME:', frame
                 pyatspi.Registry.deregisterEventListener(
-                    self._get_win, 'window:activate')
+                    self._get_win, 'document:load-complete')
+                self._top_frame = frame
 
     def xmlrpc_start_event_cache(self):
         if not self._registered_global_listener:
