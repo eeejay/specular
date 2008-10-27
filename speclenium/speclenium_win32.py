@@ -161,4 +161,9 @@ class Speclenium(SpecleniumBase):
         def _pred(x):
             return pyia.windowFromAccessibleObject(x) == \
                 pyia.windowFromAccessibleObject(self._top_frame)
-        return pyia.findAncestor(event.source, _pred)
+        try:
+            return pyia.findAncestor(
+                pyia.accessibleObjectFromWindow(event.hwnd),
+                _pred)
+        except:
+            return None
