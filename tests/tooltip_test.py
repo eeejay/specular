@@ -34,33 +34,57 @@ import unittest, time, re
 from sys import platform
 from common import TestCommon
 
+
+
 class TooltipTest(TestCommon, unittest.TestCase):
     '''WAI-ARIA Tooltip Test
     Tests to see if an accessible with a 'tooltip' role is in the document 
     at the proper moment.'''
-    base_url = "http://test.cita.uiuc.edu/"
-    path = "/aria/tooltip/view_inline.php?title=Tooltip%20Example%201&ginc=includes/tooltip1_inline.inc&gcss=css/tooltip1_inline.css&gjs=js/tooltip1_inline.js,../js/widgets_inline.js,../js/globals.js"
+    base_url = "http://codetalks.org/"
+    path = "/source/widgets/tooltip/tooltip.html"
+    _failed_asserts = []
+
+    def _tooltip_showing(self, is_showing):
+        tooltip_present = \
+            self.selenium.get_accessible_match(
+                '<accessible name="Some tooltip" role="tool tip"/>')
+
+        if is_showing:
+            tooltip_present = tooltip_present == ''
+        else:
+            tooltip_present = tooltip_present != ''
+        try:
+            self.failUnless(
+                tooltip_present, 
+                'No tooltip should be present before it is presented.')
+        except AssertionError, e:
+            self._failed_asserts.append(e)
+
+    def _wait_for_tooltip(self):
+        event_query = '<event type="object-add"><source>' \
+            '<accessible name="Some tooltip" role="tool tip"/>' \
+            '</source></event>'
+        got_events = self.selenium.wait_accessible_events([event_query])
+
+        try:
+            self.failUnless(got_events != [], 
+                            'Did not get a show tooltip event')
+        except AssertionError, e:
+            print '\n\n'.join(self.selenium.dump_accessible_event_cache())
+            self._failed_asserts.append(e)
+            return None
+        else:
+            return got_events[0]
 
     def runTest(self):
         sel = self.selenium
-        tooltip_present = \
-            sel.get_accessible_match('<accessible '
-                                     'name="Your first name is a optional" '
-                                     'role="tool tip"/>')
-        self.failUnless(
-                tooltip_present == '', 
-                'No tooltip should be present before click')
+        self._tooltip_showing(False)
+        sel.mouse_over("link=Google")
+        self._wait_for_tooltip()
+        self._tooltip_showing(True)
+        sel.mouse_out("link=Google")
+        self._tooltip_showing(False)
 
-
-        sel.click("xpath=//*[@id=\"first\"]")
-
-        tooltip_present = \
-            sel.get_accessible_match('<accessible '
-                                     'name="Your first name is a optional" '
-                                     'role="tool tip"/>')
-        self.failUnless(
-            tooltip_present != '', 
-            'Tooltip should be present after click')
 
 #if __name__ == "__main__":
 #    unittest.main()
