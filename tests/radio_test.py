@@ -46,7 +46,7 @@ class RadioTest(TestCommon, unittest.TestCase):
         success = False
         for i in xrange(10):
             e = sel.get_accessible_event_match(
-                '<event type="object-state-changed-checked">'
+                '<event type="object-state-changed">'
                 '<source><accessible role="radio button"/>'
                 '</source></event>', 0)
             if 'notfound' not in e:

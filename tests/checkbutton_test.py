@@ -48,7 +48,7 @@ class CheckboxTest(TestCommon, unittest.TestCase):
         else:
             state_regex = 'regexp:^((?!checked).)*$'
 
-        event_query = '<event type="object-state-changed-checked"><source><accessible role="check box" name="%s" state="%s"/></source></event>' % (name, state_regex)
+        event_query = '<event type="object-state-changed"><source><accessible role="check box" name="%s" state="%s"/></source></event>' % (name, state_regex)
         got_events = self.selenium.wait_accessible_events([event_query])
 
         self.failUnless(got_events != [])
