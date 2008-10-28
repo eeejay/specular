@@ -85,6 +85,11 @@ class TooltipTest(TestCommon, unittest.TestCase):
         sel.mouse_out("link=Google")
         self._tooltip_showing(False)
 
+        self.failUnless(
+            self._failed_asserts == [],
+            'Failed assertions:\n%s' \
+                % '\n'.join(map(str, self._failed_asserts)))
+    
 
 #if __name__ == "__main__":
 #    unittest.main()
