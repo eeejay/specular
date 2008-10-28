@@ -48,6 +48,7 @@ if platform == 'win32':
          u'object-text-delete' : 'not supported on platform',
          u'object-text-insert' : 'not supported on platform',
          u'object-focus' : pyia.EVENT_OBJECT_FOCUS,
+         u'object-value-change' : pyia.EVENT_OBJECT_VALUECHANGE,
          u'system-alert' : pyia.EVENT_SYSTEM_ALERT}
     def get_specular_type(native_type):
         for key, value in events_map.iteritems():
@@ -61,6 +62,7 @@ else:
          u'object-text-delete' : 'object:text-changed:delete',
          u'object-text-insert' : 'object:text-changed:insert',
          u'object-focus' : 'focus',
+         u'object-value-change' : 'object:property-change:accessible-value',
          u'system-alert' : 'not supported on platform'}
     def get_specular_type(native_type):
         for key, value in events_map.iteritems():
