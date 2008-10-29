@@ -50,13 +50,13 @@ class TooltipTest(TestCommon, unittest.TestCase):
                 '<accessible name="Some tooltip" role="tool tip"/>')
 
         if is_showing:
-            tooltip_present = tooltip_present == ''
-        else:
             tooltip_present = tooltip_present != ''
+        else:
+            tooltip_present = tooltip_present == ''
         try:
             self.failUnless(
                 tooltip_present, 
-                'No tooltip should be present before it is presented.')
+                'Tooltip should have been presented: %s' % is_showing)
         except AssertionError, e:
             self._failed_asserts.append(e)
 
