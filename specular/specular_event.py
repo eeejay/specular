@@ -86,7 +86,7 @@ class SpecularEvent(SpecularSerial):
         return events_map[self.type]
 
     def match(self, other):
-        if other.type == self.type:
+        if set(other.type.split('|')).intersection(set(self.type.split('|'))):
             if self.source.compareNode(other.source):
                 return True
         return False
