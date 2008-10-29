@@ -65,6 +65,9 @@ class AlertTest(TestCommon, unittest.TestCase):
                                                            '\n'.join(events),
                                                            '\n'.join(got_events)))
         except AssertionError, e:
+            print '-'*80
+            print '\n'.join(self.selenium.dump_accessible_event_cache())
+            print '-'*80
             self._failed_asserts.append(e)
 
     def _assert_no_alert_showing(self, subtest):
