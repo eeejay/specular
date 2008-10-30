@@ -74,6 +74,12 @@ if platform == 'win32':
         except:
             pass
 
+        try:
+            element.setAttribute('actions', 
+                                 unicode(acc.accDefaultAction(0) or ''))
+        except:
+            pass
+
         try: 
             element.setAttribute('description', 
                                  unicode((acc.accDescription(0) or '').strip('\x00')))
@@ -107,6 +113,17 @@ else:
                 val = itext.getText(0,-1)
         else:
             val = str(ivalue.currentValue)
+
+        try:
+            iaction = acc.queryAction()
+        except NotImplementedError:
+            pass
+        else:
+            actions = []
+            for i in xrange(iaction.nActions):
+                actions.append(iaction.getName(i))
+            element.setAttribute('actions', 
+                                 unicode('|'.join(actions), 'utf-8'))
 
         element.setAttribute('value', unicode(val, 'utf-8'))
         
