@@ -53,7 +53,8 @@ for mod in _test_modules:
 def build_test_suite(config_file,
                      browsers=None, 
                      tests=base_tests.keys(),
-                     base_url=None):
+                     base_url=None,
+                     include_broken=False):
     cfg_parser = ConfigParser()
     cfg_parser.read(config_file)
     if not browsers:
@@ -66,6 +67,8 @@ def build_test_suite(config_file,
             class_dict['base_url'] = base_url
         suite = unittest.TestSuite()
         for test_name in tests:
+            if not include_broken and base_tests[test_name].broken:
+                continue
             c = new.classobj(
                 browser+test_name, (base_tests[test_name],), class_dict)
             suite.addTest(c())

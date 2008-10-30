@@ -51,6 +51,8 @@ def list_tests():
             short_desc = tclass.__doc__.split('\n')[0]
         except:
             short_desc = ''
+        if tclass.broken:
+            short_desc += ' (BROKEN)'
         print ' %s%s%s' % (tname, ' '*(25-len(tname)), short_desc)
 
 def main(cfg_file, matrix_args, gui):
@@ -71,6 +73,9 @@ if __name__ == '__main__':
                       action="store_true", help="list available tests")
     parser.add_option("--list-agents", dest="list_agents",
                       action="store_true", help="list available user agents")
+    parser.add_option("--include-broken", dest="include_broken",
+                      action="store_true", default=False,
+                      help="include broken tests in suite")
     parser.add_option("-B", "--browsers", dest="browsers",
                       help="comma seperated list of browsers")
     parser.add_option("-g", "--gui", dest="gui",
@@ -92,7 +97,8 @@ if __name__ == '__main__':
         for section in cfg.sections():
             print ' %s' % section
     else:
-        matrix_args = {'base_url':options.base_url}
+        matrix_args = {'base_url':options.base_url, 
+                       'include_broken':options.include_broken}
         if args != []:
             matrix_args['tests'] = args
         if options.browsers:

@@ -42,6 +42,7 @@ class AlertTest(TestCommon, unittest.TestCase):
     path = "/source/widgets/alert/alert.html"
     _failed_asserts = []
     expected_revision = 72
+    broken = True
 
     def _wait_for_alert_show(self, subtest ,focus):
         events = [

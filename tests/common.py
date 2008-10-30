@@ -4,6 +4,8 @@ class TestCommon(object):
     '''Do common setup and teardown tasks.'''
     expected_revision = None
     fail_on_revision = False
+    broken = False
+
     def setUp(self):
         self.verificationErrors = []
         self.selenium = selenium(self.host, 4444, self.command, self.base_url)
@@ -12,7 +14,7 @@ class TestCommon(object):
         self.selenium.open(self.path)
         self._check_revision()
         self.selenium.window_maximize()
-        
+
     def _check_revision(self):
         if self.expected_revision is None: return
         rev_string = self.selenium.get_text("//*[@id=\"revision\"]")
