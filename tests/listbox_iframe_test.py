@@ -59,17 +59,17 @@ class ListBoxIframeTest(TestCommon, unittest.TestCase):
 
     def runTest(self):
         sel = self.selenium
-        sel.focus("//*[@id=\"listbox1\"]")
+        sel.click("//*[@id=\"listbox1-1\"]")
         self._wait_for_focus_change('Green')
-        sel.key_down("//*[@id=\"listbox1\"]", "40")
+        sel.click("//*[@id=\"listbox1-2\"]")
         self._wait_for_focus_change('Orange')
-        sel.key_down("//*[@id=\"listbox1\"]", "40")
+        sel.click("//*[@id=\"listbox1-3\"]")
         self._wait_for_focus_change('Red')
-        sel.key_down("//*[@id=\"listbox1\"]", "40")
+        sel.click("//*[@id=\"listbox1-4\"]")
         self._wait_for_focus_change('Blue')
-        sel.key_down("//*[@id=\"listbox1\"]", "40")
+        sel.click("//*[@id=\"listbox1-5\"]")
         self._wait_for_focus_change('Violet')
-        sel.key_down("//*[@id=\"listbox1\"]", "40")
+        sel.click("//*[@id=\"listbox1-6\"]")
         self._wait_for_focus_change('Periwinkle')
 
         self.failUnless(
