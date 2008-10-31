@@ -39,7 +39,7 @@ class SimpleListTest(TestCommon, unittest.TestCase):
     Tests to see if static divs with "list" and "listitem" roles are exposed
     correctly'''
     base_url = "http://codetalks.org/"
-    path = "/source/widgets/list/list.html"
+    path = "/source/simple/list.html"
     expected_revision = 71
 
     def runTest(self):
