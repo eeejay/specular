@@ -9,9 +9,10 @@
     <head>
       <link rel="stylesheet" type="text/css" href="api-compare.css" />
       <script type="text/javascript" src="api-compare.js" />
-      <title>An Experiment</title>
+      <title><xsl:value-of select="title"/></title>
     </head>
     <body>
+      <h1><xsl:value-of select="title"/></h1>
       <p>
         <span class="revInserted">Inserted</span><xsl:text> </xsl:text>
         <span class="revDeleted">Deleted</span><xsl:text> </xsl:text>
@@ -22,7 +23,8 @@
       </p>
       <table border="1">
         <tr>
-          <xsl:apply-templates/> 
+          <xsl:apply-templates select="left"/> 
+          <xsl:apply-templates select="right"/> 
         </tr>
       </table>
     </body>

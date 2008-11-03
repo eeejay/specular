@@ -1,5 +1,5 @@
 from xml.dom import Node
-from xml.dom.minidom import getDOMImplementation
+from xml.dom.minidom import getDOMImplementation, parseString
 from script_store import ScriptStore
 from random import random
 
@@ -109,8 +109,8 @@ class MarkChangesScriptStore(ScriptStore):
         
         return tree1.get_doc(), tree2.get_doc()
 
-    def get_sidebyside(self):
-        doc = getDOMImplementation().createDocument('', 'sidebyside', None)
+    def get_sidebyside(self, title="Side-By-Side Tree Comparison"):
+        doc = parseString('<sidebyside><title>%s</title></sidebyside>' % title)
         doc1, doc2 = self.get_tree_revs()
         left = doc.createElement('left')
         left.appendChild(doc1.documentElement)

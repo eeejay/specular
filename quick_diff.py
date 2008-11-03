@@ -118,6 +118,8 @@ class AccessibleTreeMatcher(treediff.DomTreeMatcher):
     def __init__(self, tree1, tree2, f=0.75, t=0.5, 
                  tree_parser=AccessibleTreeIface, 
                  script_store=AccessibleChangesScriptStore):
+        tree1 = parseString(tree1.documentElement.lastChild.toxml())
+        tree2 = parseString(tree2.documentElement.lastChild.toxml())
         treediff.DomTreeMatcher.__init__(
             self, tree1, tree2, f, t, tree_parser, script_store)
 
@@ -130,12 +132,6 @@ class AccessibleTreeMatcher(treediff.DomTreeMatcher):
         val1 = self._get_joint_value(node1)
         val2 = self._get_joint_value(node2)
         sm = SequenceMatcher(None, val1, val2)
-#        ratio = sm.ratio()
-#        if ratio > self._f:
-#            print '*'*80
-#            print val1.encode('utf-8')
-#            print val2.encode('utf-8')
-#            print ratio
         return sm.ratio() > self._f
 
     def _map(self, n1, n2):
@@ -151,7 +147,7 @@ class AccessibleTreeMatcher(treediff.DomTreeMatcher):
                     self._map(a1, a2)
                 
 
-def get_acc_tree(host, command, url):
+def get_acc_tree(profile_name,host, command, url):
     parsed = urlparse(url)
     try:
         first_half = url.split(parsed[2])[0]
@@ -166,7 +162,8 @@ def get_acc_tree(host, command, url):
     s.window_maximize()
     x = s.get_accessible_doc()
     s.stop()
-    return parseString(x.encode('utf-8'))
+    return parseString('<tree><title>%s</title>%s</tree>' % 
+                       (profile_name, x.encode('utf-8')))
 
 def browser_cb(option, opt_str, value, parser):
     browsers = value.split(',')
@@ -188,6 +185,12 @@ def file_cb(option, opt_str, value, parser):
         strip_whitespace(d)
         acc_trees.append(d)
     parser.values.acc_trees = acc_trees
+
+def _get_tree_title(tree):
+    title_tags = tree.getElementsByTagName('title')
+    if not title_tags:
+        return ''
+    return title_tags[0].firstChild.data.strip()
 
 if __name__ == '__main__':
     from optparse import OptionParser
@@ -227,6 +230,7 @@ if __name__ == '__main__':
         for i in xrange(len(acc_trees)):
             if type(acc_trees[i]) == str:
                 acc_trees[i] = get_acc_tree(
+                    acc_trees[i],
                     cfg.get(acc_trees[i], 'host'), 
                     cfg.get(acc_trees[i], 'command'),
                     args[0])
@@ -239,7 +243,13 @@ if __name__ == '__main__':
                 print '\n'.join(s.simple_ops)
             if options.output:
                 f = open(options.output, 'w')
-                doc = s.get_sidebyside()
+                title1 = _get_tree_title(options.acc_trees[0])
+                title2 = _get_tree_title(options.acc_trees[1])
+                doc = s.get_sidebyside("%s vs. %s" % (title1, title2))
+                doc.getElementsByTagName('left')[0].setAttribute(
+                    "profile", title1)
+                doc.getElementsByTagName('right')[0].setAttribute(
+                    "profile", title2)
                 doc.insertBefore(
                     doc.createProcessingInstruction(
                         'xml-stylesheet', 

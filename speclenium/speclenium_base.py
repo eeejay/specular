@@ -100,7 +100,7 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         
         tree = self._find_root_doc(self._top_frame)
         if tree:
-            xml_tree = specular_accessible_from_accessible(tree).toxml()
+            xml_tree = specular_accessible_from_accessible(tree).documentElement.toxml()
         else:
             print 'no xml_tree'
             xml_tree = ''
