@@ -18,10 +18,13 @@
         <span class="revDeleted">Deleted</span><xsl:text> </xsl:text>
         <span class="revUpdated">Updated</span><xsl:text> </xsl:text>
         <span class="revMoved">Moved</span><br/>
-        <span><b>[</b>name • role • description • state<b>]</b> 
-</span>
+        <span><b>[</b>name • role<b>]</b></span>
       </p>
-      <table border="1">
+      <table id="compareTable">
+        <tr>
+          <th><xsl:value-of select="//left/@profile"/></th>
+          <th><xsl:value-of select="//right/@profile"/></th>
+        </tr>
         <tr>
           <xsl:apply-templates select="left"/> 
           <xsl:apply-templates select="right"/> 
@@ -30,6 +33,7 @@
     </body>
   </html>
 </xsl:template>
+
 
 <xsl:template match="left">
   <td width="%50">
@@ -50,21 +54,13 @@
 <xsl:template match="accessible">
   <li>
     <xsl:variable name="baseclass">accessiblenode</xsl:variable>
+
 	<xsl:choose>
 
 	  <xsl:when test="contains(@revtree:changes, 'moved-self')">
 		<xsl:attribute name="class">
 		  <xsl:value-of select="concat($baseclass,' revMoved')"/>
 		</xsl:attribute> 
-		<xsl:attribute name="id">
-		  <xsl:value-of select="concat('move', @revtree:moveId)"/>
-		</xsl:attribute> 
-		<xsl:attribute name="onmouseover">
-          highlightMoved(this);
-		</xsl:attribute>    
-		<xsl:attribute name="onmouseout">
-          unhighlightMoved(this);
-		</xsl:attribute>         
 	  </xsl:when>
 
 	  <xsl:when test="contains(@revtree:changes, 'deleted-self')">
@@ -86,10 +82,40 @@
 	  </xsl:otherwise>
 
   </xsl:choose>	
-    <b>[</b><xsl:apply-templates select="@name"/> •
-    <xsl:apply-templates select="@role"/> • 
-    <xsl:apply-templates select="@description"/> •
-    <xsl:apply-templates select="@state"/><b>]</b> 
+    <span>
+      <xsl:if test="@revtree:id">
+	    <xsl:attribute name="id">
+	      <xsl:value-of select="@revtree:id"/>
+	    </xsl:attribute> 
+      </xsl:if>
+	  <xsl:attribute name="onmouseover">highlightNode(this);</xsl:attribute> 
+	  <xsl:attribute name="onmouseout">unhighlightNode(this);</xsl:attribute> 
+	  <xsl:attribute name="onclick">showDetails(this, true);</xsl:attribute> 
+      <b>[</b>
+      <xsl:apply-templates select="@name">
+        <xsl:with-param name="textdisplay">ellipsize</xsl:with-param>
+      </xsl:apply-templates>
+ •
+      <xsl:apply-templates select="@role"/><b>]</b> 
+      <table class="accDetails">
+        <tr>
+          <td>Name:</td>
+          <td><xsl:apply-templates select="@name"/></td>
+        </tr>
+        <tr>
+          <td>Role:</td>
+          <td><xsl:apply-templates select="@role"/></td>
+        </tr>
+        <tr>
+          <td>Description:</td>
+          <td><xsl:apply-templates select="@description"/></td>
+        </tr>
+        <tr>
+          <td>State:</td>
+          <td><xsl:apply-templates select="@state"/></td>
+        </tr>
+      </table>
+    </span>
     <xsl:if test="count(child::*)">
       <ul>
         <xsl:apply-templates/> 
@@ -98,7 +124,8 @@
   </li>
 </xsl:template>
 
-<xsl:template match="@*">
+<xsl:template match="//accessible/@*">
+  <xsl:param name="textdisplay">no-ellipsize</xsl:param>
   <span>
 	<xsl:variable name="baseclass" 
                   select="concat('accessible', name())"/>
@@ -127,9 +154,41 @@
 		</xsl:attribute> 
 	  </xsl:otherwise>
 
-  </xsl:choose>	
-	<xsl:value-of select="."/>
+    </xsl:choose>
+    <xsl:choose>
+      <xsl:when test="$textdisplay = 'no-ellipsize'">
+        <xsl:apply-templates select="." mode="no-ellipsize"/>
+      </xsl:when>
+	  <xsl:otherwise>
+        <xsl:apply-templates select="." mode="ellipsize"/>
+	  </xsl:otherwise>
+    </xsl:choose>
+      
   </span>
+</xsl:template>
+
+<xsl:template match="//accessible/@*" mode="no-ellipsize">
+  <xsl:value-of select="." /> 
+</xsl:template>
+
+<xsl:template match="//accessible/@*" mode="ellipsize">
+  <xsl:variable name="len" 
+                select="string-length(normalize-space(.))" />
+  <xsl:choose> 
+    <!-- if collapsed headline_text is 15 characters or longer, 
+         display the first 15 characters and add an ellipsis -->
+    
+    <xsl:when test="$len &gt;= 15"> 
+      <xsl:value-of select="substring(normalize-space(.),1,15)"/> 
+      <xsl:text> ...</xsl:text> 
+    </xsl:when>
+    
+    <!-- if collapsed headline_text is shorter than  
+         15 characters, display it unmodified -->
+    <xsl:otherwise> 
+      <xsl:value-of select="." /> 
+    </xsl:otherwise> 
+  </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>

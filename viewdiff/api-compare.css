@@ -1,7 +1,18 @@
-table.moreinfo { 
+table.accDetails { 
   display: none;
   background-color: #CACAFF;
 }
+
+#compareTable { 
+  border: 1px solid black;
+  border-collapse: separated;
+  margin: auto;
+}
+
+#compareTable td { 
+  width: 400px;
+}
+
 .fieldname { 
   font-weight: bold;
 }
@@ -10,21 +21,34 @@ a.accessible:link {
   text-decoration: none;
 }
 
+li.revUpdated { 
+  background-color: #aaf;
+}
+
 .revUpdated { 
-  background-color: #B5B5FF;
+  background-color: #66f;
+}
+
+li.revDeleted { 
+  background-color: #faa;
 }
 
 .revDeleted { 
-  background-color: #FF8380;
+  background-color: #f66;
+}
+
+li.revInserted { 
+  background-color: #bfb;
 }
 
 .revInserted { 
-  background-color: #80FF8D;
+  background-color: #6f6;
 }
 
 .revMoved { 
-  background-color: #FFF791;
+  background-color: #fff;
 }
+
 /*
 span.revUpdated { 
   color: #000085;

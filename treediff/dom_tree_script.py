@@ -47,6 +47,18 @@ class MarkChangesScriptStore(ScriptStore):
         tree2 = self._tree.deep_copy()
         pairs2 = dict(zip(self._tree.nodes_breadth(), tree2.nodes_breadth()))
 
+        for n2, n1 in self._pairs.items():
+            if n1.nodeType != Node.ELEMENT_NODE:
+                continue
+            n_id = id(n1)
+            try:
+                pairs2[n2].setAttribute('revtree:id', hex(n_id)+"Right")
+            except KeyError:
+                # deleted
+                continue
+            n1.setAttribute('revtree:id', hex(n_id)+"Left")
+            
+
         for tree in (tree1, tree2):
             tree.get_root().setAttribute(
                 'xmlns:revtree', 'http://monotonous.org')
@@ -58,16 +70,9 @@ class MarkChangesScriptStore(ScriptStore):
                 self._inserted.append(n2)
             elif n1.nodeType == Node.TEXT_NODE:
                 self._mark_change(n1.parentNode, 'moved-text')
-                n1.parentNode.setAttribute(
-                    'revtree:moveTextId', move_id+'Left')
-                self._mark_change(pairs2[n2.parentNode], 'moved-text')
-                pairs2[n2.parentNode].setAttribute(
-                    'revtree:moveTextId', move_id+'Right')
             else:
                 self._mark_change(n1, 'moved-self')
-                n1.setAttribute('revtree:moveId', move_id+'Left')
                 self._mark_change(pairs2[n2], 'moved-self')
-                pairs2[n2].setAttribute('revtree:moveId', move_id+'Right')
 
         # Delete
         for n in self._deleted:
