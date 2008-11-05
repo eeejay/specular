@@ -1,6 +1,11 @@
+td { 
+  vertical-align: top;
+}
+
 table.accDetails { 
   display: none;
   background-color: #CACAFF;
+  margin-left: 10px;
 }
 
 #compareTable { 
@@ -16,6 +21,7 @@ table.accDetails {
 .fieldname { 
   font-weight: bold;
 }
+
 a.accessible:link { 
   color: black;
   text-decoration: none;
@@ -37,11 +43,11 @@ li.revDeleted {
   background-color: #f66;
 }
 
-li.revInserted { 
-  background-color: #bfb;
+.revInserted>div { 
+  background-color: #7f7;
 }
 
-.revInserted { 
+span.revInserted { 
   background-color: #6f6;
 }
 
@@ -49,28 +55,18 @@ li.revInserted {
   background-color: #fff;
 }
 
-/*
-span.revUpdated { 
-  color: #000085;
+.revAttribUpdate>div { 
+  background-color: #ddf;
 }
 
-span.revDeleted { 
-  color: #AE0000;
-}
-
-span.revInserted { 
-  color: #009305;
-}
-
-span.revMoved { 
-  color: #FF8200;
-}
-*/
 ul { 
-  padding-left: 1em;
+  padding-left: 0;
   list-style: none;
 }
 
+li { 
+  margin-left: 1em;
+}
 .accessiblerole{ 
   font-style: italic;
 }

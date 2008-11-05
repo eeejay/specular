@@ -53,36 +53,25 @@
 
 <xsl:template match="accessible">
   <li>
-    <xsl:variable name="baseclass">accessiblenode</xsl:variable>
-
-	<xsl:choose>
-
-	  <xsl:when test="contains(@revtree:changes, 'moved-self')">
-		<xsl:attribute name="class">
-		  <xsl:value-of select="concat($baseclass,' revMoved')"/>
-		</xsl:attribute> 
-	  </xsl:when>
-
-	  <xsl:when test="contains(@revtree:changes, 'deleted-self')">
-		<xsl:attribute name="class">
-		  <xsl:value-of select="concat($baseclass,' revDeleted')"/>
-		</xsl:attribute> 
-	  </xsl:when>
-
-	  <xsl:when test="contains(@revtree:changes, 'inserted-self')">
-		<xsl:attribute name="class">
-		  <xsl:value-of select="concat($baseclass,' revInserted')"/>
-		</xsl:attribute> 
-	  </xsl:when>
-
-	  <xsl:otherwise>
-		<xsl:attribute name="class">
-		  <xsl:value-of select="$baseclass"/>
-		</xsl:attribute> 
-	  </xsl:otherwise>
-
-  </xsl:choose>	
-    <span>
+    <xsl:attribute name="class">
+      accessiblenode
+	  <xsl:if test="contains(@revtree:changes, 'moved-self')">		
+		revMoved
+	  </xsl:if>
+	  <xsl:if test="contains(@revtree:changes, 'deleted-self')">
+		revDeleted
+	  </xsl:if>
+	  <xsl:if test="contains(@revtree:changes, 'inserted-self')">
+        revInserted
+	  </xsl:if>
+	  <xsl:if test="contains(@revtree:changes, 'updated-attrib')">
+		revAttribUpdate
+	  </xsl:if>
+	  <xsl:if test="contains(@revtree:changes, 'inserted-attrib')">
+		revAttribUpdate
+	  </xsl:if>
+    </xsl:attribute>
+    <div>
       <xsl:if test="@revtree:id">
 	    <xsl:attribute name="id">
 	      <xsl:value-of select="@revtree:id"/>
@@ -90,13 +79,8 @@
       </xsl:if>
 	  <xsl:attribute name="onmouseover">highlightNode(this);</xsl:attribute> 
 	  <xsl:attribute name="onmouseout">unhighlightNode(this);</xsl:attribute> 
-	  <xsl:attribute name="onclick">showDetails(this, true);</xsl:attribute> 
-      <b>[</b>
-      <xsl:apply-templates select="@name">
-        <xsl:with-param name="textdisplay">ellipsize</xsl:with-param>
-      </xsl:apply-templates>
- •
-      <xsl:apply-templates select="@role"/><b>]</b> 
+	  <xsl:attribute name="onclick">showDetails(this);</xsl:attribute> 
+      <span style="margin-left: 10px;"><xsl:value-of select="@role"/></span>
       <table class="accDetails">
         <tr>
           <td>Name:</td>
@@ -114,8 +98,16 @@
           <td>State:</td>
           <td><xsl:apply-templates select="@state"/></td>
         </tr>
+        <tr>
+          <td>Value:</td>
+          <td><xsl:apply-templates select="@value"/></td>
+        </tr>
+        <tr>
+          <td>Actions:</td>
+          <td><xsl:apply-templates select="@actions"/></td>
+        </tr>
       </table>
-    </span>
+    </div>
     <xsl:if test="count(child::*)">
       <ul>
         <xsl:apply-templates/> 

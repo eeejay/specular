@@ -20,7 +20,10 @@ class MarkChangesScriptStore(ScriptStore):
         ScriptStore.move(self, node, parent, index)
 
     def update(self, node, value):
-        self._updated.append(node)
+        if node.nodeType == Node.ATTRIBUTE_NODE and value == '':
+            self._deleted.append(self._pairs[node])
+        else:
+            self._updated.append((self._pairs[node], node))
         ScriptStore.update(self, node, value)
 
     def insert(self, node, label, value, parent, index):
@@ -103,14 +106,14 @@ class MarkChangesScriptStore(ScriptStore):
                 self._mark_change(pairs2[n], 'inserted-self')
 
         # Update
-        for n in self._updated:
-            if n.nodeType == Node.ATTRIBUTE_NODE:
-                self._mark_change(pairs2[n.ownerElement], 
-                                      'updated-attrib')
-                self._add_attrib_name(
-                        pairs2[n.ownerElement], 'updatedAttribs', n.name)
-            elif n.nodeType == Node.TEXT_NODE:
-                self._mark_change(pairs2[n].parentNode, 'updated-text')
+        for n1, n2 in self._updated:
+            if n1.nodeType == Node.ATTRIBUTE_NODE:
+                for n in (n1.ownerElement, pairs2[n2.ownerElement]):
+                    self._mark_change(n, 'updated-attrib')
+                    self._add_attrib_name(n, 'updatedAttribs', n1.name)
+            elif n1.nodeType == Node.TEXT_NODE:
+                self._mark_change(pairs2[n2].parentNode, 'updated-text')
+                self._mark_change(n1.parentNode, 'updated-text')
         
         return tree1.get_doc(), tree2.get_doc()
 

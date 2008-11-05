@@ -40,10 +40,14 @@ function highlightNode(obj) {
    if (obj.id == '')
       return;
    var other_obj = getParallelObj(obj);
-   var compStyle = window.getComputedStyle(obj, "");
-   obj.prev_bg = compStyle.getPropertyValue('background-color');
+   obj.prev_bg = getComputedBGColor(obj);
    obj.style.backgroundColor = "#aaa";
+   other_obj.prev_bg = getComputedBGColor(other_obj);
    other_obj.style.backgroundColor = "#aaa";
+}
+
+function getComputedBGColor(obj) {
+   return window.getComputedStyle(obj, "").getPropertyValue('background-color');
 }
 
 function unhighlightNode(obj) {
@@ -51,7 +55,7 @@ function unhighlightNode(obj) {
       return;
    var other_obj = getParallelObj(obj);
    obj.style.backgroundColor = obj.prev_bg;
-   other_obj.style.backgroundColor = obj.prev_bg;
+   other_obj.style.backgroundColor = other_obj.prev_bg;
 }
 
 function getParallelObj(obj) {
