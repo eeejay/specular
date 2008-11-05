@@ -72,19 +72,19 @@ if platform == 'win32':
         try:
             element.setAttribute('value', unicode(acc.accValue(0) or ''))
         except:
-            pass
+            element.setAttribute('value', u'')
 
         try:
             element.setAttribute('actions', 
                                  unicode(acc.accDefaultAction(0) or ''))
         except:
-            pass
+            element.setAttribute('actions', u'')
 
         try: 
             element.setAttribute('description', 
                                  unicode((acc.accDescription(0) or '').strip('\x00')))
         except:
-            pass
+            element.setAttribute('description', u'')
 
         element.setAttribute('state', u'|'.join(acc.accStateSet()))
         
@@ -117,7 +117,7 @@ else:
         try:
             iaction = acc.queryAction()
         except NotImplementedError:
-            pass
+            element.setAttribute('actions', u'')
         else:
             actions = []
             for i in xrange(iaction.nActions):

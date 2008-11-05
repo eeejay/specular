@@ -34,7 +34,9 @@ class DomTreeIface(TreeIface):
         if not node.attributes:
             return []
         else:
-            return node.attributes.values()
+            keys = node.attributes.keys()
+            keys.sort()
+            return [node.attributes[k] for k in keys]
     def get_parent(self, node):
         if node.nodeType == node.ATTRIBUTE_NODE:
             rv = node.ownerElement
