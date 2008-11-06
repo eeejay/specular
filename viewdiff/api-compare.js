@@ -41,9 +41,9 @@ function highlightNode(obj) {
       return;
    var other_obj = getParallelObj(obj);
    obj.prev_bg = getComputedBGColor(obj);
-   obj.style.backgroundColor = "#aaa";
+   obj.style.backgroundColor = "#c8c8c8";
    other_obj.prev_bg = getComputedBGColor(other_obj);
-   other_obj.style.backgroundColor = "#aaa";
+   other_obj.style.backgroundColor = "#c8c8c8";
 }
 
 function getComputedBGColor(obj) {

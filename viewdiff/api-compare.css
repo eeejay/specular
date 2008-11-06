@@ -25,6 +25,11 @@ table.accDetails td {
 
 #compareTable td { 
   width: 400px;
+  border: solid 1px black;
+}
+
+#compareTable th { 
+  text-align: left;
 }
 
 .fieldname { 

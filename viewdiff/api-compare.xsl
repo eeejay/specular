@@ -13,13 +13,6 @@
     </head>
     <body>
       <h1><xsl:value-of select="title"/></h1>
-      <p>
-        <span class="revInserted">Inserted</span><xsl:text> </xsl:text>
-        <span class="revDeleted">Deleted</span><xsl:text> </xsl:text>
-        <span class="revUpdated">Updated</span><xsl:text> </xsl:text>
-        <span class="revMoved">Moved</span><br/>
-        <span><b>[</b>name • role<b>]</b></span>
-      </p>
       <table id="compareTable">
         <tr>
           <th><xsl:value-of select="//left/@profile"/></th>
@@ -30,6 +23,17 @@
           <xsl:apply-templates select="right"/> 
         </tr>
       </table>
+      <p>
+        <span class="revInserted">
+		  <span class="nodeTitle">Inserted</span>
+		</span><xsl:text> </xsl:text>
+        <span class="revDeleted">
+		  <span class="nodeTitle">Deleted</span>
+		</span><xsl:text> </xsl:text>
+        <span class="revAttribUpdate">
+		  <span class="nodeTitle">Updated</span>
+		</span>
+      </p>
     </body>
   </html>
 </xsl:template>
