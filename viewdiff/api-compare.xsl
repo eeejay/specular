@@ -54,70 +54,101 @@
 <xsl:template match="accessible">
   <li>
     <xsl:attribute name="class">
-      accessiblenode
-	  <xsl:if test="contains(@revtree:changes, 'moved-self')">		
-		revMoved
-	  </xsl:if>
-	  <xsl:if test="contains(@revtree:changes, 'deleted-self')">
-		revDeleted
-	  </xsl:if>
-	  <xsl:if test="contains(@revtree:changes, 'inserted-self')">
-        revInserted
-	  </xsl:if>
-	  <xsl:if test="contains(@revtree:changes, 'updated-attrib')">
-		revAttribUpdate
-	  </xsl:if>
-	  <xsl:if test="contains(@revtree:changes, 'inserted-attrib')">
-		revAttribUpdate
-	  </xsl:if>
+      <xsl:choose>
+        <xsl:when test="preceding-sibling::*">
+          <xsl:choose>
+            <xsl:when test="following-sibling::*">
+              middle
+            </xsl:when>
+            <xsl:otherwise>
+              last
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:choose>
+            <xsl:when test="following-sibling::*">
+              first
+            </xsl:when>
+            <xsl:otherwise>
+              single
+            </xsl:otherwise>
+          </xsl:choose>        </xsl:otherwise>
+      </xsl:choose>
     </xsl:attribute>
-    <div>
-      <xsl:if test="@revtree:id">
-	    <xsl:attribute name="id">
-	      <xsl:value-of select="@revtree:id"/>
-	    </xsl:attribute> 
-      </xsl:if>
-	  <xsl:attribute name="onmouseover">highlightNode(this);</xsl:attribute> 
-	  <xsl:attribute name="onmouseout">unhighlightNode(this);</xsl:attribute> 
+	<div>
+    <span>
+      <xsl:attribute name="class">
+        accessiblenode
+	    <xsl:if test="contains(@revtree:changes, 'moved-self')">		
+		  revMoved
+	    </xsl:if>
+	    <xsl:if test="contains(@revtree:changes, 'deleted-self')">
+		  revDeleted
+	    </xsl:if>
+	    <xsl:if test="contains(@revtree:changes, 'inserted-self')">
+          revInserted
+	    </xsl:if>
+	    <xsl:if test="contains(@revtree:changes, 'updated-attrib')">
+		  revAttribUpdate
+	    </xsl:if>
+	    <xsl:if test="contains(@revtree:changes, 'inserted-attrib')">
+		  revAttribUpdate
+	    </xsl:if>
+      </xsl:attribute>
 	  <xsl:attribute name="onclick">showDetails(this);</xsl:attribute> 
-      <span style="margin-left: 10px;"><xsl:value-of select="@role"/></span>
+	  <xsl:if test="@revtree:id">
+	    <xsl:attribute name="id">
+		  <xsl:value-of select="@revtree:id"/>
+	    </xsl:attribute>
+	  </xsl:if>
+      <span class="nodeTitle">
+		<xsl:attribute name="onmouseover">highlightNode(this);</xsl:attribute> 
+		<xsl:attribute name="onmouseout">unhighlightNode(this);</xsl:attribute>
+		<xsl:if test="@revtree:id">
+	      <xsl:attribute name="id">
+			<xsl:value-of select="@revtree:id"/>Title
+	      </xsl:attribute>
+		</xsl:if>
+		<xsl:value-of select="@role"/>
+	  </span>
       <table class="accDetails">
         <tr>
-          <td>Name:</td>
+          <td class="fieldname">Name:</td>
           <td><xsl:apply-templates select="@name"/></td>
         </tr>
         <tr>
-          <td>Role:</td>
+          <td class="fieldname">Role:</td>
           <td><xsl:apply-templates select="@role"/></td>
         </tr>
         <tr>
-          <td>Description:</td>
+          <td class="fieldname">Description:</td>
           <td><xsl:apply-templates select="@description"/></td>
         </tr>
         <tr>
-          <td>State:</td>
+          <td class="fieldname">State:</td>
           <td><xsl:apply-templates select="@state"/></td>
         </tr>
         <tr>
-          <td>Value:</td>
+          <td class="fieldname">Value:</td>
           <td><xsl:apply-templates select="@value"/></td>
         </tr>
         <tr>
-          <td>Actions:</td>
+          <td class="fieldname">Actions:</td>
           <td><xsl:apply-templates select="@actions"/></td>
         </tr>
       </table>
-    </div>
+	</span>
     <xsl:if test="count(child::*)">
       <ul>
         <xsl:apply-templates/> 
       </ul>
     </xsl:if>
+	</div>
   </li>
 </xsl:template>
 
 <xsl:template match="//accessible/@*">
-  <xsl:param name="textdisplay">no-ellipsize</xsl:param>
   <span>
 	<xsl:variable name="baseclass" 
                   select="concat('accessible', name())"/>
@@ -147,40 +178,7 @@
 	  </xsl:otherwise>
 
     </xsl:choose>
-    <xsl:choose>
-      <xsl:when test="$textdisplay = 'no-ellipsize'">
-        <xsl:apply-templates select="." mode="no-ellipsize"/>
-      </xsl:when>
-	  <xsl:otherwise>
-        <xsl:apply-templates select="." mode="ellipsize"/>
-	  </xsl:otherwise>
-    </xsl:choose>
-      
+    <xsl:value-of select="." />
   </span>
 </xsl:template>
-
-<xsl:template match="//accessible/@*" mode="no-ellipsize">
-  <xsl:value-of select="." /> 
-</xsl:template>
-
-<xsl:template match="//accessible/@*" mode="ellipsize">
-  <xsl:variable name="len" 
-                select="string-length(normalize-space(.))" />
-  <xsl:choose> 
-    <!-- if collapsed headline_text is 15 characters or longer, 
-         display the first 15 characters and add an ellipsis -->
-    
-    <xsl:when test="$len &gt;= 15"> 
-      <xsl:value-of select="substring(normalize-space(.),1,15)"/> 
-      <xsl:text> ...</xsl:text> 
-    </xsl:when>
-    
-    <!-- if collapsed headline_text is shorter than  
-         15 characters, display it unmodified -->
-    <xsl:otherwise> 
-      <xsl:value-of select="." /> 
-    </xsl:otherwise> 
-  </xsl:choose>
-</xsl:template>
-
 </xsl:stylesheet>

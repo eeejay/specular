@@ -64,9 +64,9 @@ function getParallelObj(obj) {
 	  return null;
    var suffix_index;
    if (obj.id.match("Left"))
-      other_id = obj.id.replace(/Left/, "Right");
+      other_id = obj.id.replace(/(.*)Left(Title)?/, "$1Right$2");
    else
-      other_id = obj.id.replace(/Right/, "Left");
+      other_id = obj.id.replace(/(.*)Right(Title)?/, "$1Left$2");
 
    return document.getElementById(other_id);
 }

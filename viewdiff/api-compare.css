@@ -1,17 +1,26 @@
+body { 
+  font-family: arial, sans-serif;
+}
+
 td { 
   vertical-align: top;
 }
 
 table.accDetails { 
+  font-size: 80%;
   display: none;
   background-color: #CACAFF;
   margin-left: 10px;
+  width: 85%;
+  border-collapse: collapse;
+}
+
+table.accDetails td { 
+  border: 1px solid black;
 }
 
 #compareTable { 
-  border: 1px solid black;
   border-collapse: separated;
-  margin: auto;
 }
 
 #compareTable td { 
@@ -22,41 +31,39 @@ table.accDetails {
   font-weight: bold;
 }
 
-a.accessible:link { 
-  color: black;
-  text-decoration: none;
+.revInserted .nodeTitle { 
+  color: #090;
 }
 
-li.revUpdated { 
-  background-color: #aaf;
+.revAttribUpdate .nodeTitle { 
+  color: #009;
 }
 
-.revUpdated { 
+.revDeleted .nodeTitle { 
+  color: #900;
+}
+
+.accDetails .revUpdated { 
   background-color: #66f;
 }
 
-li.revDeleted { 
-  background-color: #faa;
-}
-
-.revDeleted { 
+.accDetails .revDeleted { 
   background-color: #f66;
 }
 
-.revInserted>div { 
-  background-color: #7f7;
-}
-
-span.revInserted { 
+.accDetails .revInserted { 
   background-color: #6f6;
 }
 
+/*
 .revMoved { 
   background-color: #fff;
 }
+*/
 
-.revAttribUpdate>div { 
-  background-color: #ddf;
+.nodeTitle { 
+  margin-left: 20px;
+  font-weight: bold;
 }
 
 ul { 
@@ -65,17 +72,15 @@ ul {
 }
 
 li { 
-  margin-left: 1em;
-}
-.accessiblerole{ 
-  font-style: italic;
+  margin-left: 16px;
+  background-repeat: no-repeat;
+  background-position: top left;
+  background-image: url('last.png');
 }
 
-a.accessible:visited { 
-  color: black;
-  text-decoration: none;
+li.middle>div,li.first>div { 
+  background-image: url('spine.png');
+  background-repeat: repeat-y;
+  background-position: 0px 8px;
 }
-a.accessible:hover { 
-  color: #6D6D6D;
-  text-decoration: underline;
-}
+
