@@ -40,7 +40,7 @@
 
 
 <xsl:template match="left">
-  <td width="%50">
+  <td class="compareColumn">
     <ul>
       <xsl:apply-templates/> 
     </ul>
@@ -48,7 +48,7 @@
 </xsl:template>
 
 <xsl:template match="right">
-  <td width="%50">
+  <td class="compareColumn">
     <ul>
       <xsl:apply-templates/> 
     </ul>
@@ -119,27 +119,27 @@
       <table class="accDetails">
         <tr>
           <td class="fieldname">Name:</td>
-          <td><xsl:apply-templates select="@name"/></td>
+          <td class="fieldvalue"><xsl:apply-templates select="@name"/></td>
         </tr>
         <tr>
           <td class="fieldname">Role:</td>
-          <td><xsl:apply-templates select="@role"/></td>
+          <td class="fieldvalue"><xsl:apply-templates select="@role"/></td>
         </tr>
         <tr>
           <td class="fieldname">Description:</td>
-          <td><xsl:apply-templates select="@description"/></td>
+          <td class="fieldvalue"><xsl:apply-templates select="@description"/></td>
         </tr>
         <tr>
           <td class="fieldname">State:</td>
-          <td><xsl:apply-templates select="@state"/></td>
+          <td class="fieldvalue"><xsl:apply-templates select="@state"/></td>
         </tr>
         <tr>
           <td class="fieldname">Value:</td>
-          <td><xsl:apply-templates select="@value"/></td>
+          <td class="fieldvalue"><xsl:apply-templates select="@value"/></td>
         </tr>
         <tr>
           <td class="fieldname">Actions:</td>
-          <td><xsl:apply-templates select="@actions"/></td>
+          <td class="fieldvalue"><xsl:apply-templates select="@actions"/></td>
         </tr>
       </table>
 	</span>

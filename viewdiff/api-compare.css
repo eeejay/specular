@@ -12,19 +12,17 @@ table.accDetails {
   background-color: #CACAFF;
   margin-left: 10px;
   width: 85%;
+  table-layout: automatic;
+  border: 2px solid #00004F;
+}
+
+table#compareTable { 
+  width: 100%;
   border-collapse: collapse;
 }
 
-table.accDetails td { 
-  border: 1px solid black;
-}
-
-#compareTable { 
-  border-collapse: separated;
-}
-
-#compareTable td { 
-  width: 400px;
+td.compareColumn { 
+  width: 50%;
   border: solid 1px black;
 }
 
@@ -32,8 +30,12 @@ table.accDetails td {
   text-align: left;
 }
 
-.fieldname { 
+td.fieldname { 
   font-weight: bold;
+}
+
+td.fieldvalue { 
+  width: 100%;
 }
 
 .revInserted .nodeTitle { 
