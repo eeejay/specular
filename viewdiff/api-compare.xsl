@@ -25,13 +25,13 @@
       </table>
       <p>
         <span class="revInserted">
-		  <span class="nodeTitle">Inserted</span>
+		  <span class="nodeTitle" id="labelInserted">Inserted</span>
 		</span><xsl:text> </xsl:text>
         <span class="revDeleted">
-		  <span class="nodeTitle">Deleted</span>
+		  <span class="nodeTitle" id="labelDeleted">Deleted</span>
 		</span><xsl:text> </xsl:text>
         <span class="revAttribUpdate">
-		  <span class="nodeTitle">Updated</span>
+		  <span class="nodeTitle" id="labelAttribUpdate">Updated</span>
 		</span>
       </p>
     </body>
@@ -82,31 +82,42 @@
     </xsl:attribute>
 	<div>
     <span>
-      <xsl:attribute name="class">
-        accessiblenode
-	    <xsl:if test="contains(@revtree:changes, 'moved-self')">		
-		  revMoved
-	    </xsl:if>
-	    <xsl:if test="contains(@revtree:changes, 'deleted-self')">
-		  revDeleted
-	    </xsl:if>
-	    <xsl:if test="contains(@revtree:changes, 'inserted-self')">
-          revInserted
-	    </xsl:if>
-	    <xsl:if test="contains(@revtree:changes, 'updated-attrib')">
-		  revAttribUpdate
-	    </xsl:if>
-	    <xsl:if test="contains(@revtree:changes, 'inserted-attrib')">
-		  revAttribUpdate
-	    </xsl:if>
-      </xsl:attribute>
 	  <xsl:attribute name="onclick">showDetails(this);</xsl:attribute> 
 	  <xsl:if test="@revtree:id">
 	    <xsl:attribute name="id">
 		  <xsl:value-of select="@revtree:id"/>
 	    </xsl:attribute>
 	  </xsl:if>
-      <span class="nodeTitle">
+      <a href="#">
+		<xsl:attribute name="class">
+          nodeTitle
+	      <xsl:if test="contains(@revtree:changes, 'moved-self')">		
+			revMoved
+	      </xsl:if>
+	      <xsl:if test="contains(@revtree:changes, 'deleted-self')">
+			revDeleted
+	      </xsl:if>
+	      <xsl:if test="contains(@revtree:changes, 'inserted-self')">
+			revInserted
+	      </xsl:if>
+	      <xsl:if test="contains(@revtree:changes, 'updated-attrib')">
+			revAttribUpdate
+	      </xsl:if>
+	      <xsl:if test="contains(@revtree:changes, 'inserted-attrib')">
+			revAttribUpdate
+	      </xsl:if>
+		</xsl:attribute>
+		<!-- labeled-by -->
+		<xsl:attribute name="aria-labelledby">
+		  <xsl:choose>
+			<xsl:when test="contains(@revtree:changes, 'deleted-self')">labelDeleted</xsl:when>
+			<xsl:when test="contains(@revtree:changes, 'inserted-self')">labelInserted</xsl:when>
+			<xsl:when test="contains(@revtree:changes, 'updated-attrib')">labelAttribUpdate</xsl:when>
+			<xsl:when test="contains(@revtree:changes, 'inserted-attrib')">labelAttribUpdate</xsl:when>
+		  </xsl:choose>
+		</xsl:attribute>
+		<!-- end of labeled-by -->
+
 		<xsl:attribute name="onmouseover">highlightNode(this);</xsl:attribute> 
 		<xsl:attribute name="onmouseout">unhighlightNode(this);</xsl:attribute>
 		<xsl:if test="@revtree:id">
@@ -115,7 +126,7 @@
 	      </xsl:attribute>
 		</xsl:if>
 		<xsl:value-of select="@role"/>
-	  </span>
+	  </a>
       <table class="accDetails">
         <tr>
           <td class="fieldname">Name:</td>

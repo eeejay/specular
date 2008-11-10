@@ -38,15 +38,15 @@ td.fieldvalue {
   width: 100%;
 }
 
-.revInserted .nodeTitle { 
+.revInserted { 
   color: #090;
 }
 
-.revAttribUpdate .nodeTitle { 
+.revAttribUpdate { 
   color: #009;
 }
 
-.revDeleted .nodeTitle { 
+.revDeleted { 
   color: #900;
 }
 
@@ -71,6 +71,7 @@ td.fieldvalue {
 .nodeTitle { 
   margin-left: 20px;
   font-weight: bold;
+  text-decoration: none;
 }
 
 ul { 
