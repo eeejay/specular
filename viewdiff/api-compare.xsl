@@ -38,17 +38,12 @@
   </html>
 </xsl:template>
 
-
-<xsl:template match="left">
-  <td class="compareColumn">
-    <ul>
-      <xsl:apply-templates/> 
-    </ul>
-  </td>
-</xsl:template>
-
-<xsl:template match="right">
-  <td class="compareColumn">
+<xsl:template match="left|right">
+  <td class="compareColumn" tabindex="0" multiselectable="false">
+	<xsl:attribute name="activedescendant"><xsl:value-of select="accessible/@revtree:id"/></xsl:attribute>
+	<xsl:attribute name="onfocus">highlightDescendant(this);</xsl:attribute>
+	<xsl:attribute name="onblur">unHighlightDescendant(this);</xsl:attribute>
+	<xsl:attribute name="onkeydown">return keyCallback(event);</xsl:attribute>
     <ul>
       <xsl:apply-templates/> 
     </ul>
@@ -81,14 +76,14 @@
       </xsl:choose>
     </xsl:attribute>
 	<div>
-    <span>
+    <span class="nodeContainer">
 	  <xsl:attribute name="onclick">showDetails(this);</xsl:attribute> 
 	  <xsl:if test="@revtree:id">
 	    <xsl:attribute name="id">
 		  <xsl:value-of select="@revtree:id"/>
 	    </xsl:attribute>
 	  </xsl:if>
-      <a href="#">
+      <div>
 		<xsl:attribute name="class">
           nodeTitle
 	      <xsl:if test="contains(@revtree:changes, 'moved-self')">		
@@ -118,16 +113,14 @@
 		</xsl:attribute>
 		<!-- end of labeled-by -->
 
-		<xsl:attribute name="onmouseover">highlightNode(this);</xsl:attribute> 
-		<xsl:attribute name="onmouseout">unhighlightNode(this);</xsl:attribute>
+		<xsl:attribute name="onmouseover">mouseOverNode(this);</xsl:attribute> 
+		<xsl:attribute name="onmouseout">mouseOutNode(this);</xsl:attribute>
 		<xsl:if test="@revtree:id">
-	      <xsl:attribute name="id">
-			<xsl:value-of select="@revtree:id"/>Title
-	      </xsl:attribute>
+	      <xsl:attribute name="id"><xsl:value-of select="@revtree:id"/>Title</xsl:attribute>
 		</xsl:if>
 		<xsl:value-of select="@role"/>
-	  </a>
-      <table class="accDetails">
+	  </div>
+      <table class="accDetails" role="dialog">
         <tr>
           <td class="fieldname">Name:</td>
           <td class="fieldvalue"><xsl:apply-templates select="@name"/></td>
