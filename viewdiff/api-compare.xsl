@@ -35,43 +35,49 @@
 </xsl:template>
 
 <xsl:template match="left|right">
-  <td class="compareColumn" tabindex="0" multiselectable="false">
-	<xsl:attribute name="aria-activedescendant"><xsl:value-of select="accessible/@revtree:id"/></xsl:attribute>
-	<xsl:attribute name="onfocus">highlightDescendant(this);</xsl:attribute>
-	<xsl:attribute name="onblur">unHighlightDescendant(this);</xsl:attribute>
-	<xsl:attribute name="onkeydown">return keyCallback(event);</xsl:attribute>
-	<xsl:attribute name="onkeypress">return keyCallback(event);</xsl:attribute>
-	<xsl:attribute name="role">tree</xsl:attribute>
-    <ul>
+  <td class="compareColumn">
+    <ul class="compareTree">
+      <xsl:attribute name="tabindex">0</xsl:attribute>
+      <xsl:attribute name="multiselectable">multiselectable</xsl:attribute>
+	  <xsl:attribute name="aria-activedescendant"><xsl:value-of select="accessible/@revtree:id"/></xsl:attribute>
+	  <xsl:attribute name="onfocus">onTreeFocus(this);</xsl:attribute>
+	  <xsl:attribute name="onblur">OnTreeBlur(this);</xsl:attribute>
+	  <xsl:attribute name="onkeydown">return keyCallback(event);</xsl:attribute>
+	  <xsl:attribute name="onkeypress">return keyCallback(event);</xsl:attribute>
+	  <xsl:attribute name="role">tree</xsl:attribute>
       <xsl:apply-templates/> 
     </ul>
   </td>
 </xsl:template>
 
 <xsl:template match="accessible">
-  <li>
+  <li role="treeitem">
     <xsl:attribute name="class">
       <xsl:call-template name="itemClass"/>
     </xsl:attribute>
 	<xsl:attribute name="id"><xsl:value-of select="@revtree:id"/></xsl:attribute>
-	<div>
-      <span role="treeitem">
+    <xsl:attribute name="aria-labelledby">
+      <xsl:call-template name="labeledBy"/>
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="@revtree:id"/>Title</xsl:attribute>
+	<div role="presentation">
+      <span role="label">
 	    <xsl:attribute name="onclick">showDetails(this);</xsl:attribute> 
 		<xsl:attribute name="class">
           <xsl:call-template name="nodeTitleClass"/>
 		</xsl:attribute>
-		<xsl:attribute name="aria-labelledby"><xsl:call-template name="labeledBy"/></xsl:attribute>
 		<xsl:attribute name="onmouseover">mouseOverNode(this);</xsl:attribute> 
 		<xsl:attribute name="onmouseout">mouseOutNode(this);</xsl:attribute>
 	    <xsl:attribute name="id"><xsl:value-of select="@revtree:id"/>Title</xsl:attribute>
+        <xsl:attribute name="tabindex">-1</xsl:attribute>
 		<xsl:value-of select="@role"/>
 	  </span>
       <xsl:call-template name="detailsTable"/>
-      <xsl:if test="count(child::*)">
-        <ul>
+      <ul role="group">
+        <xsl:if test="count(child::*)">
           <xsl:apply-templates/> 
-        </ul>
-      </xsl:if>
+        </xsl:if>
+      </ul>
 	</div>
   </li>
 </xsl:template>

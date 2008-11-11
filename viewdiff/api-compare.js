@@ -37,12 +37,16 @@ function showDetails(obj) {
    }
 }
 
-function highlightDescendant(obj) {
+function onTreeFocus(obj) {
+   var classStr = obj.getAttribute("class").replace(/(.*)focus/, "$1");
+   obj.setAttribute("class", classStr+" focus");
    var id = obj.getAttribute("aria-activedescendant");
    setActiveDescendant(obj, id);
 }
 
-function unHighlightDescendant(obj) {
+function OnTreeBlur(obj) {
+   var classStr = obj.getAttribute("class").replace(/\sfocus/g, "");
+   obj.setAttribute("class", classStr);
    var id = obj.getAttribute("aria-activedescendant");
    var descendant = document.getElementById(id+"Title");
    unhighlightNode(descendant);   
@@ -70,9 +74,10 @@ function getPrevNodeId(obj) {
 
 function setActiveDescendant(container, id) {
    var current_id = container.getAttribute("aria-activedescendant");
-   container.setAttribute("aria-activedescendant", id);
    unhighlightNode(document.getElementById(current_id+"Title"));
    highlightNode(document.getElementById(id+"Title"));
+   dump("setActiveDescendant "+id+"\n");
+   container.setAttribute("aria-activedescendant", id);
 }
 
 function keyCallback(event) {
@@ -99,7 +104,7 @@ function keyCallback(event) {
                                                    target.getAttribute(
                                                       "aria-activedescendant")));
          if (parallel) {
-            var columns = document.getElementsByClassName("compareColumn");
+            var columns = document.getElementsByClassName("compareTree");
             var column;
             if (event.keyCode == event.DOM_VK_RIGHT)
                column = columns[1];
@@ -112,7 +117,6 @@ function keyCallback(event) {
    }
    return true;
 }
-
 
 function mouseOverNode(obj) {
    if (obj.id == '')
@@ -140,13 +144,15 @@ function highlightNode(obj) {
    if (obj.id == '')
       return;
    var other_obj = getParallelObj(obj);
-   obj.prev_bg = getComputedBGColor(obj);
-   obj.style.backgroundColor = "#aaa";
+   var classStr = obj.getAttribute("class").replace(/(.*)highlightedNode/, "$1");
+   dump(classStr+"\n");
+   obj.setAttribute("class", classStr+" highlightedNode");
    if (other_obj) {
-      other_obj.prev_bg = getComputedBGColor(other_obj);
-      other_obj.style.backgroundColor = "#c8c8c8";
-   }
+      classStr = other_obj.getAttribute("class").replace(
+            /(.*)highlightedNode/, "$1");
+      other_obj.setAttribute("class", classStr+" highlightedNode");   }
 }
+
 
 function getComputedBGColor(obj) {
    return window.getComputedStyle(obj, "").getPropertyValue('background-color');
@@ -156,9 +162,15 @@ function unhighlightNode(obj) {
    if (obj.id == '')
       return;
    var other_obj = getParallelObj(obj);
-   obj.style.backgroundColor = obj.prev_bg;
-   if (other_obj)
-      other_obj.style.backgroundColor = other_obj.prev_bg;
+   var classStr = obj.getAttribute("class").replace(
+      /(.*)highlightedNode/, "$1");
+   dump('unhighlightNode '+classStr+"\n");
+   obj.setAttribute("class", classStr);
+   if (other_obj) {
+      classStr = other_obj.getAttribute("class").replace(
+         /(.*)highlightedNode/, "$1");
+      other_obj.setAttribute("class", classStr);
+   }
 }
 
 function getParallelObj(obj) {

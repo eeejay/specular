@@ -98,3 +98,11 @@ li.middle>div,li.first>div {
   text-align: center;
   font-weight: bold;
 }
+
+.focus .highlightedNode { 
+  background-color: #aaa;
+}
+
+.highlightedNode { 
+  background-color: #eee;
+}
