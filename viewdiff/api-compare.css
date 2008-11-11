@@ -72,6 +72,8 @@ td.fieldvalue {
   margin-left: 20px;
   font-weight: bold;
   text-decoration: none;
+  width: 80%;
+  display: block;
 }
 
 ul { 
@@ -92,3 +94,7 @@ li.middle>div,li.first>div {
   background-position: 0px 8px;
 }
 
+#legend {
+  text-align: center;
+  font-weight: bold;
+}

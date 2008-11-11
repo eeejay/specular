@@ -23,16 +23,12 @@
           <xsl:apply-templates select="right"/> 
         </tr>
       </table>
-      <p>
-        <span class="revInserted">
-		  <span class="nodeTitle" id="labelInserted">Inserted</span>
-		</span><xsl:text> </xsl:text>
-        <span class="revDeleted">
-		  <span class="nodeTitle" id="labelDeleted">Deleted</span>
-		</span><xsl:text> </xsl:text>
-        <span class="revAttribUpdate">
-		  <span class="nodeTitle" id="labelAttribUpdate">Updated</span>
-		</span>
+      <p id="legend">
+		  <span class="revInserted" id="labelInserted">Inserted</span>
+	      <xsl:text> </xsl:text>
+		  <span class="revDeleted" id="labelDeleted">Deleted</span>
+	      <xsl:text> </xsl:text>
+		  <span class="revAttribUpdate" id="labelAttribUpdate">Updated</span>
       </p>
     </body>
   </html>
@@ -55,105 +51,27 @@
 <xsl:template match="accessible">
   <li>
     <xsl:attribute name="class">
-      <xsl:choose>
-        <xsl:when test="preceding-sibling::*">
-          <xsl:choose>
-            <xsl:when test="following-sibling::*">
-              middle
-            </xsl:when>
-            <xsl:otherwise>
-              last
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:choose>
-            <xsl:when test="following-sibling::*">
-              first
-            </xsl:when>
-            <xsl:otherwise>
-              single
-            </xsl:otherwise>
-          </xsl:choose>        </xsl:otherwise>
-      </xsl:choose>
+      <xsl:call-template name="itemClass"/>
     </xsl:attribute>
+	<xsl:attribute name="id"><xsl:value-of select="@revtree:id"/></xsl:attribute>
 	<div>
-    <span class="nodeContainer" role="treeitem">
-	  <xsl:attribute name="onclick">showDetails(this);</xsl:attribute> 
-	  <xsl:if test="@revtree:id">
-	    <xsl:attribute name="id">
-		  <xsl:value-of select="@revtree:id"/>
-	    </xsl:attribute>
-	  </xsl:if>
-      <div>
+      <span role="treeitem">
+	    <xsl:attribute name="onclick">showDetails(this);</xsl:attribute> 
 		<xsl:attribute name="class">
-          nodeTitle
-	      <xsl:if test="contains(@revtree:changes, 'moved-self')">		
-			revMoved
-	      </xsl:if>
-	      <xsl:if test="contains(@revtree:changes, 'deleted-self')">
-			revDeleted
-	      </xsl:if>
-	      <xsl:if test="contains(@revtree:changes, 'inserted-self')">
-			revInserted
-	      </xsl:if>
-	      <xsl:if test="contains(@revtree:changes, 'updated-attrib')">
-			revAttribUpdate
-	      </xsl:if>
-	      <xsl:if test="contains(@revtree:changes, 'inserted-attrib')">
-			revAttribUpdate
-	      </xsl:if>
+          <xsl:call-template name="nodeTitleClass"/>
 		</xsl:attribute>
-		<!-- labeled-by -->
-		<xsl:attribute name="aria-labelledby">
-		  <xsl:choose>
-			<xsl:when test="contains(@revtree:changes, 'deleted-self')">labelDeleted</xsl:when>
-			<xsl:when test="contains(@revtree:changes, 'inserted-self')">labelInserted</xsl:when>
-			<xsl:when test="contains(@revtree:changes, 'updated-attrib')">labelAttribUpdate</xsl:when>
-			<xsl:when test="contains(@revtree:changes, 'inserted-attrib')">labelAttribUpdate</xsl:when>
-		  </xsl:choose>
-		</xsl:attribute>
-		<!-- end of labeled-by -->
-
+		<xsl:attribute name="aria-labelledby"><xsl:call-template name="labeledBy"/></xsl:attribute>
 		<xsl:attribute name="onmouseover">mouseOverNode(this);</xsl:attribute> 
 		<xsl:attribute name="onmouseout">mouseOutNode(this);</xsl:attribute>
-		<xsl:if test="@revtree:id">
-	      <xsl:attribute name="id"><xsl:value-of select="@revtree:id"/>Title</xsl:attribute>
-		</xsl:if>
+	    <xsl:attribute name="id"><xsl:value-of select="@revtree:id"/>Title</xsl:attribute>
 		<xsl:value-of select="@role"/>
-	  </div>
-      <table class="accDetails" role="dialog">
-        <tr>
-          <td class="fieldname">Name:</td>
-          <td class="fieldvalue"><xsl:apply-templates select="@name"/></td>
-        </tr>
-        <tr>
-          <td class="fieldname">Role:</td>
-          <td class="fieldvalue"><xsl:apply-templates select="@role"/></td>
-        </tr>
-        <tr>
-          <td class="fieldname">Description:</td>
-          <td class="fieldvalue"><xsl:apply-templates select="@description"/></td>
-        </tr>
-        <tr>
-          <td class="fieldname">State:</td>
-          <td class="fieldvalue"><xsl:apply-templates select="@state"/></td>
-        </tr>
-        <tr>
-          <td class="fieldname">Value:</td>
-          <td class="fieldvalue"><xsl:apply-templates select="@value"/></td>
-        </tr>
-        <tr>
-          <td class="fieldname">Actions:</td>
-          <td class="fieldvalue"><xsl:apply-templates select="@actions"/></td>
-        </tr>
-      </table>
-	</span>
-    <xsl:if test="count(child::*)">
-      <ul>
-        <xsl:apply-templates/> 
-      </ul>
-    </xsl:if>
+	  </span>
+      <xsl:call-template name="detailsTable"/>
+      <xsl:if test="count(child::*)">
+        <ul>
+          <xsl:apply-templates/> 
+        </ul>
+      </xsl:if>
 	</div>
   </li>
 </xsl:template>
@@ -191,4 +109,88 @@
     <xsl:value-of select="." />
   </span>
 </xsl:template>
+
+<xsl:template name="detailsTable">
+  <table class="accDetails" role="dialog">
+    <tr>
+      <td class="fieldname">Name:</td>
+      <td class="fieldvalue"><xsl:apply-templates select="@name"/></td>
+    </tr>
+    <tr>
+      <td class="fieldname">Role:</td>
+      <td class="fieldvalue"><xsl:apply-templates select="@role"/></td>
+    </tr>
+    <tr>
+      <td class="fieldname">Description:</td>
+      <td class="fieldvalue"><xsl:apply-templates select="@description"/></td>
+    </tr>
+    <tr>
+      <td class="fieldname">State:</td>
+      <td class="fieldvalue"><xsl:apply-templates select="@state"/></td>
+    </tr>
+    <tr>
+      <td class="fieldname">Value:</td>
+      <td class="fieldvalue"><xsl:apply-templates select="@value"/></td>
+    </tr>
+    <tr>
+      <td class="fieldname">Actions:</td>
+      <td class="fieldvalue"><xsl:apply-templates select="@actions"/></td>
+    </tr>
+  </table>
+</xsl:template>
+
+<xsl:template name="labeledBy">
+  <xsl:choose>
+	<xsl:when test="contains(@revtree:changes, 'deleted-self')">labelDeleted</xsl:when>
+	<xsl:when test="contains(@revtree:changes, 'inserted-self')">labelInserted</xsl:when>
+	<xsl:when test="contains(@revtree:changes, 'updated-attrib')">labelAttribUpdate</xsl:when>
+	<xsl:when test="contains(@revtree:changes, 'inserted-attrib')">labelAttribUpdate</xsl:when>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template name="nodeTitleClass">
+  nodeTitle
+  <xsl:if test="contains(@revtree:changes, 'moved-self')">		
+	revMoved
+  </xsl:if>
+  <xsl:if test="contains(@revtree:changes, 'deleted-self')">
+	revDeleted
+  </xsl:if>
+  <xsl:if test="contains(@revtree:changes, 'inserted-self')">
+	revInserted
+  </xsl:if>
+  <xsl:if test="contains(@revtree:changes, 'updated-attrib')">
+	revAttribUpdate
+  </xsl:if>
+  <xsl:if test="contains(@revtree:changes, 'inserted-attrib')">
+	revAttribUpdate
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="itemClass">
+  treeNode
+  <xsl:choose>
+    <xsl:when test="preceding-sibling::*">
+      <xsl:choose>
+        <xsl:when test="following-sibling::*">
+          middle
+        </xsl:when>
+        <xsl:otherwise>
+          last
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:choose>
+        <xsl:when test="following-sibling::*">
+          first
+        </xsl:when>
+        <xsl:otherwise>
+          single
+        </xsl:otherwise>
+    </xsl:choose>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
 </xsl:stylesheet>

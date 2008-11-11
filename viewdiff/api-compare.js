@@ -16,6 +16,7 @@ function getDetailsTable(obj) {
 }
 
 function showDetails(obj) {
+   obj = obj.parentNode.parentNode
    var details = getDetailsTable(obj);
    if (!details)
 	  return;
@@ -49,7 +50,7 @@ function unHighlightDescendant(obj) {
 
 function getNextNodeId(obj) {
    var current_id = obj.getAttribute("aria-activedescendant");
-   var nodes_depth = obj.getElementsByClassName("nodeContainer");
+   var nodes_depth = obj.getElementsByClassName("treeNode");
    var i;
    for (i=0;i<nodes_depth.length-1;i++)
 	  if (nodes_depth[i].id == current_id)
@@ -59,7 +60,7 @@ function getNextNodeId(obj) {
 
 function getPrevNodeId(obj) {
    var current_id = obj.getAttribute("aria-activedescendant");
-   var nodes_depth = obj.getElementsByClassName("nodeContainer");
+   var nodes_depth = obj.getElementsByClassName("treeNode");
    var i;
    for (i=1;i<nodes_depth.length;i++)
 	  if (nodes_depth[i].id == current_id)
