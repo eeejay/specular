@@ -105,7 +105,8 @@ class MarkChangesScriptStore(ScriptStore):
                         pairs2[n.ownerElement], 'insertedAttribs', n.name)
             else:
                 self._mark_change(pairs2[n], 'inserted-self')
-                n.setAttribute('revtree:id', hex(id(n))+"Right")
+                pairs2[n].setAttribute(
+                    'revtree:id', hex(id(pairs2[n]))+"Right")
 
         # Update
         for n1, n2 in self._updated:
