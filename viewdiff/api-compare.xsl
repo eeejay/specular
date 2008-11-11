@@ -40,10 +40,12 @@
 
 <xsl:template match="left|right">
   <td class="compareColumn" tabindex="0" multiselectable="false">
-	<xsl:attribute name="activedescendant"><xsl:value-of select="accessible/@revtree:id"/></xsl:attribute>
+	<xsl:attribute name="aria-activedescendant"><xsl:value-of select="accessible/@revtree:id"/></xsl:attribute>
 	<xsl:attribute name="onfocus">highlightDescendant(this);</xsl:attribute>
 	<xsl:attribute name="onblur">unHighlightDescendant(this);</xsl:attribute>
 	<xsl:attribute name="onkeydown">return keyCallback(event);</xsl:attribute>
+	<xsl:attribute name="onkeypress">return keyCallback(event);</xsl:attribute>
+	<xsl:attribute name="role">tree</xsl:attribute>
     <ul>
       <xsl:apply-templates/> 
     </ul>
@@ -76,7 +78,7 @@
       </xsl:choose>
     </xsl:attribute>
 	<div>
-    <span class="nodeContainer">
+    <span class="nodeContainer" role="treeitem">
 	  <xsl:attribute name="onclick">showDetails(this);</xsl:attribute> 
 	  <xsl:if test="@revtree:id">
 	    <xsl:attribute name="id">

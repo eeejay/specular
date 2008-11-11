@@ -37,18 +37,18 @@ function showDetails(obj) {
 }
 
 function highlightDescendant(obj) {
-   var id = obj.getAttribute("activedescendant");
+   var id = obj.getAttribute("aria-activedescendant");
    setActiveDescendant(obj, id);
 }
 
 function unHighlightDescendant(obj) {
-   var id = obj.getAttribute("activedescendant");
+   var id = obj.getAttribute("aria-activedescendant");
    var descendant = document.getElementById(id+"Title");
    unhighlightNode(descendant);   
 }
 
 function getNextNodeId(obj) {
-   var current_id = obj.getAttribute("activedescendant");
+   var current_id = obj.getAttribute("aria-activedescendant");
    var nodes_depth = obj.getElementsByClassName("nodeContainer");
    var i;
    for (i=0;i<nodes_depth.length-1;i++)
@@ -58,7 +58,7 @@ function getNextNodeId(obj) {
 }
 
 function getPrevNodeId(obj) {
-   var current_id = obj.getAttribute("activedescendant");
+   var current_id = obj.getAttribute("aria-activedescendant");
    var nodes_depth = obj.getElementsByClassName("nodeContainer");
    var i;
    for (i=1;i<nodes_depth.length;i++)
@@ -68,8 +68,8 @@ function getPrevNodeId(obj) {
 }
 
 function setActiveDescendant(container, id) {
-   var current_id = container.getAttribute("activedescendant");
-   container.setAttribute("activedescendant", id);
+   var current_id = container.getAttribute("aria-activedescendant");
+   container.setAttribute("aria-activedescendant", id);
    unhighlightNode(document.getElementById(current_id+"Title"));
    highlightNode(document.getElementById(id+"Title"));
 }
@@ -92,10 +92,22 @@ function keyCallback(event) {
          if (node_id != '')
             setActiveDescendant(target, node_id)
 		 return false;
-	  } /* else if (event.keyCode == event.DOM_VK_RIGHT) {
-         columns = document.getElementsByClassName("compareColumn");
-         ...
-      } */
+	  }  else if (event.keyCode == event.DOM_VK_RIGHT ||
+                  event.keyCode == event.DOM_VK_LEFT) {
+         var parallel = document.getElementById(getParallelId(
+                                                   target.getAttribute(
+                                                      "aria-activedescendant")));
+         if (parallel) {
+            var columns = document.getElementsByClassName("compareColumn");
+            var column;
+            if (event.keyCode == event.DOM_VK_RIGHT)
+               column = columns[1];
+            else
+               column = columns[0];
+            column.setAttribute("aria-activedescendant", parallel.id);
+            column.focus();
+         }
+      } 
    }
    return true;
 }
@@ -149,14 +161,15 @@ function unhighlightNode(obj) {
 }
 
 function getParallelObj(obj) {
-   var other_id;
    if (obj.id == '')
 	  return null;
-   var suffix_index;
-   if (obj.id.match("Left"))
-      other_id = obj.id.replace(/(.*)Left(Title)?/, "$1Right$2");
-   else
-      other_id = obj.id.replace(/(.*)Right(Title)?/, "$1Left$2");
-
+   var other_id = getParallelId(obj.id);
    return document.getElementById(other_id);
+}
+
+function getParallelId(id) {
+   if (id.match("Left"))
+      return id.replace(/(.*)Left(Title)?/, "$1Right$2");
+   else
+      return id.replace(/(.*)Right(Title)?/, "$1Left$2");
 }
