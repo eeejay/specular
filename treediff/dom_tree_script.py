@@ -89,6 +89,7 @@ class MarkChangesScriptStore(ScriptStore):
                         n.ownerElement, 'deletedAttribs', n.name)
             else:
                 self._mark_change(n, 'deleted-self')
+                n.setAttribute('revtree:id', hex(id(n))+"Left")
 
         # Insert
         for n in self._inserted:
@@ -104,6 +105,7 @@ class MarkChangesScriptStore(ScriptStore):
                         pairs2[n.ownerElement], 'insertedAttribs', n.name)
             else:
                 self._mark_change(pairs2[n], 'inserted-self')
+                n.setAttribute('revtree:id', hex(id(n))+"Right")
 
         # Update
         for n1, n2 in self._updated:
