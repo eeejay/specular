@@ -1,4 +1,5 @@
 var ad;
+var hoverColumn = null;
 
 function getDetailsTable(obj) {
    if (!obj)
@@ -7,6 +8,12 @@ function getDetailsTable(obj) {
    if (collection.length == 0)
 	  return null;
    return collection[0];
+}
+
+function onNodeClick(obj) {
+   var id = obj.id.replace(/Title/, "");
+   setActiveDescendant(hoverColumn.firstChild, id);
+   showDetails(id);
 }
 
 function showDetails(id) {
@@ -127,6 +134,7 @@ function mouseOutNode(obj) {
 
 function mouseOverTree(obj) {
    addClass(obj, "mouseOverTree");
+   hoverColumn = obj;
    var other_obj = getParallelObj(obj);
    if (other_obj)
 	  addClass(other_obj, "mouseOverTree");
@@ -134,6 +142,7 @@ function mouseOverTree(obj) {
 
 function mouseOutTree(obj) {
    removeClass(obj, "mouseOverTree");
+   hoverColumn = null;
    var other_obj = getParallelObj(obj);
    if (other_obj)
 	  removeClass(other_obj, "mouseOverTree");

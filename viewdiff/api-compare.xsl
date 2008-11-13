@@ -86,9 +86,7 @@
 	<div role="presentation">
       <span role="label">
 	    <xsl:attribute name="onclick">
-		  <xsl:text>showDetails('</xsl:text>
-		  <xsl:value-of select="@revtree:id"/>
-		  <xsl:text>');</xsl:text>
+		  <xsl:text>onNodeClick(this);</xsl:text>
 		</xsl:attribute> 
 		<xsl:attribute name="class">
           <xsl:call-template name="nodeTitleClass"/>
