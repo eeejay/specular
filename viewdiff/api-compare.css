@@ -6,9 +6,12 @@ td {
   vertical-align: top;
 }
 
-table.accDetails { 
-  font-size: 80%;
+div.accDetails { 
   display: none;
+}
+
+.accDetails>table { 
+  font-size: 80%;
   background-color: #CACAFF;
   margin-left: 10px;
   width: 85%;
@@ -16,9 +19,18 @@ table.accDetails {
   border: 2px solid #00004F;
 }
 
+.accDetails th { 
+  background-color: #00004F;
+  color: #fff;
+}
+
 table#compareTable { 
   width: 100%;
   border-collapse: collapse;
+}
+
+.fieldvalue>p { 
+  margin: 0;
 }
 
 td.compareColumn { 

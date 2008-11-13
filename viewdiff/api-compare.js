@@ -1,4 +1,5 @@
-showingDetails = new Array();
+var showingDetails = new Array();
+var parallelDetails;
 
 function hideShowing() {
    var i;
@@ -15,26 +16,18 @@ function getDetailsTable(obj) {
    return collection[0];
 }
 
-function showDetails(obj) {
-   obj = obj.parentNode.parentNode
+function showDetails(id) {
+   var obj = document.getElementById(id);
    var details = getDetailsTable(obj);
-   if (!details)
-	  return;
-   var parallel = getDetailsTable(getParallelObj(obj));   
-   if (details.style.display == 'table') {
+   if (details.style.display == 'block') {
+	  obj.setAttribute("aria-expanded", "false");
       details.style.display = 'none';
-	  if (parallel)
-		 parallel.style.display = 'none';
-	  showingDetails = new Array();
    } else {
-	  hideShowing();
-	  details.style.display = 'table';
-	  showingDetails[0] = details;
-	  if (parallel) {
-		 parallel.style.display = 'table';
-		 showingDetails[1] = parallel;
-	  }
+	  obj.setAttribute("aria-expanded", "true");
+	  details.style.display = 'block';
+	  return details;
    }
+   return null;
 }
 
 function onTreeFocus(obj) {
@@ -76,18 +69,38 @@ function setActiveDescendant(container, id) {
    var current_id = container.getAttribute("aria-activedescendant");
    unhighlightNode(document.getElementById(current_id+"Title"));
    highlightNode(document.getElementById(id+"Title"));
-   dump("setActiveDescendant "+id+"\n");
    container.setAttribute("aria-activedescendant", id);
 }
-
-function keyCallback(event) {
+function detailsKeyCallback(event) {
    var target = event.target;
-
+   dump("detailsKeyCallback "+target+"\n");
    if (event.type == "keydown") {
       if (event.altKey) {
          return true;
       }
 	  
+	  if (event.keyCode == event.DOM_VK_RIGHT ||
+          event.keyCode == event.DOM_VK_LEFT) {
+         parallelDetails = document.getElementById(getParallelId(target.id));
+		 dump(parallelDetails.id+" "+target.id+"\n");
+		 setTimeout("parallelDetails.focus();", 50);
+		 return false;
+	  }  else if (event.keyCode == event.DOM_VK_ENTER ||
+				  event.keyCode == event.DOM_VK_RETURN) {
+		 showDetails(target.id);
+	  }
+   }
+   return true;
+   
+}
+function nodeKeyCallback(event) {
+   var target = event.target;
+   
+   if (event.type == "keydown") {
+      if (event.altKey) {
+         return true;
+      }
+
 	  if (event.keyCode == event.DOM_VK_DOWN) {
 		 var node_id = getNextNodeId(target);
          if (node_id != '')
@@ -113,7 +126,11 @@ function keyCallback(event) {
             column.setAttribute("aria-activedescendant", parallel.id);
             column.focus();
          }
-      } 
+	  }  else if (event.keyCode == event.DOM_VK_ENTER ||
+				  event.keyCode == event.DOM_VK_RETURN) {
+		 dump("Doing "+target.getAttribute("aria-activedescendant"));
+		 showDetails(target.getAttribute("aria-activedescendant"));
+	  }
    }
    return true;
 }
@@ -145,7 +162,6 @@ function highlightNode(obj) {
       return;
    var other_obj = getParallelObj(obj);
    var classStr = obj.getAttribute("class").replace(/(.*)highlightedNode/, "$1");
-   dump(classStr+"\n");
    obj.setAttribute("class", classStr+" highlightedNode");
    if (other_obj) {
       classStr = other_obj.getAttribute("class").replace(
@@ -164,7 +180,6 @@ function unhighlightNode(obj) {
    var other_obj = getParallelObj(obj);
    var classStr = obj.getAttribute("class").replace(
       /(.*)highlightedNode/, "$1");
-   dump('unhighlightNode '+classStr+"\n");
    obj.setAttribute("class", classStr);
    if (other_obj) {
       classStr = other_obj.getAttribute("class").replace(
@@ -181,8 +196,10 @@ function getParallelObj(obj) {
 }
 
 function getParallelId(id) {
+   if (!id)
+	  return '';
    if (id.match("Left"))
-      return id.replace(/(.*)Left(Title)?/, "$1Right$2");
+      return id.replace(/(.*)Left(Title|Dialog)?/, "$1Right$2");
    else
-      return id.replace(/(.*)Right(Title)?/, "$1Left$2");
+      return id.replace(/(.*)Right(Title|Dialog)?/, "$1Left$2");
 }

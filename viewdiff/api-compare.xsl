@@ -42,8 +42,8 @@
 	  <xsl:attribute name="aria-activedescendant"><xsl:value-of select="accessible/@revtree:id"/></xsl:attribute>
 	  <xsl:attribute name="onfocus">onTreeFocus(this);</xsl:attribute>
 	  <xsl:attribute name="onblur">OnTreeBlur(this);</xsl:attribute>
-	  <xsl:attribute name="onkeydown">return keyCallback(event);</xsl:attribute>
-	  <xsl:attribute name="onkeypress">return keyCallback(event);</xsl:attribute>
+	  <xsl:attribute name="onkeydown">return nodeKeyCallback(event);</xsl:attribute>
+	  <xsl:attribute name="onkeypress">return nodeKeyCallback(event);</xsl:attribute>
 	  <xsl:attribute name="role">tree</xsl:attribute>
       <xsl:apply-templates/> 
     </ul>
@@ -52,6 +52,9 @@
 
 <xsl:template match="accessible">
   <li role="treeitem">
+	<xsl:attribute name="aria-expanded">
+	  <xsl:text>false</xsl:text>
+	</xsl:attribute>
     <xsl:attribute name="class">
       <xsl:call-template name="itemClass"/>
     </xsl:attribute>
@@ -62,14 +65,13 @@
       <xsl:value-of select="@revtree:id"/>Title</xsl:attribute>
 	<div role="presentation">
       <span role="label">
-	    <xsl:attribute name="onclick">showDetails(this);</xsl:attribute> 
+	    <xsl:attribute name="onclick">showDetails('<xsl:value-of select="@revtree:id"/>');</xsl:attribute> 
 		<xsl:attribute name="class">
           <xsl:call-template name="nodeTitleClass"/>
 		</xsl:attribute>
 		<xsl:attribute name="onmouseover">mouseOverNode(this);</xsl:attribute> 
 		<xsl:attribute name="onmouseout">mouseOutNode(this);</xsl:attribute>
 	    <xsl:attribute name="id"><xsl:value-of select="@revtree:id"/>Title</xsl:attribute>
-        <xsl:attribute name="tabindex">-1</xsl:attribute>
 		<xsl:value-of select="@role"/>
 	  </span>
       <xsl:call-template name="detailsTable"/>
@@ -83,68 +85,80 @@
 </xsl:template>
 
 <xsl:template match="//accessible/@*">
-  <span>
-	<xsl:variable name="baseclass" 
-                  select="concat('accessible', name())"/>
-	<xsl:choose>
-	  <xsl:when test="contains(../@revtree:updatedAttribs, name())">
-		<xsl:attribute name="class">
-		  <xsl:value-of select="concat($baseclass,' revUpdated')"/>
-		</xsl:attribute> 
-	  </xsl:when>
-
-	  <xsl:when test="contains(../@revtree:deletedAttribs, name())">
-		<xsl:attribute name="class">
-		  <xsl:value-of select="concat($baseclass,' revDeleted')"/>
-		</xsl:attribute> 
-	  </xsl:when>
-
-	  <xsl:when test="contains(../@revtree:insertedAttribs, name())">
-		<xsl:attribute name="class">
-		  <xsl:value-of select="concat($baseclass,' revInserted')"/>
-		</xsl:attribute> 
-	  </xsl:when>
-
-	  <xsl:otherwise>
-		<xsl:attribute name="class">
-		  <xsl:value-of select="$baseclass"/>
-		</xsl:attribute> 
-	  </xsl:otherwise>
-
-    </xsl:choose>
-    <xsl:value-of select="." />
-  </span>
+  <xsl:variable name="fieldtitle" 
+				select="concat(translate(substring(name(),1,1), 
+						'abcdefghijklmnopqrstuvwxyz',
+						'ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 
+						substring(name(),2))"/>
+  <tr role="presentation">
+	<td class="fieldname">
+	  <xsl:attribute name="id">
+		<xsl:value-of select="../@revtree:id"/>
+		<xsl:value-of select="$fieldtitle"/>
+		<xsl:text>Field</xsl:text>
+	  </xsl:attribute>
+	  <xsl:value-of select="$fieldtitle"/>
+	</td>
+	<td class="fieldvalue" role="presentation">
+	  <span>
+		<xsl:attribute name="aria-labelledby">
+		  <xsl:value-of select="../@revtree:id"/>
+		  <xsl:value-of select="$fieldtitle"/>
+		  <xsl:text>Field</xsl:text>
+		</xsl:attribute>
+		<xsl:variable name="baseclass" 
+					  select="concat('accessible', $fieldtitle)"/>
+		<xsl:choose>
+		  <xsl:when test="contains(../@revtree:updatedAttribs, name())">
+			<xsl:attribute name="class">
+			  <xsl:value-of select="concat($baseclass,' revUpdated')"/>
+			</xsl:attribute> 
+		  </xsl:when>
+		  
+		  <xsl:when test="contains(../@revtree:deletedAttribs, name())">
+			<xsl:attribute name="class">
+			  <xsl:value-of select="concat($baseclass,' revDeleted')"/>
+			</xsl:attribute> 
+		  </xsl:when>
+		  
+		  <xsl:when test="contains(../@revtree:insertedAttribs, name())">
+			<xsl:attribute name="class">
+			  <xsl:value-of select="concat($baseclass,' revInserted')"/>
+			</xsl:attribute> 
+		  </xsl:when>
+		  
+		  <xsl:otherwise>
+			<xsl:attribute name="class">
+			  <xsl:value-of select="$baseclass"/>
+			</xsl:attribute> 
+		  </xsl:otherwise>
+		  
+		</xsl:choose>
+		<xsl:value-of select="." />
+	  </span>
+	</td>
+  </tr>
 </xsl:template>
 
 <xsl:template name="detailsTable">
-  <table class="accDetails" role="dialog">
-    <tr>
-      <td class="fieldname">Name:</td>
-      <td class="fieldvalue"><xsl:apply-templates select="@name"/></td>
-    </tr>
-    <tr>
-      <td class="fieldname">Role:</td>
-      <td class="fieldvalue"><xsl:apply-templates select="@role"/></td>
-    </tr>
-    <tr>
-      <td class="fieldname">Description:</td>
-      <td class="fieldvalue"><xsl:apply-templates select="@description"/></td>
-    </tr>
-    <tr>
-      <td class="fieldname">State:</td>
-      <td class="fieldvalue"><xsl:apply-templates select="@state"/></td>
-    </tr>
-    <tr>
-      <td class="fieldname">Value:</td>
-      <td class="fieldvalue"><xsl:apply-templates select="@value"/></td>
-    </tr>
-    <tr>
-      <td class="fieldname">Actions:</td>
-      <td class="fieldvalue"><xsl:apply-templates select="@actions"/></td>
-    </tr>
-  </table>
+  <div class="accDetails">
+	  <xsl:attribute name="id">
+	  <xsl:value-of select="../@revtree:id"/>
+	  <xsl:text>Dialog</xsl:text>
+	</xsl:attribute>
+	<table role="presentation">
+	  <tbody role="presentation">
+		<xsl:apply-templates select="@name"/>
+		<xsl:apply-templates select="@role"/>
+		<xsl:apply-templates select="@description"/>
+		<xsl:apply-templates select="@state"/>
+		<xsl:apply-templates select="@value"/>
+		<xsl:apply-templates select="@actions"/>
+	  </tbody>
+	</table>
+  </div>
 </xsl:template>
-
+  
 <xsl:template name="labeledBy">
   <xsl:choose>
 	<xsl:when test="contains(@revtree:changes, 'deleted-self')">labelDeleted</xsl:when>
