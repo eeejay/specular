@@ -17,7 +17,11 @@ td {
   width: 85%;
   table-layout: automatic;
   border: 2px solid #00004F;
+  padding: 2px;
 }
+
+.accDetails>table>tbody {
+} 
 
 .accDetails th { 
   background-color: #00004F;
@@ -111,12 +115,19 @@ li.middle>div,li.first>div {
   font-weight: bold;
 }
 
-.focus .highlightedNode { 
+.focus .highlighted>div>span { 
   background-color: #aaa;
 }
 
-.highlightedNode { 
+.highlighted>div>span { 
   background-color: #eee;
+}
+
+div.highlighted>table { 
+//  background-color: red;
+  border: 4px solid #00004F;
+  padding: 0px;
+
 }
 
 .mouseOverNode { 

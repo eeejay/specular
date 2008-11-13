@@ -40,11 +40,11 @@ function onTreeFocus(obj) {
 }
 
 function OnTreeBlur(obj) {
-   var classStr = obj.getAttribute("class").replace(/\sfocus/g, "");
-   obj.setAttribute("class", classStr);
-   var id = obj.getAttribute("aria-activedescendant");
-   var descendant = document.getElementById(id+"Title");
-   unhighlightNode(descendant);   
+   removeClass(obj, "focus");
+   var descendant = document.getElementById(
+	  obj.getAttribute("aria-activedescendant"));
+   if (descendant)
+	  unhighlightNode(descendant);   
 }
 
 function getNextNodeId(obj) {
@@ -77,12 +77,8 @@ function getPrevNodeId(obj) {
 
 function setActiveDescendant(container, id) {
    var current_id = container.getAttribute("aria-activedescendant");
-   var current_title = document.getElementById(current_id+"Title");
-   if (current_title)
-	  unhighlightNode(current_title);
-   var next_title = document.getElementById(id+"Title");
-   if (next_title)
-	  highlightNode(next_title);
+   unhighlightNode(document.getElementById(current_id));
+   highlightNode(document.getElementById(id));
    container.setAttribute("aria-activedescendant", id);
 }
 
@@ -164,26 +160,19 @@ function mouseOutTree(obj) {
 
 
 function highlightNode(obj) {
-   if (obj.id == '')
-      return;
-   addClass(obj, "highlightedNode");
+   dump(obj.firstChild.firstChild.nodeName+" "+obj.id+"\n");
+   addClass(obj, "highlighted");
    var other_obj = getParallelObj(obj);
    if (other_obj)
-	  addClass(other_obj, "highlightedNode");
-}
-
-
-function getComputedBGColor(obj) {
-   return window.getComputedStyle(obj, "").getPropertyValue('background-color')
+	  addClass(other_obj, "highlighted");
 }
 
 function unhighlightNode(obj) {
-   if (obj.id == '')
-      return;
-   removeClass(obj, "highlightedNode");
+   dump(obj+"\n");
+   removeClass(obj, "highlighted");
    var other_obj = getParallelObj(obj);
    if (other_obj)
-	  removeClass(other_obj, "highlightedNode");
+	  removeClass(other_obj, "highlighted");
 }
 
 function getParallelObj(obj) {
