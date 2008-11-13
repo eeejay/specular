@@ -6,7 +6,7 @@ td {
   vertical-align: top;
 }
 
-div.accDetails { 
+.hiddenDetails, .hiddenDetails * { 
   display: none;
 }
 

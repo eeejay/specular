@@ -170,9 +170,10 @@
 </xsl:template>
 
 <xsl:template name="detailsTable">
-  <div class="accDetails">
-	  <xsl:attribute name="id">
-	  <xsl:value-of select="../@revtree:id"/>
+  <div class="accDetails hiddenDetails" role="treeitem">
+	<xsl:attribute name="aria-hidden">true</xsl:attribute>
+	<xsl:attribute name="id">
+	  <xsl:value-of select="@revtree:id"/>
 	  <xsl:text>Dialog</xsl:text>
 	</xsl:attribute>
 	<table role="presentation">

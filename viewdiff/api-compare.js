@@ -19,13 +19,15 @@ function onNodeClick(obj) {
 function showDetails(id) {
    var obj = document.getElementById(id);
    var details = getDetailsTable(obj);
-   if (details.style.display == 'block') {
-      details.style.display = 'none';
-	  obj.setAttribute("aria-expanded", "false");
-   } else {
-	  details.style.display = 'block';
+   if (hasClass(details, "hiddenDetails")) {
+	  removeClass(details, "hiddenDetails");
 	  obj.setAttribute("aria-expanded", "true");
+      details.setAttribute("aria-hidden", "false");
 	  return details;
+   } else {
+	  addClass(details, "hiddenDetails");
+	  obj.setAttribute("aria-expanded", "false");
+      details.setAttribute("aria-hidden", "true");
    }
    return null;
 }
@@ -198,4 +200,8 @@ function removeClass(obj, cls) {
    var regex = new RegExp("\\s"+cls, "g");
    classStr = obj.getAttribute("class").replace(regex, "");
    obj.setAttribute("class", classStr);
+}
+
+function hasClass(obj, cls) {
+   return obj.getAttribute("class").match(cls)
 }
