@@ -1,3 +1,5 @@
+var ad;
+
 function getDetailsTable(obj) {
    if (!obj)
 	  return null;
@@ -98,7 +100,8 @@ function nodeKeyCallback(event) {
          }
 	  }  else if (event.keyCode == event.DOM_VK_ENTER ||
 				  event.keyCode == event.DOM_VK_RETURN) {
-		 showDetails(target.getAttribute("aria-activedescendant"));
+		 ad = target.getAttribute("aria-activedescendant");
+		 setTimeout("showDetails(ad)", 0);
 	  }
    }
    return true;
