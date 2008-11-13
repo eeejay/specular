@@ -81,7 +81,7 @@ td.fieldvalue {
 */
 
 .nodeTitle { 
-  margin-left: 20px;
+  margin: 0 0 0 20px;
   font-weight: bold;
   text-decoration: none;
   width: 80%;
@@ -117,4 +117,11 @@ li.middle>div,li.first>div {
 
 .highlightedNode { 
   background-color: #eee;
+}
+
+.mouseOverNode { 
+  text-decoration: underline;
+}
+
+.mouseOverTree .mouseOverNode {
 }

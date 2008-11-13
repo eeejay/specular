@@ -1,12 +1,3 @@
-var showingDetails = new Array();
-var parallelDetails;
-
-function hideShowing() {
-   var i;
-   for (i in showingDetails)
-	  showingDetails[i].style.display = 'none';
-}
-
 function getDetailsTable(obj) {
    if (!obj)
 	  return null;
@@ -20,11 +11,11 @@ function showDetails(id) {
    var obj = document.getElementById(id);
    var details = getDetailsTable(obj);
    if (details.style.display == 'block') {
-	  obj.setAttribute("aria-expanded", "false");
       details.style.display = 'none';
+	  obj.setAttribute("aria-expanded", "false");
    } else {
-	  obj.setAttribute("aria-expanded", "true");
 	  details.style.display = 'block';
+	  obj.setAttribute("aria-expanded", "true");
 	  return details;
    }
    return null;
@@ -71,28 +62,7 @@ function setActiveDescendant(container, id) {
    highlightNode(document.getElementById(id+"Title"));
    container.setAttribute("aria-activedescendant", id);
 }
-function detailsKeyCallback(event) {
-   var target = event.target;
-   dump("detailsKeyCallback "+target+"\n");
-   if (event.type == "keydown") {
-      if (event.altKey) {
-         return true;
-      }
-	  
-	  if (event.keyCode == event.DOM_VK_RIGHT ||
-          event.keyCode == event.DOM_VK_LEFT) {
-         parallelDetails = document.getElementById(getParallelId(target.id));
-		 dump(parallelDetails.id+" "+target.id+"\n");
-		 setTimeout("parallelDetails.focus();", 50);
-		 return false;
-	  }  else if (event.keyCode == event.DOM_VK_ENTER ||
-				  event.keyCode == event.DOM_VK_RETURN) {
-		 showDetails(target.id);
-	  }
-   }
-   return true;
-   
-}
+
 function nodeKeyCallback(event) {
    var target = event.target;
    
@@ -128,7 +98,6 @@ function nodeKeyCallback(event) {
          }
 	  }  else if (event.keyCode == event.DOM_VK_ENTER ||
 				  event.keyCode == event.DOM_VK_RETURN) {
-		 dump("Doing "+target.getAttribute("aria-activedescendant"));
 		 showDetails(target.getAttribute("aria-activedescendant"));
 	  }
    }
@@ -138,54 +107,57 @@ function nodeKeyCallback(event) {
 function mouseOverNode(obj) {
    if (obj.id == '')
       return;
+   addClass(obj, "mouseOverNode");
    var other_obj = getParallelObj(obj);
-   obj.mouseout_bg = getComputedBGColor(obj);
-   obj.style.backgroundColor = "#ddd";
-   if (other_obj) {
-      other_obj.mouseout_bg = getComputedBGColor(other_obj);
-      other_obj.style.backgroundColor = "#eee";
-   }
+   if (other_obj)
+	  addClass(other_obj, "mouseOverNode");
 }
 
 function mouseOutNode(obj) {
    if (obj.id == '')
       return;
+   removeClass(obj, "mouseOverNode");
    var other_obj = getParallelObj(obj);
-   obj.style.backgroundColor = obj.mouseout_bg;
    if (other_obj)
-      other_obj.style.backgroundColor = other_obj.mouseout_bg;
+	  removeClass(other_obj, "mouseOverNode");
+}
+
+function mouseOverTree(obj) {
+   addClass(obj, "mouseOverTree");
+   var other_obj = getParallelObj(obj);
+   if (other_obj)
+	  addClass(other_obj, "mouseOverTree");
+}
+
+function mouseOutTree(obj) {
+   removeClass(obj, "mouseOverTree");
+   var other_obj = getParallelObj(obj);
+   if (other_obj)
+	  removeClass(other_obj, "mouseOverTree");
 }
 
 
 function highlightNode(obj) {
    if (obj.id == '')
       return;
+   addClass(obj, "highlightedNode");
    var other_obj = getParallelObj(obj);
-   var classStr = obj.getAttribute("class").replace(/(.*)highlightedNode/, "$1");
-   obj.setAttribute("class", classStr+" highlightedNode");
-   if (other_obj) {
-      classStr = other_obj.getAttribute("class").replace(
-            /(.*)highlightedNode/, "$1");
-      other_obj.setAttribute("class", classStr+" highlightedNode");   }
+   if (other_obj)
+	  addClass(other_obj, "highlightedNode");
 }
 
 
 function getComputedBGColor(obj) {
-   return window.getComputedStyle(obj, "").getPropertyValue('background-color');
+   return window.getComputedStyle(obj, "").getPropertyValue('background-color')
 }
 
 function unhighlightNode(obj) {
    if (obj.id == '')
       return;
+   removeClass(obj, "highlightedNode");
    var other_obj = getParallelObj(obj);
-   var classStr = obj.getAttribute("class").replace(
-      /(.*)highlightedNode/, "$1");
-   obj.setAttribute("class", classStr);
-   if (other_obj) {
-      classStr = other_obj.getAttribute("class").replace(
-         /(.*)highlightedNode/, "$1");
-      other_obj.setAttribute("class", classStr);
-   }
+   if (other_obj)
+	  removeClass(other_obj, "highlightedNode");
 }
 
 function getParallelObj(obj) {
@@ -202,4 +174,16 @@ function getParallelId(id) {
       return id.replace(/(.*)Left(Title|Dialog)?/, "$1Right$2");
    else
       return id.replace(/(.*)Right(Title|Dialog)?/, "$1Left$2");
+}
+
+function addClass(obj, cls) {
+   var regex = new RegExp("\\s"+cls, "g");
+   classStr = obj.getAttribute("class").replace(regex, "");
+   obj.setAttribute("class", classStr+" "+cls);
+}
+
+function removeClass(obj, cls) {
+   var regex = new RegExp("\\s"+cls, "g");
+   classStr = obj.getAttribute("class").replace(regex, "");
+   obj.setAttribute("class", classStr);
 }

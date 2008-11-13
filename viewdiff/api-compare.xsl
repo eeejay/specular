@@ -36,14 +36,32 @@
 
 <xsl:template match="left|right">
   <td class="compareColumn">
+	<xsl:attribute name="onmouseover">
+	  <xsl:text>mouseOverTree(this);</xsl:text>
+	</xsl:attribute>
+	<xsl:attribute name="onmouseout">
+	  <xsl:text>mouseOutTree(this);</xsl:text>
+	</xsl:attribute>
     <ul class="compareTree">
       <xsl:attribute name="tabindex">0</xsl:attribute>
-      <xsl:attribute name="multiselectable">multiselectable</xsl:attribute>
-	  <xsl:attribute name="aria-activedescendant"><xsl:value-of select="accessible/@revtree:id"/></xsl:attribute>
-	  <xsl:attribute name="onfocus">onTreeFocus(this);</xsl:attribute>
-	  <xsl:attribute name="onblur">OnTreeBlur(this);</xsl:attribute>
-	  <xsl:attribute name="onkeydown">return nodeKeyCallback(event);</xsl:attribute>
-	  <xsl:attribute name="onkeypress">return nodeKeyCallback(event);</xsl:attribute>
+      <xsl:attribute name="multiselectable">
+		<xsl:text>multiselectable</xsl:text>
+	  </xsl:attribute>
+	  <xsl:attribute name="aria-activedescendant">
+		<xsl:value-of select="accessible/@revtree:id"/>
+	  </xsl:attribute>
+	  <xsl:attribute name="onfocus">
+		<xsl:text>onTreeFocus(this);</xsl:text>
+	  </xsl:attribute>
+	  <xsl:attribute name="onblur">
+		<xsl:text>OnTreeBlur(this);</xsl:text>
+	  </xsl:attribute>
+	  <xsl:attribute name="onkeydown">
+		<xsl:text>return nodeKeyCallback(event);</xsl:text>
+	  </xsl:attribute>
+	  <xsl:attribute name="onkeypress">
+		<xsl:text>return nodeKeyCallback(event);</xsl:text>
+	  </xsl:attribute>
 	  <xsl:attribute name="role">tree</xsl:attribute>
       <xsl:apply-templates/> 
     </ul>
@@ -58,20 +76,33 @@
     <xsl:attribute name="class">
       <xsl:call-template name="itemClass"/>
     </xsl:attribute>
-	<xsl:attribute name="id"><xsl:value-of select="@revtree:id"/></xsl:attribute>
+	<xsl:attribute name="id">
+	  <xsl:value-of select="@revtree:id"/>
+	</xsl:attribute>
     <xsl:attribute name="aria-labelledby">
       <xsl:call-template name="labeledBy"/>
       <xsl:text> </xsl:text>
       <xsl:value-of select="@revtree:id"/>Title</xsl:attribute>
 	<div role="presentation">
       <span role="label">
-	    <xsl:attribute name="onclick">showDetails('<xsl:value-of select="@revtree:id"/>');</xsl:attribute> 
+	    <xsl:attribute name="onclick">
+		  <xsl:text>showDetails('</xsl:text>
+		  <xsl:value-of select="@revtree:id"/>
+		  <xsl:text>');</xsl:text>
+		</xsl:attribute> 
 		<xsl:attribute name="class">
           <xsl:call-template name="nodeTitleClass"/>
 		</xsl:attribute>
-		<xsl:attribute name="onmouseover">mouseOverNode(this);</xsl:attribute> 
-		<xsl:attribute name="onmouseout">mouseOutNode(this);</xsl:attribute>
-	    <xsl:attribute name="id"><xsl:value-of select="@revtree:id"/>Title</xsl:attribute>
+		<xsl:attribute name="onmouseover">
+		  <xsl:text>mouseOverNode(this);</xsl:text>
+		</xsl:attribute> 
+		<xsl:attribute name="onmouseout">
+		  <xsl:text>mouseOutNode(this);</xsl:text>
+		</xsl:attribute>
+	    <xsl:attribute name="id">
+		  <xsl:value-of select="@revtree:id"/>
+		  <xsl:text>Title</xsl:text>
+		</xsl:attribute>
 		<xsl:value-of select="@role"/>
 	  </span>
       <xsl:call-template name="detailsTable"/>
@@ -161,10 +192,18 @@
   
 <xsl:template name="labeledBy">
   <xsl:choose>
-	<xsl:when test="contains(@revtree:changes, 'deleted-self')">labelDeleted</xsl:when>
-	<xsl:when test="contains(@revtree:changes, 'inserted-self')">labelInserted</xsl:when>
-	<xsl:when test="contains(@revtree:changes, 'updated-attrib')">labelAttribUpdate</xsl:when>
-	<xsl:when test="contains(@revtree:changes, 'inserted-attrib')">labelAttribUpdate</xsl:when>
+	<xsl:when test="contains(@revtree:changes, 'deleted-self')">
+	  <xsl:text>labelDeleted</xsl:text>
+	</xsl:when>
+	<xsl:when test="contains(@revtree:changes, 'inserted-self')">
+	  <xsl:text>labelInserted</xsl:text>
+	</xsl:when>
+	<xsl:when test="contains(@revtree:changes, 'updated-attrib')">
+	  <xsl:text>labelAttribUpdate</xsl:text>
+	</xsl:when>
+	<xsl:when test="contains(@revtree:changes, 'inserted-attrib')">
+	  <xsl:text>labelAttribUpdate</xsl:text>
+	</xsl:when>
   </xsl:choose>
 </xsl:template>
 
