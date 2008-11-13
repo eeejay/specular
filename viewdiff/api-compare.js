@@ -49,28 +49,40 @@ function OnTreeBlur(obj) {
 
 function getNextNodeId(obj) {
    var current_id = obj.getAttribute("aria-activedescendant");
-   var nodes_depth = obj.getElementsByClassName("treeNode");
+   var nodes_depth = obj.getElementsByClassName("walkable");
    var i;
-   for (i=0;i<nodes_depth.length-1;i++)
-	  if (nodes_depth[i].id == current_id)
-		 return nodes_depth[i+1].id;
+   for (i=0;i<nodes_depth.length-2;i++)
+	  if (nodes_depth[i].id == current_id) {
+		 if (hasClass(nodes_depth[i+1], "hiddenDetails"))
+			return nodes_depth[i+2].id;
+         else 
+			return nodes_depth[i+1].id;
+	  }
    return '';
 }
 
 function getPrevNodeId(obj) {
    var current_id = obj.getAttribute("aria-activedescendant");
-   var nodes_depth = obj.getElementsByClassName("treeNode");
+   var nodes_depth = obj.getElementsByClassName("walkable");
    var i;
-   for (i=1;i<nodes_depth.length;i++)
-	  if (nodes_depth[i].id == current_id)
-		 return nodes_depth[i-1].id;
+   for (i=2;i<nodes_depth.length;i++)
+	  if (nodes_depth[i].id == current_id) {
+		 if (hasClass(nodes_depth[i-1], "hiddenDetails"))
+			return nodes_depth[i-2].id;
+		 else
+			return nodes_depth[i-1].id;
+	  }
    return '';
 }
 
 function setActiveDescendant(container, id) {
    var current_id = container.getAttribute("aria-activedescendant");
-   unhighlightNode(document.getElementById(current_id+"Title"));
-   highlightNode(document.getElementById(id+"Title"));
+   var current_title = document.getElementById(current_id+"Title");
+   if (current_title)
+	  unhighlightNode(current_title);
+   var next_title = document.getElementById(id+"Title");
+   if (next_title)
+	  highlightNode(next_title);
    container.setAttribute("aria-activedescendant", id);
 }
 

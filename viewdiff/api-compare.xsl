@@ -170,7 +170,7 @@
 </xsl:template>
 
 <xsl:template name="detailsTable">
-  <div class="accDetails hiddenDetails" role="treeitem">
+  <div class="accDetails walkable hiddenDetails" role="treeitem">
 	<xsl:attribute name="aria-hidden">true</xsl:attribute>
 	<xsl:attribute name="id">
 	  <xsl:value-of select="@revtree:id"/>
@@ -226,7 +226,7 @@
 </xsl:template>
 
 <xsl:template name="itemClass">
-  treeNode
+  <xsl:text>treeNode walkable </xsl:text>
   <xsl:choose>
     <xsl:when test="preceding-sibling::*">
       <xsl:choose>
