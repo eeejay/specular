@@ -177,6 +177,7 @@
 	  <xsl:text>Dialog</xsl:text>
 	</xsl:attribute>
 	<table role="presentation">
+	  <th colspan="2"  role="presentation">Accessible Details</th>
 	  <tbody role="presentation">
 		<xsl:apply-templates select="@name"/>
 		<xsl:apply-templates select="@role"/>

@@ -124,10 +124,12 @@ li.middle>div,li.first>div {
 }
 
 div.highlighted>table { 
-//  background-color: red;
-  border: 4px solid #00004F;
+  border: 4px solid #66664F;
   padding: 0px;
+}
 
+.focus div.highlighted>table { 
+  border: 4px solid #00004F;
 }
 
 .mouseOverNode { 

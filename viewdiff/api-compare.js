@@ -78,7 +78,12 @@ function getPrevNodeId(obj) {
 function setActiveDescendant(container, id) {
    var current_id = container.getAttribute("aria-activedescendant");
    unhighlightNode(document.getElementById(current_id));
-   highlightNode(document.getElementById(id));
+   var to_activate = document.getElementById(id);
+   if (hasClass(to_activate, "hiddenDetails")) {
+	  ad = id.replace(/Dialog/, "");
+   	  setTimeout("showDetails(ad)", 0);
+   }
+   highlightNode(to_activate);
    container.setAttribute("aria-activedescendant", id);
 }
 
@@ -118,7 +123,14 @@ function nodeKeyCallback(event) {
 	  }  else if (event.keyCode == event.DOM_VK_ENTER ||
 				  event.keyCode == event.DOM_VK_RETURN) {
 		 ad = target.getAttribute("aria-activedescendant");
-		 setTimeout("showDetails(ad)", 0);
+		 if (!ad.match("Dialog")) {
+			setTimeout("showDetails(ad)", 0);
+//			setActiveDescendant(target, ad+"Dialog");
+		 } else {
+			ad = ad.replace(/Dialog/, "");
+			setTimeout("showDetails(ad)", 0);
+			setActiveDescendant(target, ad);
+		 }
 	  }
    }
    return true;
