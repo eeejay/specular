@@ -131,9 +131,6 @@
 	<td class="fieldvalue" role="presentation">
 	  <span>
 		<xsl:attribute name="aria-labelledby">
-		  <xsl:value-of select="../@revtree:id"/>
-		  <xsl:value-of select="$fieldtitle"/>
-		  <xsl:text>Field</xsl:text>
 		</xsl:attribute>
 		<xsl:variable name="baseclass" 
 					  select="concat('accessible', $fieldtitle)"/>
@@ -141,29 +138,59 @@
 		  <xsl:when test="contains(../@revtree:updatedAttribs, name())">
 			<xsl:attribute name="class">
 			  <xsl:value-of select="concat($baseclass,' revUpdated')"/>
-			</xsl:attribute> 
+			</xsl:attribute>
+			<xsl:attribute name="aria-labelledby">
+			  <xsl:text>labelAttribUpdate </xsl:text>
+			  <xsl:value-of select="../@revtree:id"/>
+			  <xsl:value-of select="$fieldtitle"/>
+			  <xsl:text>Field</xsl:text>
+			</xsl:attribute>
 		  </xsl:when>
 		  
 		  <xsl:when test="contains(../@revtree:deletedAttribs, name())">
 			<xsl:attribute name="class">
 			  <xsl:value-of select="concat($baseclass,' revDeleted')"/>
 			</xsl:attribute> 
+			<xsl:attribute name="aria-labelledby">
+			  <xsl:text>labelDeleted </xsl:text>
+			  <xsl:value-of select="../@revtree:id"/>
+			  <xsl:value-of select="$fieldtitle"/>
+			  <xsl:text>Field</xsl:text>
+			</xsl:attribute>
 		  </xsl:when>
 		  
 		  <xsl:when test="contains(../@revtree:insertedAttribs, name())">
 			<xsl:attribute name="class">
 			  <xsl:value-of select="concat($baseclass,' revInserted')"/>
 			</xsl:attribute> 
+			<xsl:attribute name="aria-labelledby">
+			  <xsl:text>labelInserted </xsl:text>
+			  <xsl:value-of select="../@revtree:id"/>
+			  <xsl:value-of select="$fieldtitle"/>
+			  <xsl:text>Field</xsl:text>
+			</xsl:attribute>
 		  </xsl:when>
 		  
 		  <xsl:otherwise>
 			<xsl:attribute name="class">
 			  <xsl:value-of select="$baseclass"/>
 			</xsl:attribute> 
+			<xsl:attribute name="aria-labelledby">
+			  <xsl:value-of select="../@revtree:id"/>
+			  <xsl:value-of select="$fieldtitle"/>
+			  <xsl:text>Field</xsl:text>
+			</xsl:attribute> 
 		  </xsl:otherwise>
 		  
 		</xsl:choose>
-		<xsl:value-of select="." />
+		<xsl:choose>
+		  <xsl:when test="string(.)">
+			<xsl:value-of select="." />
+		  </xsl:when>
+		  <xsl:otherwise>
+			<i>No value</i>
+		  </xsl:otherwise>
+		</xsl:choose>
 	  </span>
 	</td>
   </tr>
@@ -189,7 +216,7 @@
 	</table>
   </div>
 </xsl:template>
-  
+
 <xsl:template name="labeledBy">
   <xsl:choose>
 	<xsl:when test="contains(@revtree:changes, 'deleted-self')">

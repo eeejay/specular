@@ -84,6 +84,7 @@ function setActiveDescendant(container, id) {
    	  setTimeout("showDetails(ad)", 0);
    }
    highlightNode(to_activate);
+   to_activate.scrollIntoView();
    container.setAttribute("aria-activedescendant", id);
 }
 
@@ -125,7 +126,6 @@ function nodeKeyCallback(event) {
 		 ad = target.getAttribute("aria-activedescendant");
 		 if (!ad.match("Dialog")) {
 			setTimeout("showDetails(ad)", 0);
-//			setActiveDescendant(target, ad+"Dialog");
 		 } else {
 			ad = ad.replace(/Dialog/, "");
 			setTimeout("showDetails(ad)", 0);
