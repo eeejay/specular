@@ -36,33 +36,34 @@
 
 <xsl:template match="left|right">
   <td class="compareColumn">
+    <xsl:attribute name="tabindex">0</xsl:attribute>
+    <xsl:attribute name="multiselectable">
+	  <xsl:text>false</xsl:text>
+	</xsl:attribute>
+	<xsl:attribute name="aria-activedescendant">
+	  <xsl:value-of select="accessible/@revtree:id"/>
+	</xsl:attribute>
+	<xsl:attribute name="onfocus">
+	  <xsl:text>onTreeFocus(this);</xsl:text>
+	</xsl:attribute>
+	<xsl:attribute name="onblur">
+	  <xsl:text>OnTreeBlur(this);</xsl:text>
+	</xsl:attribute>
+	<xsl:attribute name="onkeydown">
+	  <xsl:text>return nodeKeyCallback(event);</xsl:text>
+	</xsl:attribute>
+	<xsl:attribute name="onkeypress">
+	  <xsl:text>return nodeKeyCallback(event);</xsl:text>
+	</xsl:attribute>
 	<xsl:attribute name="onmouseover">
 	  <xsl:text>mouseOverTree(this);</xsl:text>
 	</xsl:attribute>
 	<xsl:attribute name="onmouseout">
 	  <xsl:text>mouseOutTree(this);</xsl:text>
 	</xsl:attribute>
-    <ul class="compareTree">
-      <xsl:attribute name="tabindex">0</xsl:attribute>
-      <xsl:attribute name="multiselectable">
-		<xsl:text>multiselectable</xsl:text>
-	  </xsl:attribute>
-	  <xsl:attribute name="aria-activedescendant">
-		<xsl:value-of select="accessible/@revtree:id"/>
-	  </xsl:attribute>
-	  <xsl:attribute name="onfocus">
-		<xsl:text>onTreeFocus(this);</xsl:text>
-	  </xsl:attribute>
-	  <xsl:attribute name="onblur">
-		<xsl:text>OnTreeBlur(this);</xsl:text>
-	  </xsl:attribute>
-	  <xsl:attribute name="onkeydown">
-		<xsl:text>return nodeKeyCallback(event);</xsl:text>
-	  </xsl:attribute>
-	  <xsl:attribute name="onkeypress">
-		<xsl:text>return nodeKeyCallback(event);</xsl:text>
-	  </xsl:attribute>
-	  <xsl:attribute name="role">tree</xsl:attribute>
+	<xsl:attribute name="role">tree</xsl:attribute>
+    <ul>
+	  <xsl:attribute name="role">presentation</xsl:attribute>
       <xsl:apply-templates/> 
     </ul>
   </td>

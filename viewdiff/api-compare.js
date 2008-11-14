@@ -112,7 +112,7 @@ function nodeKeyCallback(event) {
                                                    target.getAttribute(
                                                       "aria-activedescendant")));
          if (parallel) {
-            var columns = document.getElementsByClassName("compareTree");
+            var columns = document.getElementsByClassName("compareColumn");
             var column;
             if (event.keyCode == event.DOM_VK_RIGHT)
                column = columns[1];
