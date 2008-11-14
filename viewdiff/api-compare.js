@@ -172,7 +172,6 @@ function mouseOutTree(obj) {
 
 
 function highlightNode(obj) {
-   dump(obj.firstChild.firstChild.nodeName+" "+obj.id+"\n");
    addClass(obj, "highlighted");
    var other_obj = getParallelObj(obj);
    if (other_obj)
@@ -180,7 +179,6 @@ function highlightNode(obj) {
 }
 
 function unhighlightNode(obj) {
-   dump(obj+"\n");
    removeClass(obj, "highlighted");
    var other_obj = getParallelObj(obj);
    if (other_obj)
