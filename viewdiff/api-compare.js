@@ -12,7 +12,7 @@ function getDetailsTable(obj) {
 
 function onNodeClick(obj) {
    var id = obj.id.replace(/Title/, "");
-   setActiveDescendant(hoverColumn.firstChild, id);
+   setActiveDescendant(hoverColumn, id);
    showDetails(id);
 }
 
