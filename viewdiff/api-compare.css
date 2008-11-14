@@ -2,6 +2,14 @@ body {
   font-family: arial, sans-serif;
 }
 
+h1 {  
+  font-size: 150%;
+}
+
+h2 {  
+  font-size: 110%;
+}
+
 td { 
   vertical-align: top;
 }
@@ -92,19 +100,19 @@ td.fieldvalue {
   display: block;
 }
 
-ul { 
+#compareTable ul { 
   padding-left: 0;
   list-style: none;
 }
 
-li { 
+#compareTable li { 
   margin-left: 16px;
   background-repeat: no-repeat;
   background-position: top left;
   background-image: url('last.png');
 }
 
-li.middle>div,li.first>div { 
+#compareTable li.middle>div,#compareTable li.first>div { 
   background-image: url('spine.png');
   background-repeat: repeat-y;
   background-position: 0px 8px;

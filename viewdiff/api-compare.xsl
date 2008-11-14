@@ -13,6 +13,15 @@
     </head>
     <body>
       <h1><xsl:value-of select="title"/></h1>
+      <p>This is a comparison of the same URL with two different
+      browser profiles. You could tab to the two seperate trees.</p>
+      <h2>Keystrokes</h2>
+      <ul>
+      <li><b>Up/Down:</b> Traverse the node heirarchy.</li>
+      <li><b>Enter:</b> Expand a node to show details (arrow down to it).</li>
+      <li><b>Left/Right:</b> Navigate to the sister node in the other
+      tree.</li>
+      </ul>
       <table id="compareTable">
         <tr>
           <th><xsl:value-of select="//left/@profile"/></th>
@@ -24,9 +33,9 @@
         </tr>
       </table>
       <p id="legend">
-		  <span class="revInserted" id="labelInserted">Inserted</span>
-	      <xsl:text> </xsl:text>
 		  <span class="revDeleted" id="labelDeleted">Deleted</span>
+	      <xsl:text> </xsl:text>
+		  <span class="revInserted" id="labelInserted">Inserted</span>
 	      <xsl:text> </xsl:text>
 		  <span class="revAttribUpdate" id="labelAttribUpdate">Updated</span>
       </p>
