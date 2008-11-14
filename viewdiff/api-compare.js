@@ -51,12 +51,12 @@ function getNextNodeId(obj) {
    var current_id = obj.getAttribute("aria-activedescendant");
    var nodes_depth = obj.getElementsByClassName("walkable");
    var i;
-   for (i=0;i<nodes_depth.length-2;i++)
+   for (i=0;i<nodes_depth.length-1;i++)
 	  if (nodes_depth[i].id == current_id) {
-		 if (hasClass(nodes_depth[i+1], "hiddenDetails"))
-			return nodes_depth[i+2].id;
-         else 
+		 if (!hasClass(nodes_depth[i+1], "hiddenDetails"))
 			return nodes_depth[i+1].id;
+         else if (i+2 < nodes_depth.length)
+			return nodes_depth[i+2].id;
 	  }
    return '';
 }
@@ -65,12 +65,12 @@ function getPrevNodeId(obj) {
    var current_id = obj.getAttribute("aria-activedescendant");
    var nodes_depth = obj.getElementsByClassName("walkable");
    var i;
-   for (i=2;i<nodes_depth.length;i++)
+   for (i=1;i<nodes_depth.length;i++)
 	  if (nodes_depth[i].id == current_id) {
-		 if (hasClass(nodes_depth[i-1], "hiddenDetails"))
-			return nodes_depth[i-2].id;
-		 else
+		 if (!hasClass(nodes_depth[i-1], "hiddenDetails"))
 			return nodes_depth[i-1].id;
+		 else if (i-2 >= 0)
+			return nodes_depth[i-2].id;
 	  }
    return '';
 }
