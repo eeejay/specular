@@ -58,7 +58,7 @@ class MenuBarTest(TestCommon, unittest.TestCase):
     Tests role="menubar" and aria-haspopup="true"'''
     base_url = "http://codetalks.org/"
     path = "/source/widgets/grid/grid.html"
-    expected_revision = 71
+    expected_revision = 144
     _failed_asserts = []
 
     def _wait_for_focus_change(self, name, popup=False):
