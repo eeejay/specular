@@ -118,8 +118,10 @@ class AccessibleTreeMatcher(treediff.DomTreeMatcher):
     def __init__(self, tree1, tree2, f=0.75, t=0.5, 
                  tree_parser=AccessibleTreeIface, 
                  script_store=AccessibleChangesScriptStore):
-        tree1 = parseString(tree1.documentElement.lastChild.toxml())
-        tree2 = parseString(tree2.documentElement.lastChild.toxml())
+        tree1 = \
+            parseString(tree1.documentElement.lastChild.toxml().encode('utf-8'))
+        tree2 = \
+            parseString(tree2.documentElement.lastChild.toxml().encode('utf-8'))
         treediff.DomTreeMatcher.__init__(
             self, tree1, tree2, f, t, tree_parser, script_store)
 
@@ -149,12 +151,8 @@ class AccessibleTreeMatcher(treediff.DomTreeMatcher):
 
 def get_acc_tree(profile_name,host, command, url):
     parsed = urlparse(url)
-    try:
-        first_half = url.split(parsed[2])[0]
-        second_half = url.split(parsed[1])[-1]
-    except:
-        first_half = url
-        second_half = '/'
+    first_half = parsed[0] + '://' + parsed[1]
+    second_half = ''.join(parsed[2:])
     s = selenium(host, 4444, command, first_half)
     s.start()
     s.set_timeout(30000)
