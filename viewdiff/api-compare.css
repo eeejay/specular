@@ -94,10 +94,19 @@ td.fieldvalue {
 
 .nodeTitle { 
   margin: 0 0 0 20px;
-  font-weight: bold;
+  
   text-decoration: none;
   width: 80%;
   display: block;
+}
+
+.nodeTitle>.titleRole { 
+  font-weight: bold;
+}
+
+.nodeTitle>.titleName { 
+  font-size: 80%;
+  font-style: italic;
 }
 
 #compareTable ul { 

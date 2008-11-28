@@ -111,7 +111,13 @@
 		  <xsl:value-of select="@revtree:id"/>
 		  <xsl:text>Title</xsl:text>
 		</xsl:attribute>
-		<xsl:value-of select="@role"/>
+        <span class="titleRole">
+		  <xsl:value-of select="@role"/>
+        </span>
+        <xsl:text> </xsl:text>
+        <span class="titleName">
+          <xsl:call-template name="ellipsizedName"/>
+        </span>
 	  </span>
       <xsl:call-template name="detailsTable"/>
       <ul role="group">
@@ -288,5 +294,26 @@
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
+
+<xsl:template name="ellipsizedName">
+  <xsl:variable name="len" 
+                select="string-length(normalize-space(@name))" />
+  <xsl:choose> 
+    <!-- if collapsed headline_text is 20 characters or longer, 
+         display the first 15 characters and add an ellipsis -->
+    
+    <xsl:when test="$len &gt;= 20"> 
+      <xsl:value-of select="substring(normalize-space(@name),1,17)"/> 
+      <xsl:text> ...</xsl:text> 
+    </xsl:when>
+    
+    <!-- if collapsed headline_text is shorter than  
+         20 characters, display it unmodified -->
+    <xsl:otherwise> 
+      <xsl:value-of select="@name" /> 
+    </xsl:otherwise> 
+  </xsl:choose>
+</xsl:template>
+
 
 </xsl:stylesheet>
