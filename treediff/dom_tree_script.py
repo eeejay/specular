@@ -20,10 +20,7 @@ class MarkChangesScriptStore(ScriptStore):
         ScriptStore.move(self, node, parent, index)
 
     def update(self, node, value):
-        if node.nodeType == Node.ATTRIBUTE_NODE and value == '':
-            self._deleted.append(self._pairs[node])
-        else:
-            self._updated.append((self._pairs[node], node))
+        self._updated.append((self._pairs[node], node))
         ScriptStore.update(self, node, value)
 
     def insert(self, node, label, value, parent, index):
