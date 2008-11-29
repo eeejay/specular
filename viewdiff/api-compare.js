@@ -75,6 +75,26 @@ function getPrevNodeId(obj) {
    return '';
 }
 
+function scrollIntoViewIfNeeded(obj) {
+   if (obj.nodeName == "LI")
+      obj = document.getElementById(obj.id+"Title");
+   var top = obj.offsetTop;
+   var offsetParent = obj.offsetParent;
+   while (offsetParent != null) {
+      top = top + offsetParent.offsetTop;
+      offsetParent = offsetParent.offsetParent;
+   }
+   var bottom = top + obj.offsetHeight;
+   if (bottom > (window.pageYOffset + window.innerHeight)) {
+      dump(bottom+" "+window.pageYOffset+" "+window.innerHeight+" Scroll!\n");
+      obj.scrollIntoView(false);
+   } else {
+      dump(bottom+" "+window.pageYOffset+" "+window.innerHeight+" Don't\n");
+   }
+   if (top < window.pageYOffset)
+      obj.scrollIntoView(true);
+}
+
 function setActiveDescendant(container, id) {
    var current_id = container.getAttribute("aria-activedescendant");
    unhighlightNode(document.getElementById(current_id));
@@ -84,7 +104,7 @@ function setActiveDescendant(container, id) {
    	  setTimeout("showDetails(ad)", 0);
    }
    highlightNode(to_activate);
-   to_activate.scrollIntoView();
+   scrollIntoViewIfNeeded(to_activate);
    container.setAttribute("aria-activedescendant", id);
 }
 
