@@ -23,6 +23,7 @@ function showDetails(id) {
 	  removeClass(details, "hiddenDetails");
 	  obj.setAttribute("aria-expanded", "true");
       details.setAttribute("aria-hidden", "false");
+      scrollIntoViewIfNeeded(details);
 	  return details;
    } else {
 	  addClass(details, "hiddenDetails");
@@ -78,21 +79,12 @@ function getPrevNodeId(obj) {
 function scrollIntoViewIfNeeded(obj) {
    if (obj.nodeName == "LI")
       obj = document.getElementById(obj.id+"Title");
-   var top = obj.offsetTop;
-   var offsetParent = obj.offsetParent;
-   while (offsetParent != null) {
-      top = top + offsetParent.offsetTop;
-      offsetParent = offsetParent.offsetParent;
-   }
-   var bottom = top + obj.offsetHeight;
-   if (bottom > (window.pageYOffset + window.innerHeight)) {
-      dump(bottom+" "+window.pageYOffset+" "+window.innerHeight+" Scroll!\n");
-      obj.scrollIntoView(false);
-   } else {
-      dump(bottom+" "+window.pageYOffset+" "+window.innerHeight+" Don't\n");
-   }
-   if (top < window.pageYOffset)
+   var rect = obj.getBoundingClientRect();
+   if (rect.top < 0)
       obj.scrollIntoView(true);
+
+   if (rect.bottom > window.innerHeight)
+      obj.scrollIntoView(false);
 }
 
 function setActiveDescendant(container, id) {
