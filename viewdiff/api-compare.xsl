@@ -11,7 +11,7 @@
       <script type="text/javascript" src="api-compare.js" />
       <title><xsl:value-of select="title"/></title>
     </head>
-    <body>
+    <body onload="diffViewInit();">
       <h1><xsl:value-of select="title"/></h1>
       <p>This is a comparison of the same URL with two different
       browser profiles. You could tab to the two seperate trees.</p>
@@ -49,6 +49,10 @@
     <xsl:attribute name="multiselectable">
 	  <xsl:text>false</xsl:text>
 	</xsl:attribute>
+    <xsl:attribute name="id">
+      <xsl:value-of select="name()"/>
+      <xsl:text>Column</xsl:text>
+    </xsl:attribute>
 	<xsl:attribute name="aria-activedescendant">
 	  <xsl:value-of select="accessible/@revtree:id"/>
 	</xsl:attribute>

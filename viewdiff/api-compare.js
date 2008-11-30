@@ -1,5 +1,22 @@
 var ad;
 var hoverColumn = null;
+var leftWalkableChildren = Array();
+var rightWalkableChildren = Array();
+var leftTitleChildren = Array();
+var rightTitleChildren = Array();
+var activeColumn = null;
+var leftCol = null;
+var rightCol = null;
+
+function diffViewInit() {
+   leftCol = document.getElementById("leftColumn")
+   leftWalkableChildren = leftCol.getElementsByClassName("walkable");
+   leftTitleChildren = leftCol.getElementsByClassName("nodeTitle");
+
+   rightCol = document.getElementById("rightColumn")
+   rightWalkableChildren = rightCol.getElementsByClassName("walkable");
+   rightTitleChildren = rightCol.getElementsByClassName("nodeTitle");
+}
 
 function getDetailsTable(obj) {
    if (!obj)
@@ -34,6 +51,7 @@ function showDetails(id) {
 }
 
 function onTreeFocus(obj) {
+   activeColumn = obj;
    var classStr = obj.getAttribute("class").replace(/(.*)focus/, "$1");
    obj.setAttribute("class", classStr+" focus");
    var id = obj.getAttribute("aria-activedescendant");
@@ -50,7 +68,11 @@ function OnTreeBlur(obj) {
 
 function getNextNodeId(obj) {
    var current_id = obj.getAttribute("aria-activedescendant");
-   var nodes_depth = obj.getElementsByClassName("walkable");
+   var nodes_depth;
+   if (current_id.match("Left"))
+      nodes_depth = leftWalkableChildren;
+   else
+      nodes_depth = rightWalkableChildren;
    var i;
    for (i=0;i<nodes_depth.length-1;i++)
 	  if (nodes_depth[i].id == current_id) {
@@ -64,7 +86,11 @@ function getNextNodeId(obj) {
 
 function getPrevNodeId(obj) {
    var current_id = obj.getAttribute("aria-activedescendant");
-   var nodes_depth = obj.getElementsByClassName("walkable");
+   var nodes_depth;
+   if (current_id.match("Left"))
+      nodes_depth = leftWalkableChildren;
+   else
+      nodes_depth = rightWalkableChildren;
    var i;
    for (i=1;i<nodes_depth.length;i++)
 	  if (nodes_depth[i].id == current_id) {
@@ -124,12 +150,10 @@ function nodeKeyCallback(event) {
                                                    target.getAttribute(
                                                       "aria-activedescendant")));
          if (parallel) {
-            var columns = document.getElementsByClassName("compareColumn");
-            var column;
             if (event.keyCode == event.DOM_VK_RIGHT)
-               column = columns[1];
+               column = rightCol;
             else
-               column = columns[0];
+               column = leftCol;
             column.setAttribute("aria-activedescendant", parallel.id);
             column.focus();
          }
@@ -201,7 +225,23 @@ function getParallelObj(obj) {
    if (obj.id == '')
 	  return null;
    var other_id = getParallelId(obj.id);
-   return document.getElementById(other_id);
+   var collection;
+   if (other_id.match("Left")) {
+      if (other_id.match("Title"))
+         collection = leftTitleChildren;
+      else
+         collection = leftWalkableChildren;
+   } else {
+      if (other_id.match("Title"))
+         collection = rightTitleChildren;
+      else
+         collection = rightWalkableChildren;
+   }
+   for (var i=0; i<collection.length;i++) {
+      if (other_id == collection[i].id)
+         return collection[i]
+   }
+   return null;
 }
 
 function getParallelId(id) {
