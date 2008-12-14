@@ -5,10 +5,10 @@ from xml.dom.minidom import parseString
 
 class SpecleniumClient(selenium):
     SPECLENIUM_PORT = 4117
-    def start(self):
+    def start(self, record_events=False):
         self._speclenium_server =  \
             ServerProxy('http://%s:%d' % (self.host, self.SPECLENIUM_PORT))
-        self._speclenium_server.start(self.browserStartCommand)
+        self._speclenium_server.start(self.browserStartCommand, record_events)
         selenium.start(self)
 
     def do_command(self, verb, args):
@@ -29,6 +29,9 @@ class SpecleniumClient(selenium):
     
     def get_accessible_match(self, match_criteria):
         return self._speclenium_server.get_accessible_match(match_criteria)
+
+    def get_stored_events(self):
+        return self._speclenium_server.get_stored_events()
 
     def get_accessible_event_match(self, match_criteria, index):
         return self._speclenium_server.get_accessible_event_match(

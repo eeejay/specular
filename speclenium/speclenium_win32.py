@@ -43,8 +43,8 @@ class Speclenium(SpecleniumBase):
     def __init__(self):
         SpecleniumBase.__init__(self)
 
-    def xmlrpc_start(self, browser_start_cmd):
-        SpecleniumBase.xmlrpc_start(self, browser_start_cmd)
+    def xmlrpc_start(self, browser_start_cmd, record_events):
+        SpecleniumBase.xmlrpc_start(self, browser_start_cmd, record_events)
         self._top_frame = None
         self._target_pid = -1
         self._window_id = -1

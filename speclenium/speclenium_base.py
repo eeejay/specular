@@ -49,13 +49,18 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         xmlrpc.XMLRPC.__init__(self)
         self._event_list = []
         self._registered_global_listener = False
+        self._store_events = False
 
-    def xmlrpc_start(self, browser_start_cmd):
+    def xmlrpc_start(self, browser_start_cmd, store_events):
         # Capture target frame here.
+        self._store_events = store_events
+        self._stored_event_list = []
         self.xmlrpc_start_event_cache()
         self._browser_start_cmd = browser_start_cmd
 
     def xmlrpc_flush_event_cache(self):
+        if self._store_events:
+            self._stored_event_list += self._event_list
         self._event_list = []
         return True
 
@@ -64,6 +69,10 @@ class SpecleniumBase(xmlrpc.XMLRPC):
 
     def xmlrpc_stop_event_cache(self):
         raise NotImplementedError
+
+    def xmlrpc_get_stored_events(self):
+        events = self._stored_event_list + self._event_list
+        return map(str, events)
 
     def _event_cache_cb(self, event):
         if self._is_in_frame(event):

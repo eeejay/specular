@@ -50,6 +50,10 @@ class SpecularAccessible(SpecularSerial):
                 return n
         return None
 
+    def __str__(self):
+        e = self.documentElement
+        return '[%s | %s]' % (e.getAttribute('name'), e.getAttribute('role'))
+
 def specular_accessible_from_string(acc_str):
     dom = parseString(acc_str.encode('utf-8'))
     strip_whitespace(dom.documentElement)

@@ -85,6 +85,9 @@ class SpecularEvent(SpecularSerial):
     def native_type(self):
         return events_map[self.type]
 
+    def __str__(self):
+        return '%s %s' % (self.type, self.source)
+
     def match(self, other):
         if other.type == self.type:
             if self.source.compareNode(other.source):

@@ -46,8 +46,8 @@ class Speclenium(SpecleniumBase):
         self._event_list = []
         self._registered_global_listener = False
 
-    def xmlrpc_start(self, browser_start_cmd):
-        SpecleniumBase.xmlrpc_start(self, browser_start_cmd)
+    def xmlrpc_start(self, browser_start_cmd, record_events):
+        SpecleniumBase.xmlrpc_start(self, browser_start_cmd, record_events)
         self._top_frame = None
         pyatspi.Registry.registerEventListener(
             self._get_win, 'document:load-complete')
