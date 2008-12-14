@@ -83,7 +83,7 @@ class testsuite_dist(partial_dist):
     dist_overlay = dict(
         name=__doc__.split('\n')[0]+'-testsuite',
         data_files=[('', ['LICENSE', 'README', 'README.tests', 
-                          'README.api_compare','settings.ini',
+                          'README.api_diff','settings.ini',
                           selenium.__file__.rstrip('c')]),
                     ('viewdiff', ['viewdiff/api-compare.css', 
                                   'viewdiff/api-compare.js', 
@@ -178,6 +178,6 @@ setup(name=__doc__.split('\n')[0],
       data_files=[('', ['LICENSE', 
                         'README', 
                         'README.speclenium',
-                        'README.tests', 
+                        'README.api_diff', 
                         'README.tests'])],
       **extras)
