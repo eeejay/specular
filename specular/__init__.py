@@ -30,7 +30,7 @@
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
 
-__version__   = "0.0.6"
+__version__   = "0.0.7"
 __copyright__ = "Copyright (c) 2008 Eitan Isaacson"
 __license__   = "MPL 1.1/GPL 2.0/LGPL 2.1"
 
