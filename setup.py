@@ -82,7 +82,8 @@ class testsuite_dist(partial_dist):
     description = "Create a standalone speclenium test suite and harness."
     dist_overlay = dict(
         name=__doc__.split('\n')[0]+'-testsuite',
-        data_files=[('', ['LICENSE', 'README', 'README.tests', 'settings.ini',
+        data_files=[('', ['LICENSE', 'README', 'README.tests', 
+                          'README.api_compare','settings.ini',
                           selenium.__file__.rstrip('c')]),
                     ('viewdiff', ['viewdiff/api-compare.css', 
                                   'viewdiff/api-compare.js', 
@@ -176,6 +177,7 @@ setup(name=__doc__.split('\n')[0],
       scripts=["speclenium.py", "run_tests.py"], 
       data_files=[('', ['LICENSE', 
                         'README', 
-                        'README.speclenium', 
+                        'README.speclenium',
+                        'README.tests', 
                         'README.tests'])],
       **extras)
