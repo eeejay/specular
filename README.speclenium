@@ -15,7 +15,7 @@ dependancies. Otherwise, these are the things that are needed:
 (http://github.com/eeejay/selenium-remote-control/tree/master)
 - Python 2.5
 - Twisted (http://twistedmatrix.com)
-- pyia, for Windows (http://github.com/eeejay/pyia/tree)
+- pyia, for Windows (http://monotonous.org/pyia)
 - comtypes, for Windows (http://www.comtypes.sf.net)
 - pywin32, for Windows (http://sourceforge.net/projects/pywin32)
 
