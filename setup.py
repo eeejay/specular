@@ -2,7 +2,7 @@ r"""Specular
 A cross-platform accessibility API inspection service.
 """
 import sys, os
-from distutils.core import setup, Command, DistutilsOptionError
+from distutils.core import setup, Command
 from distutils.archive_util import make_archive
 import distutils.command, distutils.command.build_py
 import shutil
