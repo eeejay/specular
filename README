@@ -1,29 +1,87 @@
 Specular
+========
+
+spec·u·lar  /ˈspekyələr/
+Adjective:  Of, relating to, or having the properties of a mirror.
 
 Description
-===========
+-----------
 
 Specular is a suite of tools and libraries used for
 cross-(browser|platform) testing of ARIA implementations in user
 agents. Specular currently consists of the following components that
-may be ditributed seperately for ease of use:
+may be distributed seperately for ease of use:
 
-1. Speclenium
-Speclenium is a server that runs along-side Selenium-RC to provide
+1. Speclenium Server (speclenium_server.py)
+Speclenium is a server that runs along-side Selenium Server to provide
 accessibility API assertions during a Selenium automated
-tests. Typically when speclenium is launched, it will start an
-instance of Selenium-RC. All test target machines need to have
-Speclenium running on them.
+tests. Typically when Speclenium Server is launched, it will start an
+instance of Selenium Server (formerly known as Selenium-RC). 
 
-2. PyUnit Test Suite
-Selenium-RC allows tests to be driven accross machine boundaries by
+All test target machines need to have Speclenium Server running on 
+them. Either pass it the Selenium Server's jar to launch with, or
+launch Selenium Server yourself and --no-selenium.
+Here is an example command line used to launch Speclenium Server:
+$ python speclenium-server.py -S path-to-selenium-server.jar
+
+2. Speclenium Client (speclenium_server.py)
+The client commnicates with Speclenium Server over port 4117 to 
+control the tests. There's no need to launch it separately, as the 
+tests will do that.
+
+3. PyUnit Test Suite (run_tests.py)
+Selenium Server allows tests to be driven accross machine boundaries by
 almost any standard unit testing framework, in any language. The test
 suite bundled with Specular is written in Python, and tests for ARIA
 conformance across browsers. The test suite too could be distributed 
-seperateley.
+seperately.
+
+The tests can be found in the “tests” subdirectory. The “run_tests.py” 
+script is an easy harness that allows running the test with any 
+combination of tests and of browsers defined in “settings.ini”. Run 
+with “–help” to see range of options.
+
+4. API delta tool (quick_diff.py)
+This allows pointing two browsers at a URL, and spotting the 
+differences in their accessible object hierarchies. It uses the same 
+“settings.ini” to provide remote (or local) hosts and their installed 
+browsers. It also allows saving a hierarchy to file for later comparison 
+with different browsers or builds. The delta could be viewed either by 
+a list of changes, or by a browser viewable XML file (put the output XML 
+file in “viewdiff” for that to work). This tool is still in early stages 
+of development, so the tree size it can handle is fairly limited, don’t 
+point it at GMail just yet!
+
+Visual Overview of Architecture
+-------------------------------
+
+run_tests or quick_diff  (launch second)
+     |          |
+  Speclenium Client
+          |
+      [port 4117]
+          |
+   Speclenium Server (launch first) 
+          |
+      [port 4444]
+          |
+    Selenium Server
+
+Quick Start
+-----------
+
+These steps work if you're running everything on the same computer:
+
+1. Install Selenium Server (yes, it's just a JAR file)
+2. python speclenium-server.py -S path-to-selenium-server.jar
+3. Check http://localhost:4444/wd/hub/status to see if it's running.
+   You should get a JSON status back
+4. Edit settings.ini (see all-browsers.ini for more ideas)
+5. python ./run_tests.py   or    python ./quick_diff.py
+6. Quit Speclenium Server via Ctrl+C in the console it's running in.
 
 Building Distribution Packages
-==============================
+------------------------------
 
 The whole of Specular is developed in one repository and it's source
 is distributed as one monolithic collection of the components
@@ -33,8 +91,8 @@ installation. The following setup.py commands should work:
 
 1. speclenium_dist
 This prepares an archive with the library and script needed to start a
-Speclenium server. A Selenium-RC JAR file will be bundled with this
-package, and Speclenium will launch Selenium-RC at startup.
+Speclenium server. A Selenium Server JAR file will be bundled with this
+package, and Speclenium will launch Selenium Server at startup.
 
 2. speclenium_dist_win32
 This prepares an executable of Speclenium for Windows. All
