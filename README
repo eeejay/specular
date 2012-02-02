@@ -103,3 +103,10 @@ dependancies are included in this package, even Python.
 This prepares an archive of PyUnit tests and a harness called
 'run_tests'. This distribution will bundle selenium.py, which is an
 external module from the Selenium project.
+
+Project Status
+--------------
+As of February 2, 2012, Aaron Leventhal is working to revitalize the 
+project. So far ./run-tests has been able to run through Firefox, but
+produces many failures.
+
