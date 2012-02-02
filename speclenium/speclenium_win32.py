@@ -38,18 +38,12 @@ from specular.specular_event import events_map
 import pyia
 from speclenium_base import SpecleniumBase
 
-SPI_GETSCREENREADER = 70
-SPI_SETSCREENREADER = 71
-SPIF_UPDATEINIFILE=1
-SPIF_SENDCHANGE=2
-            
 class Speclenium(SpecleniumBase):
     """An example object to be published."""
     def __init__(self):
         SpecleniumBase.__init__(self)
 
     def shutdown(self):
-        self._set_screenreader_flag(self._was_screenreader_on)
         SpecleniumBase.shutdown(self)
 
     def xmlrpc_start(self, browser_start_cmd, record_events):
@@ -79,15 +73,6 @@ class Speclenium(SpecleniumBase):
             pyia.Registry.deregisterEventListener(
                 self._get_win, pyia.EVENT_OBJECT_NAMECHANGE)
             
-    def _is_screenreader_on(self):
-        val = BOOL()
-        windll.user32.SystemParametersInfoW(SPI_GETSCREENREADER, 0, byref(val), 0)
-        ret_val = bool(val)
-        return ret_val
-    
-    def _set_screenreader_flag(self, val):
-        windll.user32.SystemParametersInfoW(SPI_SETSCREENREADER, val, 0, SPIF_SENDCHANGE)
-
     def _get_win_safari(self, event):
         try:
             acc_name = event.source.accName(0) or ''
