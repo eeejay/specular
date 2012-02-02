@@ -42,9 +42,10 @@ class ButtonTest(TestCommon, unittest.TestCase):
     base_url = "http://codetalks.org/"
     path = "/source/widgets/button/button.html"
     expected_revision = 71
+    broken = False
 
     def runTest(self):
-        sel = self.selenium
+        sel = self.speclenium_client
         # "embedded component" is here just to have this test pass in Linux.
         match = sel.get_accessible_match(
             '<accessible name="Order tracking" description="regexp:(Description:\s)?Order tracking has been enabled for all shipments outside of Texas. For information on orders to Texas, please call 1-555-HELP-NOW for an automated recording."  />')

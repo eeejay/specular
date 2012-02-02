@@ -38,10 +38,19 @@ from specular.specular_event import events_map
 import pyia
 from speclenium_base import SpecleniumBase
 
+SPI_GETSCREENREADER = 70
+SPI_SETSCREENREADER = 71
+SPIF_UPDATEINIFILE=1
+SPIF_SENDCHANGE=2
+            
 class Speclenium(SpecleniumBase):
     """An example object to be published."""
     def __init__(self):
         SpecleniumBase.__init__(self)
+
+    def shutdown(self):
+        self._set_screenreader_flag(self._was_screenreader_on)
+        SpecleniumBase.shutdown(self)
 
     def xmlrpc_start(self, browser_start_cmd, record_events):
         SpecleniumBase.xmlrpc_start(self, browser_start_cmd, record_events)
@@ -63,11 +72,22 @@ class Speclenium(SpecleniumBase):
             success = self._get_win_opera(event)
         elif agent_id == self.AGENT_SAFARI:
             success = self._get_win_safari(event)
+        elif agent_id == self.AGENT_CHROME:
+			success = self._get_win_chrome(event)
 
         if success:
             pyia.Registry.deregisterEventListener(
                 self._get_win, pyia.EVENT_OBJECT_NAMECHANGE)
             
+    def _is_screenreader_on(self):
+        val = BOOL()
+        windll.user32.SystemParametersInfoW(SPI_GETSCREENREADER, 0, byref(val), 0)
+        ret_val = bool(val)
+        return ret_val
+    
+    def _set_screenreader_flag(self, val):
+        windll.user32.SystemParametersInfoW(SPI_SETSCREENREADER, val, 0, SPIF_SENDCHANGE)
+
     def _get_win_safari(self, event):
         try:
             acc_name = event.source.accName(0) or ''
@@ -114,6 +134,22 @@ class Speclenium(SpecleniumBase):
                 return True
         return False
 
+    def _get_win_chrome(self, event):
+        if event.source != None:
+            try:
+                acc_name = event.source.accName(0) or ''
+            except:
+                acc_name = ''
+            if self._target_pid == -1 and \
+                    'Selenium Remote Control' in acc_name:
+                self._target_pid = pyia.getAccessibleThreadProcessID(event.source)[0]
+                self._window_id = event.hwnd
+            elif pyia.getAccessibleThreadProcessID(event.source)[0] == self._target_pid and \
+                    self._window_id != event.hwnd:
+                self._top_frame = event.source
+                return True
+        return False
+       
     def xmlrpc_start_event_cache(self):
         if not self._registered_global_listener:
             for value in events_map.values():
@@ -155,6 +191,15 @@ class Speclenium(SpecleniumBase):
             pred = lambda x: x.accRole(0) == pyia.ROLE_SYSTEM_DOCUMENT and \
                 not x.accState(0) & pyia.STATE_SYSTEM_INVISIBLE
             rv = pyia.findDescendant(window_acc, pred)
+        elif agent_id == self.AGENT_CHROME:
+			# Chrome
+			pred = lambda x: 'browser' in x.accRoleName() and \
+				not x.accState(0) & pyia.STATE_SYSTEM_INVISIBLE
+			rv = pyia.findDescendant(window_acc, pred)
+			try:
+				rv = rv[0]
+			except:
+				pass
         return rv
 
     def _is_in_frame(self, event):

@@ -1,4 +1,4 @@
-from speclenium_client import SpecleniumClient as selenium
+from speclenium_client import SpecleniumClient as speclenium_client
 
 class TestCommon(object):
     '''Do common setup and teardown tasks.'''
@@ -8,16 +8,16 @@ class TestCommon(object):
 
     def setUp(self):
         self.verificationErrors = []
-        self.selenium = selenium(self.host, 4444, self.command, self.base_url)
-        self.selenium.start()
-        self.selenium.set_timeout(30000)
-        self.selenium.open(self.path)
+        self.speclenium_client = speclenium_client(self.host, 4444, self.command, self.base_url)
+        self.speclenium_client.start()
+        self.speclenium_client.set_timeout(30000)
+        self.speclenium_client.open(self.path)
         self._check_revision()
-        self.selenium.window_maximize()
+        self.speclenium_client.window_maximize()
 
     def _check_revision(self):
         if self.expected_revision is None: return
-        rev_string = self.selenium.get_text("//*[@id=\"revision\"]")
+        rev_string = self.speclenium_client.get_text("//*[@id=\"revision\"]")
         try:
             rev_num = int(rev_string[11:-2])
         except:
@@ -33,6 +33,6 @@ class TestCommon(object):
                     (self.__class__.__name__, rev_num, self.expected_revision)
         
     def tearDown(self):
-        self.selenium.stop()
+        self.speclenium_client.stop()
         self.assertEqual([], self.verificationErrors)
         #self.failUnless([] == self.verificationErrors)

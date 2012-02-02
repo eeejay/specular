@@ -32,7 +32,8 @@
 # the provisions above, a recipient may use your version of this file under
 # the terms of any one of the MPL, the GPL or the LGPL.
 
-from speclenium_client import SpecleniumClient as selenium
+from speclenium_client import SpecleniumClient as speclenium_client
+import speclenium
 import sys, codecs
 from xml.dom.minidom import parse, parseString
 from ConfigParser import ConfigParser
@@ -153,7 +154,7 @@ def get_acc_tree(profile_name,host, command, url):
     parsed = urlparse(url)
     first_half = parsed[0] + '://' + parsed[1]
     second_half = ''.join(parsed[2:])
-    s = selenium(host, 4444, command, first_half)
+    s = speclenium_client(host, 4444, command, first_half)
     s.start()
     s.set_timeout(30000)
     s.open(second_half)
@@ -191,7 +192,7 @@ def _get_tree_title(tree):
     return title_tags[0].firstChild.data.strip()
 
 if __name__ == '__main__':
-    from optparse import OptionParser
+    from optparse import OptionParser, OptionValueError
     from sys import stderr, stdout
 
     usage = "Usage: %prog [options] url"

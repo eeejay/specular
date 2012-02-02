@@ -49,20 +49,20 @@ class SliderTest(TestCommon, unittest.TestCase):
             '<accessible role="slider" name="My slider" value="%s"/>'
             '</source></event>' % value]
 
-        got_events = self.selenium.wait_accessible_events(event_query)
+        got_events = self.speclenium_client.wait_accessible_events(event_query)
 
         try:
             self.failUnless(got_events != [], 
                             'Did not get a value change event')
         except AssertionError, e:
-            print '\n\n'.join(self.selenium.dump_accessible_event_cache())
+            print '\n\n'.join(self.speclenium_client.dump_accessible_event_cache())
             self._failed_asserts.append(e)
             return None
         else:
             return got_events[0]
 
     def runTest(self):
-        sel = self.selenium
+        sel = self.speclenium_client
         sel.key_down("//*[@id=\"slider1\"]", "\\36") # Home
         self._wait_for_value_change("regexp:^0(\.\d)?$")
         sel.key_down("//*[@id=\"slider1\"]", "\\39") # Right

@@ -58,7 +58,7 @@ class AlertTest(TestCommon, unittest.TestCase):
                           '<source><accessible role="alert"/>'
                           '</source></event>')
         
-        got_events = self.selenium.wait_accessible_events(events)
+        got_events = self.speclenium_client.wait_accessible_events(events)
         try:
             self.failUnless(len(got_events) == len(events), 
                             'Did not get the right events for "%s"\n'
@@ -67,14 +67,14 @@ class AlertTest(TestCommon, unittest.TestCase):
                                                            '\n'.join(got_events)))
         except AssertionError, e:
             print '-'*80
-            print '\n'.join(self.selenium.dump_accessible_event_cache())
+            print '\n'.join(self.speclenium_client.dump_accessible_event_cache())
             print '-'*80
             self._failed_asserts.append(e)
 
     def _assert_no_alert_showing(self, subtest):
         try:
             self.assertEqual(
-                self.selenium.get_accessible_match(
+                self.speclenium_client.get_accessible_match(
                     '<accessible role="alert" state="regexp:.*focusable.*" />'), 
                 '', 'Found unexpected focusable "alert" accessible in "%s" test' % subtest)
         except AssertionError, e:
@@ -84,7 +84,7 @@ class AlertTest(TestCommon, unittest.TestCase):
     def _assert_alert_showing(self, subtest):
         try:
             self.assertNotEqual(
-                self.selenium.get_accessible_match(
+                self.speclenium_client.get_accessible_match(
                     '<accessible role="alert" state="regexp:.*focusable.*" />'), 
                 '', 
                 'Failed to find focusable "alert" accessible in "%s" test' % subtest)
@@ -93,7 +93,7 @@ class AlertTest(TestCommon, unittest.TestCase):
         
 
     def runTest(self):
-        sel = self.selenium
+        sel = self.speclenium_client
         self._assert_no_alert_showing('')
 
         # Create and Focus

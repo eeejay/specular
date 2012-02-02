@@ -45,20 +45,20 @@ class ListBoxIframeTest(TestCommon, unittest.TestCase):
 
     def _wait_for_focus_change(self, name, role="list item"):
         event_query = '<event type="object-focus"><source><accessible role="%s" name="%s"/></source></event>' % (role, name)
-        got_events = self.selenium.wait_accessible_events([event_query])
+        got_events = self.speclenium_client.wait_accessible_events([event_query])
 
         try:
             self.failUnless(got_events != [], 
                             'Did not get a focus event for "%s"' % name)
         except AssertionError, e:
-            print '\n\n'.join(self.selenium.dump_accessible_event_cache())
+            print '\n\n'.join(self.speclenium_client.dump_accessible_event_cache())
             self._failed_asserts.append(e)
             return None
         else:
             return got_events[0]
 
     def runTest(self):
-        sel = self.selenium
+        sel = self.speclenium_client
         sel.click("//*[@id=\"listbox1-1\"]")
         self._wait_for_focus_change('Green')
         sel.click("//*[@id=\"listbox1-2\"]")

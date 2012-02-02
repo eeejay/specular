@@ -43,7 +43,7 @@ class ImageTiledTest(TestCommon, unittest.TestCase):
     expected_revision = 71
 
     def runTest(self):
-        sel = self.selenium
+        sel = self.speclenium_client
         # "embedded component" is here just to have this test pass in Linux.
         match = sel.get_accessible_match(
             '<accessible role="regexp:(image|graphic)" name="Image label" />')

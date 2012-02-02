@@ -46,13 +46,13 @@ class ComboboxEditTest(TestCommon, unittest.TestCase):
     def _wait_for_focus_change(self, 
                                name, role="list item", value="regexp:.*"):
         event_query = '<event type="object-focus"><source><accessible role="%s" name="%s" value="%s"/></source></event>' % (role, name, value)
-        got_events = self.selenium.wait_accessible_events([event_query])
+        got_events = self.speclenium_client.wait_accessible_events([event_query])
 
         try:
             self.failUnless(got_events != [], 
                             'Did not get a focus event for "%s"' % name)
         except AssertionError, e:
-            print '\n\n'.join(self.selenium.dump_accessible_event_cache())
+            print '\n\n'.join(self.speclenium_client.dump_accessible_event_cache())
             self._failed_asserts.append(e)
             return None
         else:
@@ -68,7 +68,7 @@ class ComboboxEditTest(TestCommon, unittest.TestCase):
             '</source></event>']
 
         
-        got_events = self.selenium.wait_accessible_events(events)
+        got_events = self.speclenium_client.wait_accessible_events(events)
         try:
             self.failUnless(len(got_events) == len(events), 
                             'Did not get the right events for combo box show\n'
@@ -76,12 +76,12 @@ class ComboboxEditTest(TestCommon, unittest.TestCase):
                     '\n'.join(events),
                     '\n'.join(got_events)))
         except AssertionError, e:
-            print '\n\n'.join(self.selenium.dump_accessible_event_cache())
+            print '\n\n'.join(self.speclenium_client.dump_accessible_event_cache())
             self._failed_asserts.append(e)
 
 
     def runTest(self):
-        sel = self.selenium
+        sel = self.speclenium_client
         sel.type("cat", "cool")
         sel.key_down("cat", "\\13")
         self._wait_for_combobox_show()

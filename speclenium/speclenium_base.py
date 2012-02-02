@@ -38,11 +38,12 @@ from specular.specular_event import \
     specular_event_from_event, specular_event_from_string, events_map
 
 class SpecleniumBase(xmlrpc.XMLRPC):
-    AGENTS = ['Mozilla', 'Internet Explorer', 'Webkit', 'Opera', 'Unknown']
+    AGENTS = ['Mozilla', 'Internet Explorer', 'Webkit', 'Opera', 'Chrome', 'Unknown']
     AGENT_MOZILLA = 0
     AGENT_IE = 1
     AGENT_SAFARI = 2
     AGENT_OPERA = 3
+    AGENT_CHROME = 4
     AGENT_UNKNOWN = -1
     """An example object to be published."""
     def __init__(self):
@@ -50,6 +51,9 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         self._event_list = []
         self._registered_global_listener = False
         self._store_events = False
+
+    def shutdown(self):
+        pass
 
     def xmlrpc_start(self, browser_start_cmd, store_events):
         # Capture target frame here.
@@ -137,8 +141,6 @@ class SpecleniumBase(xmlrpc.XMLRPC):
         raise NotImplementedError
 
     def _get_agent(self):
-        if 'chrome' in self._browser_start_cmd:
-            return self.AGENT_MOZILLA
         if 'firefox' in self._browser_start_cmd:
             return self.AGENT_MOZILLA
         if 'explore' in self._browser_start_cmd:
@@ -147,4 +149,6 @@ class SpecleniumBase(xmlrpc.XMLRPC):
             return self.AGENT_SAFARI
         if 'opera' in self._browser_start_cmd:
             return self.AGENT_OPERA
+        if 'chrome' in self._browser_start_cmd:
+			return self.AGENT_CHROME
         return self.AGENT_UNKNOWN

@@ -43,7 +43,7 @@ class LiveRegionsPoliteTest(TestCommon, unittest.TestCase):
     path = "/source/live/live_polite.html"
 
     def runTest(self):
-        sel = self.selenium
+        sel = self.speclenium_client
         sel.flush_accessible_event_cache()
         time.sleep(3)
 

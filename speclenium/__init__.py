@@ -35,15 +35,59 @@ __copyright__ = "Copyright (c) 2008 Eitan Isaacson"
 __license__   = "MPL 1.1/GPL 2.0/LGPL 2.1"
 
 from sys import platform
+import os, os.path
+import sys
+import subprocess
+from time import sleep
 
 if platform == 'win32':
     from speclenium_win32 import Speclenium
 else:
     from speclenium_atspi import Speclenium
 
-def main(port=4117):
+
+def main(use_existing_selenium, selenium_jar, port=4117):
     from twisted.internet import reactor
     from twisted.web import server
-    r = Speclenium()
-    reactor.listenTCP(port, server.Site(r))
-    reactor.run()
+ 
+    if use_existing_selenium and not run_selenium(selenium_jar):
+        print 'Could not launch Selenium Server. Start Selenium Server separately (run with --help for options)'
+        return
+
+    run_selenium(selenium_jar)
+       
+    spec_server = Speclenium()
+    try:
+        reac = reactor;
+        reac.listenTCP(port, server.Site(spec_server))
+        reac.run()
+    finally:
+        # TODO: Proper exception handling.
+        # TODO: Shutdown automatically when Selenium Server is shutdown separately. 
+        spec_server.shutdown()
+        print '==> Speclenium Server stopped'
+
+def run_selenium(jar_file):
+    if not jar_file:
+        try:
+            script_dir = os.path.dirname(__file__) or '.'
+        except NameError:
+            # This could be one of those py2exe entry-points.
+            script_dir = os.path.dirname(sys.executable)
+        try:
+            jar_file = filter(
+                lambda x: x.startswith('selenium-server') and \
+                    x.endswith('.jar'), os.listdir(script_dir))[0]
+        except IndexError:
+            return False
+        jar_file = os.path.join(script_dir, jar_file)
+    try:
+        extra_args = os.environ['SELENIUM_ARGS'].split(' ')
+    except KeyError:
+        extra_args = []
+    s = subprocess.Popen(['java', '-jar', jar_file] + extra_args)
+    sleep(1)
+    return s.poll() != 1
+    
+
+

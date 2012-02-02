@@ -76,7 +76,8 @@ These steps work if you're running everything on the same computer:
 2. python speclenium-server.py -S path-to-selenium-server.jar
 3. Check http://localhost:4444/wd/hub/status to see if it's running.
    You should get a JSON status back
-4. Edit settings.ini (see all-browsers.ini for more ideas)
+4. Edit settings.ini -- the default settings.ini just runs Firefox and 
+   Chrome on Windows. See all-browsers.ini for more examples.
 5. python ./run_tests.py   or    python ./quick_diff.py
 6. Quit Speclenium Server via Ctrl+C in the console it's running in.
 

@@ -69,14 +69,14 @@ class TreeTest(TestCommon, unittest.TestCase):
             'role="regexp:list|outline item" state="%s"/>' \
             '</source></event>' % state_regex
 
-        got_events = self.selenium.wait_accessible_events([event_query])
+        got_events = self.speclenium_client.wait_accessible_events([event_query])
 
         try:
             self.failUnless(
                 got_events != [], 
                 'Did not get a state-change event for expand/collapse')
         except AssertionError, e:
-            print '\n\n'.join(self.selenium.dump_accessible_event_cache())
+            print '\n\n'.join(self.speclenium_client.dump_accessible_event_cache())
             self._failed_asserts.append(e)
             return None
         else:
@@ -85,22 +85,22 @@ class TreeTest(TestCommon, unittest.TestCase):
 
     def _wait_for_focus_change(self, name):
         event_query = '<event type="object-focus"><source><accessible role="regexp:list|outline item" name="%s"/></source></event>' % name
-        got_events = self.selenium.wait_accessible_events([event_query])
+        got_events = self.speclenium_client.wait_accessible_events([event_query])
 
         try:
             self.failUnless(got_events != [], 
                             'Did not get a focus event for "%s"' % name)
         except AssertionError, e:
-            print '\n\n'.join(self.selenium.dump_accessible_event_cache())
+            print '\n\n'.join(self.speclenium_client.dump_accessible_event_cache())
             self._failed_asserts.append(e)
             return None
         else:
             return got_events[0]
 
     def runTest(self):
-        sel = self.selenium
+        sel = self.speclenium_client
 
-        found_subtree = self.selenium.get_accessible_match(expect_subtree)
+        found_subtree = self.speclenium_client.get_accessible_match(expect_subtree)
         
         try:
             self.failUnless(found_subtree, 

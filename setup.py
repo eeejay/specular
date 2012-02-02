@@ -1,4 +1,4 @@
-r"""Specular
+"""Specular
 A cross-platform accessibility API inspection service.
 """
 import sys, os
@@ -6,12 +6,12 @@ from distutils.core import setup, Command
 from distutils.archive_util import make_archive
 import distutils.command, distutils.command.build_py
 import shutil
-import specular, speclenium, selenium
+import specular, speclenium, speclenium_client
 
 class partial_dist(distutils.command.build_py.build_py):
     description = "Create a standalone speclenium test suite and harness."
     user_options = \
-        [('formats=','F','formats for distribution (comma-seperated list)')]+\
+        [('formats=','F','formats for distribution (comma-separated list)')]+\
         distutils.command.build_py.build_py.user_options
     dist_overlay = {}
 
@@ -61,30 +61,31 @@ class partial_dist(distutils.command.build_py.build_py):
 
 class speclenium_dist(partial_dist):
     description = "Create a standalone speclenium test suite and harness."
-    user_options = [('selenium=', 'S', 'Selenium JAR file to include')] + \
+    user_options = [('speclenium_client=', 'S', 'Selenium JAR file to include')] + \
         partial_dist.user_options
     dist_overlay = dict(
         name='Speclenium-standalone',
         data_files=[('', ['LICENSE', 'README', 'README.speclenium', ])],
         packages=['specular', 'speclenium'],
-        scripts=['speclenium.py'])
+        scripts=['speclenium_server.py'])
 
     def initialize_options(self):
-        self.selenium = "selenium-server.jar"
+        self.speclenium_client = "speclenium_client-server.jar"
         partial_dist.initialize_options(self)
 
     def finalize_options(self):
         self.distribution.__dict__.setdefault('data_files', []).append(
-            ('', [self.selenium]))
+            ('', [self.speclenium_client]))
         partial_dist.finalize_options(self)
 
 class testsuite_dist(partial_dist):
     description = "Create a standalone speclenium test suite and harness."
+    selenium_file_name = speclenium_client.__file__
     dist_overlay = dict(
         name=__doc__.split('\n')[0]+'-testsuite',
         data_files=[('', ['LICENSE', 'README', 'README.tests', 
                           'README.api_diff','settings.ini',
-                          selenium.__file__.rstrip('c')]),
+                          selenium_file_name.rstrip('c')]),
                     ('viewdiff', ['viewdiff/api-compare.css', 
                                   'viewdiff/api-compare.js', 
                                   'viewdiff/api-compare.xsl'])],
@@ -104,7 +105,7 @@ else:
             "Create a standalone speclenium distribution for Windows."
         user_options = py2exe.build_exe.py2exe.user_options + \
             [('zip', 'Z', 'zip distribution'),
-             ('selenium=', 'S', 'Selenium JAR file to include')]
+             ('speclenium_client=', 'S', 'Selenium JAR file to include')]
 
         def __init__(self, dist):
             dist.metadata.name = dist.name = 'Speclenium-standalone-win32'
@@ -115,13 +116,13 @@ else:
 
         def initialize_options(self):
             self.zip = False
-            self.selenium = 'selenium-server.jar'
+            self.speclenium_client = 'speclenium_client-server.jar'
             py2exe.build_exe.py2exe.initialize_options(self)
 
         def finalize_options(self):
             if self.distribution.data_files is None:
                 self.distribution.data_files = []
-            self.distribution.data_files.append(('', [self.selenium]))
+            self.distribution.data_files.append(('', [self.speclenium_client]))
             py2exe.build_exe.py2exe.finalize_options(self)
             self.base_name = \
                 self.distribution.get_fullname()
@@ -140,7 +141,7 @@ else:
 
     extras = {'options' : {'speclenium_dist_win32' : 
                            {'includes' : 'twisted.web.resource'}},
-              'console' : [{'script' : 'speclenium.py',
+              'console' : [{'script' : 'speclenium_server.py',
                             "icon_resources" : 
                             [(1, "speclenium-logo.ico")]}],
               'cmdclass' : {'testsuite_dist' : testsuite_dist,
@@ -174,7 +175,7 @@ setup(name=__doc__.split('\n')[0],
       version=specular.__version__,
       packages=["specular", "speclenium", "tests"],
       py_modules=["speclenium_client"],
-      scripts=["speclenium.py", "run_tests.py"], 
+      scripts=["speclenium_server.py", "run_tests.py"], 
       data_files=[('', ['LICENSE', 
                         'README', 
                         'README.speclenium',

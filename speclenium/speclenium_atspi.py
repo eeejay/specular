@@ -35,7 +35,6 @@ glib2reactor.install()
 from twisted.internet import reactor
 from twisted.web import xmlrpc, server
 import pyatspi
-import gobject
 from speclenium_base import SpecleniumBase
 from specular.specular_event import events_map
 
@@ -88,7 +87,7 @@ class Speclenium(SpecleniumBase):
     def _find_root_doc(self, window_acc):
         agent_id = self._get_agent()
         pred = lambda x: False
-        if agent_id == self.AGENT_MOZILLA:
+        if agent_id == self.AGENT_MOZILLA or agent_id ==self.AGENT_CHROME:
             # Firefox
             def pred(x):
                 p = x.parent

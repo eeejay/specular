@@ -72,20 +72,20 @@ class MenuBarTest(TestCommon, unittest.TestCase):
                 '<accessible role="regexp:.*menu$"/>'
                 '</source>'
                 '</event>')
-        got_events = self.selenium.wait_accessible_events(event_query)
+        got_events = self.speclenium_client.wait_accessible_events(event_query)
 
         try:
             self.failUnless(got_events != [], 
                             'Did not get a focus event for "%s"' % name)
         except AssertionError, e:
-            print '\n\n'.join(self.selenium.dump_accessible_event_cache())
+            print '\n\n'.join(self.speclenium_client.dump_accessible_event_cache())
             self._failed_asserts.append(e)
             return None
         else:
             return got_events[0]
 
     def runTest(self):
-        sel = self.selenium
+        sel = self.speclenium_client
         # "embedded component" is here just to have this test pass in Linux.
         try:
             self.failUnless(sel.get_accessible_match(expected_subtree), 

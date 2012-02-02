@@ -51,13 +51,13 @@ class CheckboxTristateTest(TestCommon, unittest.TestCase):
             state_regex = 'regexp:^((?!checked|indeterminate|mixed).)*$'
 
         event_query = '<event type="object-state-changed"><source><accessible role="check box" name="%s" state="%s"/></source></event>' % (name, state_regex)
-        got_events = self.selenium.wait_accessible_events([event_query])
+        got_events = self.speclenium_client.wait_accessible_events([event_query])
 
         self.failUnless(got_events != [])
         return got_events[0]
 
     def runTest(self):
-        sel = self.selenium
+        sel = self.speclenium_client
         sel.click("//span[@id='remove-to-clear']/img")
         self._wait_for_checked(False,'regexp:.*removeAttribute.*')
         sel.click("//span[@id='remove-to-clear']/img")
